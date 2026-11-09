@@ -9,6 +9,8 @@ import {
   getConversationMeta,
   loadFile,
   saveFileReady,
+  listRecentConversations,
+  searchConversations,
   searchMessages,
   updateConversation,
 } from "../index";
@@ -103,6 +105,71 @@ describe("conversation persistence", () => {
 
     const results = await searchMessages("needle");
     expect(results.some((match) => match.conversationId === "chat-1")).toBe(true);
+  });
+
+  describe("chat search", () => {
+    const text = (value) => [{ type: "text", text: value }];
+    const addChat = (id, title, value) =>
+      createConversation({
+        id,
+        title,
+        settings,
+        messages: value ? [{ idx: 0, role: "user", content: text(value) }] : [],
+      });
+
+    it("matches word parts in titles and messages, titles first", async () => {
+      await addChat("message-hit", "Connected Consumables", "In Krankenhäusern laufen viele Prozesse");
+      await addChat("title-hit", "Krankentransport prüfen");
+      await addChat("miss", "Reisen", "Nichts davon");
+
+      const results = await searchConversations("KRANKEN");
+      expect(results.map((result) => result.conversationId)).toEqual([
+        "title-hit",
+        "message-hit",
+      ]);
+      expect(results[0]).toMatchObject({ snippet: "", messageId: null });
+      expect(results[1].snippet).toContain("Krankenhäusern");
+      expect(results[1].messageId).toBeTruthy();
+    });
+
+    it("returns one result per chat and short context around the match", async () => {
+      await createConversation({
+        id: "chat-1",
+        title: "Long",
+        settings,
+        messages: [
+          { idx: 0, role: "user", content: text(`${"a ".repeat(100)}needle one`) },
+          { idx: 1, role: "assistant", content: text("needle two") },
+        ],
+      });
+
+      const results = await searchConversations("needle");
+      expect(results).toHaveLength(1);
+      expect(results[0].snippet.indexOf("needle")).toBeLessThan(30);
+    });
+
+    it("ignores blank queries and the Meta chat", async () => {
+      await createConversation({
+        id: "meta-chat",
+        title: "needle",
+        isMetaChat: true,
+        settings,
+        messages: [],
+      });
+      expect(await searchConversations("   ")).toEqual([]);
+      expect(await searchConversations("needle")).toEqual([]);
+      expect(await listRecentConversations()).toEqual([]);
+    });
+
+    it("lists the most recent chats up to the limit", async () => {
+      await addChat("older", "Older");
+      await addChat("newer", "Newer");
+      await db.conversations.update("older", { lastOpenedAt: 1 });
+      await db.conversations.update("newer", { lastOpenedAt: 2 });
+
+      const results = await listRecentConversations(1);
+      expect(results.map((result) => result.conversationId)).toEqual(["newer"]);
+    });
   });
 
   it("creates topics once and assigns conversations", async () => {

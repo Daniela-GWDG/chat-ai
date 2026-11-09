@@ -375,7 +375,7 @@ export const featureGuides = {
   search_chats: {
     titleKey: "feature_guide.search_chats.title",
     prompt:
-      "Search chats by title from the sidebar search button.",
+      "Open the search dialog from the sidebar search button. It lists recent chats and finds chats by title or message text.",
     keywords: ["search chats", "search conversation", "find a chat", "search"],
     steps: [
       {

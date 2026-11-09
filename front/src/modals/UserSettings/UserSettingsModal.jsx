@@ -216,10 +216,12 @@ export default function UserSettingsModal({
       isOpen={isOpen}
       onClose={onClose}
       titleKey="user_settings.title"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
       maxWidth="max-w-5xl"
       contentClassName="min-h-0 p-0"
     >
-      <div className="flex h-[min(72dvh,650px)] min-h-0 flex-col overflow-hidden border-t border-base-300 md:flex-row">
+      <div className="flex h-[min(72dvh,650px)] min-h-0 flex-col overflow-hidden rounded-b-box border-t border-base-300 md:flex-row">
         <nav
           aria-label={t("user_settings.tabs.navigation_label")}
           className="flex shrink-0 gap-1 overflow-x-auto border-b border-base-300 bg-base-200 p-2 md:w-56 md:flex-col md:overflow-y-auto md:border-r md:border-b-0 md:p-3"

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trans } from "react-i18next";
-import cross_sm from "../assets/icons/cross_sm.svg";
+import { Close } from "@carbon/icons-react";
 
 /**
  * BaseModal Component
@@ -24,6 +24,9 @@ export default function BaseModal({
   isForced = false,
   minimal = false,
   contentClassName = "p-5 pt-0 flex flex-col gap-0",
+  titleClassName = "font-semibold text-sm",
+  // Shared by the title and the close icon, so the two always match.
+  titleColorClassName = "text-accent",
 }) {
 
   return (
@@ -63,7 +66,7 @@ export default function BaseModal({
               >
                 {/* Header */}
                 <div className="flex justify-between items-center p-5 pb-3">
-                  <Dialog.Title className="font-semibold text-sm text-accent">
+                  <Dialog.Title className={`${titleClassName} ${titleColorClassName}`}>
                     <Trans i18nKey={titleKey} />
                   </Dialog.Title>
 
@@ -74,11 +77,7 @@ export default function BaseModal({
                     className="btn btn-ghost btn-sm btn-square"
                     aria-label="Close dialog"
                   >
-                    <img
-                      src={cross_sm}
-                      alt="Close"
-                      className="h-[24px] w-[24px]"
-                    />
+                    <Close size={20} className={titleColorClassName} aria-hidden="true" />
                   </button>
                   )}
                 </div>

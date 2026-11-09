@@ -154,7 +154,7 @@ export default function ImportChatButton({
           onClick={handleClickJSON}
           disabled={loading}
           data-guide="import-chat"
-          className={`cursor-pointer w-full hover:bg-base-200 text-base-content px-4 py-3 rounded-2xl flex items-center justify-start gap-2 text-xs font-medium touch-manipulation transition-all duration-100 ${
+          className={`cursor-pointer w-full hover:bg-base-200 text-base-content px-4 py-3 rounded-lg flex items-center justify-start gap-2 text-xs font-medium touch-manipulation transition-all duration-100 ${
             loading ? "cursor-not-allowed opacity-50" : ""
           } `}
           style={{

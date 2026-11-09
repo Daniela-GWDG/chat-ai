@@ -24,6 +24,7 @@ import FolderEditorModal from "../components/Sidebar/Modals/FolderEditorModal";
 import DeleteFolderModal from "../components/Sidebar/Modals/DeleteFolderModal";
 import MoveChatModal from "../components/Sidebar/Modals/MoveChatModal";
 import OrganizeChatsModal from "../components/Sidebar/Modals/OrganizeChatsModal";
+import SearchChatsModal from "../components/Sidebar/Modals/SearchChatsModal";
 import ClearMemoryModal from "./UserSettings/ClearMemoryModal";
 import ConfirmActionModal from "./Alert/ConfirmActionModal";
 import FolderAccessModal from "./Alert/FolderAccessModal";
@@ -149,6 +150,9 @@ export function ModalProvider({ children }) {
       )}
       {modalType === "helpWebSearch" && (
         <HelpWebSearchModal isOpen onClose={closeModal} {...modalProps} />
+      )}
+      {modalType === "searchChats" && (
+        <SearchChatsModal isOpen onClose={closeModal} {...modalProps} />
       )}
       {/* User Settings Modals*/}
       {modalType === "userSettings" && (

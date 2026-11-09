@@ -1,4 +1,4 @@
-import { RotateCw } from "lucide-react";
+import { WatsonHealthRotate_180 as Rotate180 } from "@carbon/icons-react";
 import { useTranslation } from "react-i18next";
 import { useSendMessage } from "../../../hooks/useSendMessage";
 import { useModal } from "../../../modals/ModalContext";
@@ -39,10 +39,7 @@ export default function RetryButton({
   return (
     <Tooltip text={t("common.regenerate")}>
       <button onClick={handleRetry} className="flex">
-        <RotateCw
-          className="h-[20px] w-[20px] cursor-pointer text-accent"
-          alt="icon_retry"
-        />
+        <Rotate180 size={18} className="cursor-pointer text-accent" />
       </button>
     </Tooltip>
   );

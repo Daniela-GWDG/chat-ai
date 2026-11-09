@@ -1,15 +1,18 @@
-import { Workflow } from "lucide-react";
+import { FlowBranch } from "@carbon/icons-react";
 import { useTranslation } from "react-i18next";
+import Tooltip from "../../Others/Tooltip";
 
 export default function ForkButton({ handleForkConversation }) {
     const { t } = useTranslation();
     return (
-        <button onClick={handleForkConversation} data-guide="fork-button" title={t("common.fork")} className=" h-[20px] w-[20px] cursor-pointer disabled:opacity-40">
+        <Tooltip text={t("common.fork")} className="inline-flex">
+        <button onClick={handleForkConversation} data-guide="fork-button" className=" h-[18px] w-[18px] cursor-pointer disabled:opacity-40">
             {" "}
-            <Workflow
-                className="opacity-25 group-hover:opacity-100 transition-opacity duration-300 h-[20px] w-[20px] cursor-pointer text-accent"
-                alt="fork_icon"
+            <FlowBranch
+                size={18}
+                className="opacity-25 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-accent"
             />
         </button>
+        </Tooltip>
     );
 }

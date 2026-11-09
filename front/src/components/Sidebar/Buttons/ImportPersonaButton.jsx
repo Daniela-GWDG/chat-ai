@@ -24,7 +24,7 @@ export default function ImportPersonaButton({
           }}
           data-guide="import-persona"
           aria-label={t("sidebar.import_persona")}
-          className="cursor-pointer flex-shrink-0 p-1.5 rounded-2xl hover:bg-base-200 transition-all duration-200 flex items-center justify-center"
+          className="cursor-pointer flex-shrink-0 p-1.5 rounded-lg hover:bg-base-200 transition-all duration-200 flex items-center justify-center"
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
           <Bot size={20} className="text-accent" />
@@ -44,7 +44,7 @@ export default function ImportPersonaButton({
           }}
           data-guide="import-persona"
           aria-label={t("sidebar.import_persona")}
-          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-2xl transition-all duration-200 flex items-center justify-center`}
+          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-lg transition-all duration-200 flex items-center justify-center`}
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
           <Bot size={22} className="text-accent" />

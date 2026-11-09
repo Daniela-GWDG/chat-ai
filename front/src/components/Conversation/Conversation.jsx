@@ -7,7 +7,6 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 // Hooks
 import { selectShowSettings } from "../../Redux/reducers/interfaceSettingsSlice";
 import Prompt from "../Prompt/Prompt";
-import EmptyConversation from "./EmptyConversation";
 import HallucinationWarning from "./HallucinationWarning";
 import MessageAssistant from "./MessageAssistant/MessageAssistant";
 import MessageUser from "./MessageUser/MessageUser";
@@ -380,24 +379,8 @@ export default function Conversation({
         <CloseChatButton localState={localState} setLocalState={setLocalState} />
       )}
 
-      {/* Empty conversation */}
-      <div
-        className={`flex flex-col space-y-16 md:max-h-[45vh] xl:max_h-[45vh] justify-end
-          ${emptyConversation ? "flex-grow" : "absolute pointer-events-none"}`}
-      >
-        <div
-          className={`transition-all duration-500 ease-in-out p-10  
-            ${
-              emptyConversation
-                ? "scale-100 opacity-80"
-                : "scale-90 opacity-0 pointer-events-none"
-            }`}
-        >
-          {emptyConversation && (
-            <EmptyConversation localState={localState} userData={userData} />
-          )}
-        </div>
-      </div>
+      {/* Keeps the prompt box in its place while the conversation is empty */}
+      {emptyConversation && <div className="flex-grow md:max-h-[45vh]" />}
 
       {/* Messages area */}
       <div

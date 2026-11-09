@@ -1,11 +1,15 @@
 import React, { useState, useRef } from "react";
-import { Volume2, Square } from "lucide-react";
+import { Square } from "lucide-react";
+import { VolumeUp } from "@carbon/icons-react";
+import { useTranslation } from "react-i18next";
 import generateAudio from "../../../apis/generateAudio";
+import Tooltip from "../../Others/Tooltip";
 
 export default function SpeakButton({
    message
 }) {
   
+  const { t } = useTranslation();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechFile, setSpeechFile] = useState(null);
 
@@ -80,19 +84,23 @@ export default function SpeakButton({
 
   return speechModule && (
     !isSpeaking ? (
-        <button onClick={handleSpeak} data-guide="speak" title="Speak" className="inline-grid h-[22px] w-[22px] cursor-pointer" disabled={isSpeaking}>
-        <Volume2
-            className="opacity-20 group-hover:opacity-100 transition-opacity duration-300 h-[22px] w-[22px] cursor-pointer text-accent"
-            alt="speak_icon"
+        <Tooltip text={t("common.speak")} className="inline-flex">
+        <button onClick={handleSpeak} data-guide="speak" className="inline-grid h-[18px] w-[18px] cursor-pointer" disabled={isSpeaking}>
+        <VolumeUp
+            size={18}
+            className="opacity-20 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-accent"
         />
         </button>
+        </Tooltip>
       ) : (
-        <button onClick={handleStop} data-guide="speak" title="Stop" className="inline-grid h-[22px] w-[22px] cursor-pointer" disabled={!isSpeaking}>
+        <Tooltip text={t("common.stop")} className="inline-flex">
+        <button onClick={handleStop} data-guide="speak" className="inline-grid h-[22px] w-[22px] cursor-pointer" disabled={!isSpeaking}>
         <Square
             className="opacity-20 group-hover:opacity-100 transition-opacity duration-300 h-[22px] w-[22px] cursor-pointer text-accent"
             alt="stop_icon"
         />
         </button>
+        </Tooltip>
       )
   )
 }

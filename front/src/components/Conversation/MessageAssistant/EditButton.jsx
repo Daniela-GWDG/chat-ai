@@ -1,18 +1,23 @@
-import { Edit } from "lucide-react";
+import { Edit } from "@carbon/icons-react";
+import { useTranslation } from "react-i18next";
+import Tooltip from "../../Others/Tooltip";
 
 export default function EditButton({ setEditMode }) {
+    const { t } = useTranslation();
     // Function to handle editing message
     const handleEdit = () => {
         setEditMode(true);
     };
 
     return (
-        <button onClick={handleEdit} title="Edit message" className=" h-[18px] w-[18px] cursor-pointer">
+        <Tooltip text={t("common.edit_message")} className="inline-flex">
+        <button onClick={handleEdit} className=" h-[18px] w-[18px] cursor-pointer">
             {" "}
             <Edit
-                className="opacity-25 group-hover:opacity-100 transition-opacity duration-300 h-[18px] w-[18px] cursor-pointer text-accent"
-                alt="edit_icon"
+                size={18}
+                className="opacity-25 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-accent"
             />
         </button>
+        </Tooltip>
     );
 }

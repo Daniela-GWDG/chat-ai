@@ -512,7 +512,7 @@ function searchTerms(query: string): string[] {
   )];
 }
 
-function makeSnippet(text: string, query: string, terms: string[]): string {
+function makeSnippet(text: string, query: string, terms: string[], contextBefore = 100): string {
   const clean = String(text || "").replace(/\s+/g, " ").trim();
   const lower = clean.toLowerCase();
   let index = query ? lower.indexOf(query.toLowerCase()) : -1;
@@ -523,7 +523,7 @@ function makeSnippet(text: string, query: string, terms: string[]): string {
     }
   }
   if (index < 0) index = 0;
-  const start = Math.max(0, index - 100);
+  const start = Math.max(0, index - contextBefore);
   const end = Math.min(clean.length, start + 320);
   return `${start > 0 ? "…" : ""}${clean.slice(start, end).trim()}${end < clean.length ? "…" : ""}`;
 }
@@ -599,6 +599,96 @@ export async function searchMessages(
     .sort((first, second) => second.score - first.score || second.createdAt - first.createdAt)
     .slice(0, Math.max(1, limit))
     .map(({ score: _score, ...result }) => result);
+}
+
+export type ConversationSearchResult = {
+  conversationId: string
+  title: string
+  lastModified: number
+  snippet: string
+  messageId: string | null
+}
+
+const isSearchableConversation = (conversation: ConversationRow) =>
+  !conversation.isMetaChat && conversation.id !== 'meta-chat';
+
+/** The most recently used chats, for the search dialog's initial list. */
+export async function listRecentConversations(
+  limit = 20,
+): Promise<ConversationSearchResult[]> {
+  const conversations = await db.conversations.toArray();
+  const recency = (conversation: ConversationRow) =>
+    conversation.lastOpenedAt ?? conversation.lastModified ?? 0;
+  return conversations
+    .filter(isSearchableConversation)
+    .sort((first, second) => recency(second) - recency(first))
+    .slice(0, Math.max(1, limit))
+    .map((conversation) => ({
+      conversationId: conversation.id,
+      title: (conversation.title || '').trim(),
+      lastModified: conversation.lastModified ?? conversation.createdAt ?? 0,
+      snippet: '',
+      messageId: null,
+    }));
+}
+
+/**
+ * Finds chats whose title or messages contain the literal query, one result per
+ * chat. Title matches rank first, then the most recently changed chats.
+ */
+export async function searchConversations(
+  query: string,
+  limit = 50,
+): Promise<ConversationSearchResult[]> {
+  const needle = String(query || '').trim().toLowerCase();
+  if (!needle) return [];
+
+  const [conversations, messages, contentItems] = await Promise.all([
+    db.conversations.toArray(),
+    db.messages.toArray(),
+    db.content_items.where('type').equals('text').toArray(),
+  ]);
+
+  const messageById = new Map(messages.map((message) => [message.id, message]));
+  const latestHit = new Map<string, { messageId: string; createdAt: number; text: string }>();
+  for (const item of contentItems) {
+    if (!item.text || !item.text.toLowerCase().includes(needle)) continue;
+    const message = messageById.get(item.messageId);
+    if (!message || !['user', 'assistant'].includes(message.role)) continue;
+    const createdAt = message.createdAt ?? 0;
+    const previous = latestHit.get(message.conversationId);
+    if (!previous || createdAt > previous.createdAt) {
+      latestHit.set(message.conversationId, {
+        messageId: message.id,
+        createdAt,
+        text: item.text,
+      });
+    }
+  }
+
+  const results = conversations.filter(isSearchableConversation).flatMap((conversation) => {
+    const title = (conversation.title || '').trim();
+    const titleMatch = title.toLowerCase().includes(needle);
+    const hit = latestHit.get(conversation.id);
+    if (!titleMatch && !hit) return [];
+    return [{
+      conversationId: conversation.id,
+      title,
+      lastModified: conversation.lastModified ?? conversation.createdAt ?? 0,
+      snippet: hit ? makeSnippet(hit.text, needle, [], 24) : '',
+      messageId: hit?.messageId ?? null,
+      titleMatch,
+    }];
+  });
+
+  return results
+    .sort(
+      (first, second) =>
+        Number(second.titleMatch) - Number(first.titleMatch) ||
+        second.lastModified - first.lastModified,
+    )
+    .slice(0, Math.max(1, limit))
+    .map(({ titleMatch: _titleMatch, ...result }) => result);
 }
 
 export async function getRecentMessageExcerpts(

@@ -65,7 +65,7 @@ export default function SidebarRail({
             <ShortcutTooltip label={t("sidebar.expand") }>
               <button
                 onClick={() => onOpen?.()}
-                className="absolute h-10 w-10 inset-0 grid place-items-center rounded-xl transition duration-200 opacity-0 group-hover:opacity-100 hover:bg-info/10 cursor-pointer"
+                className="absolute h-10 w-10 inset-0 grid place-items-center rounded-lg transition duration-200 opacity-0 group-hover:opacity-100 hover:bg-info/10 cursor-pointer"
                 aria-label={t("sidebar.expand")}
               >
                 <ChevronRight size={40} className="text-accent" />
@@ -92,7 +92,7 @@ export default function SidebarRail({
           <ShortcutTooltip label={t("sidebar.expand") }>
             <button
               className={`
-                h-10 w-10 inset-0 grid place-items-center rounded-xl
+                h-10 w-10 inset-0 grid place-items-center rounded-lg
                 transition duration-200 opacity-0 
  group-hover:opacity-100 hover:bg-base-300 cursor-pointer
                 ${true || isTouch ? "opacity-100" : "opacity-0"}`}
@@ -140,7 +140,7 @@ export default function SidebarRail({
               }}
               aria-label={t("user_settings.title")}
               data-guide="user-settings"
-              className="flex items-center px-1 pt-1 pb-4 rounded-2xl cursor-pointer hover:bg-base-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+              className="flex items-center px-1 pt-1 pb-4 rounded-lg cursor-pointer hover:bg-base-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
             <UserContainer

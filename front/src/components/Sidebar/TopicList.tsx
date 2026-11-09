@@ -213,7 +213,7 @@ export default function TopicList({
               onOpenTopic(id);
             }
           }}
-          className={`group flex items-center gap-2 rounded-2xl px-1 py-2 text-xs transition cursor-pointer border text-base-content hover:bg-base-200 ${
+          className={`group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border text-base-content hover:bg-base-200 ${
             isActiveTopic
               ? "border-accent/40 bg-base-200"
               : "border-transparent"
@@ -232,7 +232,7 @@ export default function TopicList({
                 ? t("folders.expand_topic")
                 : t("folders.collapse_topic")
             }
-            className="flex-shrink-0 rounded-lg p-1 text-base-content/50 transition-colors hover:bg-base-300"
+            className="flex-shrink-0 rounded-lg p-1 text-base-content transition-colors hover:bg-base-300"
           >
             <ChevronDown
               size={12}
@@ -271,10 +271,6 @@ export default function TopicList({
             {label}
           </span>
 
-          <span className="text-[11px] select-none pointer-events-none font-normal text-base-content">
-            {count > 999 ? "999+" : count}
-          </span>
-
           {topic && (
             <button
               type="button"
@@ -298,6 +294,10 @@ export default function TopicList({
               />
             </button>
           )}
+
+          <span className="text-[11px] select-none pointer-events-none font-normal text-base-content">
+            {count > 999 ? "999+" : count}
+          </span>
         </div>
 
         {!isCollapsed && (
@@ -346,7 +346,7 @@ export default function TopicList({
       )}
       {grouping === "topic" && (
         <>
-          <div className={`group flex items-center gap-2 rounded-2xl px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200`}>
+          <div className={`group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200`}>
       <button
         type="button"
         ref={createButtonRef}
@@ -413,7 +413,7 @@ export default function TopicList({
                         toggleTopicCollapse(bucketId);
                       }
                     }}
-                    className="group flex items-center gap-2 rounded-2xl px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+                    className="group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
                   >
                     <ParentIcon
                       size={14}
@@ -427,7 +427,7 @@ export default function TopicList({
                     </span>
                     <ChevronDown
                       size={12}
-                      className={`flex-shrink-0 pointer-events-none text-base-content/50 transition-transform duration-200 ${
+                      className={`flex-shrink-0 pointer-events-none text-base-content transition-transform duration-200 ${
                         bucketCollapsed ? "-rotate-90" : "rotate-0"
                       }`}
                     />

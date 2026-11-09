@@ -206,7 +206,7 @@ export default function UsageDetailsCard({
         {canExpand && (
           <ChevronDown
             size={12}
-            className={`shrink-0 text-base-content/50 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
+            className={`shrink-0 text-base-content transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
             aria-hidden="true"
           />
         )}

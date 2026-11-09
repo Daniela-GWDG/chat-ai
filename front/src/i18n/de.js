@@ -40,6 +40,9 @@ export default {
     dont_show_again: "Nicht mehr anzeigen",
     regenerate: "Antwort neu generieren",
     fork: "In neuem Chat fortfahren",
+    copy_message: "Nachricht kopieren",
+    edit_message: "Nachricht bearbeiten",
+    speak: "Vorlesen",
     backup_data: "Daten sichern",
     skip_backup: "Backup überspringen",
     upgrade_chat_ai: "Chat AI aktualisieren",
@@ -85,7 +88,8 @@ export default {
     empty_topic: "Ziehen Sie einen Chat hierher.",
     search_label: "Suche",
     search_action: "Chats durchsuchen",
-    search_placeholder: "nach Titel durchsuchen",
+    search_placeholder: "Chats und Nachrichten durchsuchen",
+    search_recent: "Letzte Chats",
     search_no_results: 'Keine Treffer für "{{query}}"',
     clear_search: "Suche löschen",
     create_title: "Thema erstellen",
@@ -408,7 +412,7 @@ export default {
     search_chats: {
       title: "Chats durchsuchen",
       step1: "Klicken Sie in der Seitenleiste auf Suchen.",
-      step2: "Geben Sie einen Teil eines Chat-Titels ein, um zu filtern.",
+      step2: "Geben Sie einen Suchbegriff ein, um Chats und Nachrichten zu finden.",
     },
     manage_topics: {
       title: "Chats mit Themen organisieren",
@@ -924,7 +928,7 @@ export default {
   },
   // User Settings Modal
   user_settings: {
-    title: "Benutzereinstellungen",
+    title: "Einstellungen",
     tabs: {
       navigation_label: "Bereiche der Profileinstellungen",
       profile: {

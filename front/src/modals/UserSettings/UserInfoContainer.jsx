@@ -1,6 +1,8 @@
-import { Building2, LogOut, Mail } from "lucide-react";
+import { LogOut, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+
+import UserAvatar from "../../components/Header/UserAvatar";
 
 import {
   selectShowUsageInSidebar,
@@ -17,7 +19,6 @@ export default function UserInfoContainer({ userData }) {
   const firstName = userData?.firstname ?? "";
   const lastName = userData?.lastname ?? "";
   const fullName = `${firstName} ${lastName}`.trim();
-  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
   const handleLogout = () => {
     window.location.href =
@@ -29,18 +30,13 @@ export default function UserInfoContainer({ userData }) {
       <section className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent">
-              {initials || "?"}
-            </div>
+            <UserAvatar userData={userData} />
             <div className="min-w-0">
               <h3 className="truncate text-sm font-semibold text-base-content">
                 {fullName || t("common.loading")}
               </h3>
-              <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-base-content/70">
-                <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="truncate">
-                  {userData?.organization ?? t("common.loading")}
-                </span>
+              <p className="mt-0.5 truncate text-xs text-base-content/70">
+                {userData?.organization ?? t("common.loading")}
               </p>
             </div>
           </div>

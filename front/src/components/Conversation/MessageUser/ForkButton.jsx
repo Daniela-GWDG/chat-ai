@@ -1,4 +1,4 @@
-import { Workflow } from "lucide-react";
+import { FlowBranch } from "@carbon/icons-react";
 import { useTranslation } from "react-i18next";
 import { useForkConversation } from "../../../hooks/useForkConversation";
 import { useModal } from "../../../modals/ModalContext";
@@ -24,10 +24,7 @@ export default function ForkButton({ localState, message_index }) {
   return (
     <Tooltip text={t("common.fork")}>
       <button onClick={handleFork} disabled={forking} className="flex">
-        <Workflow
-          className="h-[20px] w-[20px] cursor-pointer text-accent"
-          alt="icon_fork"
-        />
+        <FlowBranch size={18} className="cursor-pointer text-accent" />
       </button>
     </Tooltip>
   );

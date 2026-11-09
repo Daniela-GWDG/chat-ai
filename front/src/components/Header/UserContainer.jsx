@@ -1,5 +1,6 @@
 import { useModal } from "../../modals/ModalContext";
 import { User } from "@carbon/icons-react";
+import UserAvatar from "./UserAvatar";
 
 export default function UserContainer({
   localState,
@@ -10,27 +11,9 @@ export default function UserContainer({
   interactive = true,
 }) {
   const { openModal } = useModal();
-  /**
-   * Extracts initials from username for avatar display
-   * Handles both dot-separated names (e.g., "john.doe") and regular usernames
-   */
-  const getInitials = (username) => {
-    if (!username) return "";
-
-    if (username.includes(".")) {
-      const [first, last] = username.split(".");
-      return (first.charAt(0) + last.charAt(0)).toUpperCase();
-    }
-
-    return username.slice(0, 2).toUpperCase();
-  };
 
   const avatar = userData?.username ? (
-    <div className="user-profile-button w-9 h-9 rounded-full border border-accent flex items-center justify-center bg-base-200">
-      <span className="text-accent font-medium text-sm">
-        {getInitials(userData.username)}
-      </span>
-    </div>
+    <UserAvatar userData={userData} className="user-profile-button" />
   ) : (
     <User size={20} className="h-full w-full text-accent" />
   );

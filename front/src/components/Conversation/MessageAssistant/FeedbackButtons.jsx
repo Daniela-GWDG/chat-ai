@@ -1,6 +1,7 @@
 import { ThumbsUp, ThumbsDown, MessageCircleReply } from "lucide-react";
 import { useSendMessage } from "../../../hooks/useSendMessage";
 import i18n from "i18next";
+import Tooltip from "../../Others/Tooltip";
 
 export default function FeedbackButtons({
   localState,
@@ -30,24 +31,30 @@ export default function FeedbackButtons({
 
   return (
     <div  className="group flex justify-between mt-1 gap-2" data-guide="feedback">
-    <button onClick={sendFeedbackThumbsUp} title={i18n.t("feedback.thumbsup")}>
+    <Tooltip text={i18n.t("feedback.thumbsup")} className="inline-flex">
+    <button onClick={sendFeedbackThumbsUp}>
       <ThumbsUp
         className={`h-[22px] w-[22px] cursor-pointer ${msg?.feedback?.rating == 1 ? "text-error" : "text-accent"}`}
         alt="feedback.thumbsup"
       />
     </button>
-    <button onClick={sendFeedbackThumbsDown} title={i18n.t("feedback.thumbsdown")}>
+    </Tooltip>
+    <Tooltip text={i18n.t("feedback.thumbsdown")} className="inline-flex">
+    <button onClick={sendFeedbackThumbsDown}>
       <ThumbsDown
         className={`h-[22px] w-[22px] cursor-pointer ${msg?.feedback?.rating == -1 ? "text-error" : "text-accent"}`}
         alt="feedback.thumbsdown"
       />
     </button>
-    <button onClick={editFeedback} title={i18n.t("feedback.send")}>      
+    </Tooltip>
+    <Tooltip text={i18n.t("feedback.send")} className="inline-flex">
+    <button onClick={editFeedback}>      
       <MessageCircleReply
         className={`h-[22px] w-[22px] cursor-pointer ${msg?.feedback?.comment ? "text-error" : "text-accent"}`}
         alt="feedback.send"
       />
     </button>
+    </Tooltip>
     </div>
   );
 }

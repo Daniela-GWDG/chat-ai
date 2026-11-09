@@ -50,7 +50,7 @@ export default function RenameChatButton({
       >
         <button
           onClick={() => {handleRenameChat(localState?.id, localState?.title || "Untitled Chat");}}
-          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-2xl transition-all duration-200 flex items-center justify-center`}
+          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-lg transition-all duration-200 flex items-center justify-center`}
           aria-label={t("sidebar.rename_tooltip", { title: localState?.title })}
         >
           <Edit size={22} className="text-accent" />

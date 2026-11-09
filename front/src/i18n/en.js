@@ -40,6 +40,9 @@ export default {
     dont_show_again: "Don't show this again",
     regenerate: "Regenerate response",
     fork: "Continue in a new chat",
+    copy_message: "Copy message",
+    edit_message: "Edit message",
+    speak: "Read aloud",
     backup_data: "Backup Data",
     skip_backup: "Skip Backup",
     upgrade_chat_ai: "Upgrade Chat AI",
@@ -85,7 +88,8 @@ export default {
     empty_topic: "Drag a chat here.",
     search_label: "Search",
     search_action: "Search chats",
-    search_placeholder: "Search by title",
+    search_placeholder: "Search chats and messages",
+    search_recent: "Recent chats",
     search_no_results: 'No matches for "{{query}}"',
     clear_search: "Clear search",
     create_title: "Create topic",
@@ -393,7 +397,7 @@ export default {
     search_chats: {
       title: "Search chats",
       step1: "Click search in the sidebar.",
-      step2: "Type part of a chat title to filter your conversations.",
+      step2: "Type a search term to find chats and messages.",
     },
     manage_topics: {
       title: "Organize chats with topics",
@@ -909,7 +913,7 @@ export default {
   },
   // User Settings Modal
   user_settings: {
-    title: "User Profile Settings",
+    title: "Settings",
     tabs: {
       navigation_label: "Profile settings sections",
       profile: {

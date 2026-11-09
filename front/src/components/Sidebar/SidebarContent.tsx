@@ -12,12 +12,12 @@ import {
 import {
   Ai,
   ArrangeHorizontal,
+  Arrange,
   Calendar,
   Checkmark,
-  ChevronLeft,
-  Close,
   FolderMoveTo,
   FolderTree,
+  OpenPanelLeft,
   OverflowMenuVertical,
   Pin,
   PinFilled,
@@ -160,39 +160,10 @@ export default function SidebarContent({
     }
   }, [localState, currentConversationId]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const normalizedSearch = searchQuery.trim().toLowerCase();
-  const hasSearch = normalizedSearch.length > 0;
-  const [searchOpen, setSearchOpen] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const searchVisible = searchOpen || hasSearch;
-
-  const openSearch = useCallback(() => {
-    setSearchOpen(true);
-    requestAnimationFrame(() => {
-      searchInputRef.current?.focus();
-    });
-  }, []);
-
-  const closeSearch = useCallback(() => {
-    setSearchQuery("");
-    setSearchOpen(false);
-  }, []);
-
   const [activeMenu, setActiveMenu] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const menuRef = useRef(null);
   const menuButtonRefs = useRef({}); // Add refs for menu buttons
-
-  const visibleConversations = useMemo(() => {
-    if (!hasSearch) return orderedConversations;
-    return orderedConversations.filter((conv) => {
-      const title =
-        conv.title ||
-        t("conversation.untitled", { defaultValue: "Untitled Chat" });
-      return title.toLowerCase().includes(normalizedSearch);
-    });
-  }, [orderedConversations, hasSearch, normalizedSearch, t]);
 
   const conversationsByTopic = useMemo(() => {
     const grouped = new Map<string, any[]>();
@@ -249,8 +220,6 @@ export default function SidebarContent({
     creationDateGroups,
     dispatch,
   ]);
-
-  const noSearchResults = hasSearch && visibleConversations.length === 0;
 
   const handleConversationDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>, conversationId: string) => {
@@ -386,30 +355,6 @@ export default function SidebarContent({
     });
   };
 
-  const highlightText = (text?: string | null) => {
-    const value =
-      text ||
-      t("conversation.untitled", { defaultValue: "Untitled Chat" });
-    if (!hasSearch) return value;
-    const escapeRegExp = (str: string) =>
-      str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`(${escapeRegExp(normalizedSearch)})`, "ig");
-    const parts = value.split(regex);
-    return parts.map((part, index) => {
-      if (part.toLowerCase() === normalizedSearch) {
-        return (
-          <mark
-            key={`highlight-${index}`}
-            className="bg-warning/30 text-base-content px-0.5 rounded-sm"
-          >
-            {part}
-          </mark>
-        );
-      }
-      return <span key={`text-${index}`}>{part}</span>;
-    });
-  };
-
   const handleSelectConversation = (id) => {
     if (id === currentConversationId) return;
     setSelectedConversationId(id); // update selected now for nicer user interaction
@@ -417,6 +362,22 @@ export default function SidebarContent({
     if (!isDesktop) {
       onClose();
     }
+  };
+
+  const openSearch = () => {
+    openModal("searchChats", {
+      onSelect: (id: string, messageId: string | null) => {
+        setSelectedConversationId(id);
+        navigate(
+          messageId
+            ? `/chat/${id}?message=${encodeURIComponent(messageId)}`
+            : `/chat/${id}`,
+        );
+        if (!isDesktop) {
+          onClose();
+        }
+      },
+    });
   };
 
   const handleOpenTopic = (topicId: string) => {
@@ -550,7 +511,7 @@ export default function SidebarContent({
           onMouseLeave={() => setHoveredId(null)}
           onDragStart={(event) => handleConversationDragStart(event, id)}
           onDragEnd={handleConversationDragEnd}
-          className={`sidebar-wrapper group relative px-2 py-1 rounded-xl touch-manipulation border border-transparent ${
+          className={`sidebar-wrapper relative h-10 px-2 rounded-lg touch-manipulation border border-transparent ${
             isActive
               ? "bg-base-200 text-base-content"
               : "text-base-content hover:bg-base-200 transition-all duration-100"
@@ -558,11 +519,10 @@ export default function SidebarContent({
           data-current={isActive ? "true" : "false"}
           style={{
             WebkitTapHighlightColor: "transparent",
-            minHeight: "16px",
           }}
         >
           {/* Title container */}
-          <div className="flex items-center h-full w-full group">
+          <div className="flex items-center h-full w-full">
             <div
               className="flex-1 overflow-hidden min-w-0"
               title={showSummary ? undefined : conv.title || "Untitled Chat"}
@@ -571,7 +531,8 @@ export default function SidebarContent({
             >
               <div className="flex items-center gap-2">
                 <div className="truncate text-xs leading-relaxed cursor-pointer flex-1">
-                  {highlightText(conv.title)}
+                  {conv.title ||
+                    t("conversation.untitled", { defaultValue: "Untitled Chat" })}
                 </div>
                 {showCreated && conv.createdAt ? (
                   <span className="shrink-0 text-[10px] leading-tight text-base-content/70">
@@ -589,10 +550,10 @@ export default function SidebarContent({
             {/* Dropdown Menu Button */}
             <div
               className={`transition-opacity duration-200 ${
-                window.innerWidth < 1024 || isHovered || isActive || isMenuOpen
+                window.innerWidth < 1024 || isHovered || isMenuOpen
                   ? "opacity-100"
                   : "opacity-0"
-              } group-hover:opacity-100`}
+              }`}
             >
               <button
                 ref={(el) => (menuButtonRefs.current[id] = el)}
@@ -627,24 +588,35 @@ export default function SidebarContent({
       {/* Header with close button */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2 gap-2">
         <AiServicesMenu />
-        <ShortcutTooltip
-          label={t("sidebar.close_sidebar")}
-          position="left"
-          enterDelay={150}
-        >
+        <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={onClose}
-            aria-label={t("sidebar.close_sidebar")}
-            className="cursor-pointer p-2.5 hover:bg-base-300 rounded-2xl transition-all duration-200 flex items-center justify-center text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            onClick={openSearch}
+            data-guide="search-chats"
+            className="cursor-pointer p-2.5 hover:bg-base-300 rounded-lg transition-all duration-200 flex items-center justify-center text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            aria-label={t("folders.search_label")}
           >
-            <ChevronLeft size={20} />
+            <Search size={20} />
           </button>
-        </ShortcutTooltip>
+          <ShortcutTooltip
+            label={t("sidebar.close_sidebar")}
+            position="left"
+            enterDelay={150}
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t("sidebar.close_sidebar")}
+              className="cursor-pointer p-2.5 hover:bg-base-300 rounded-lg transition-all duration-200 flex items-center justify-center text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            >
+              <OpenPanelLeft size={20} />
+            </button>
+          </ShortcutTooltip>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Conversations header, with the search field it reveals */}
+        {/* Conversations header */}
         <div className="sticky top-0 z-20 bg-base-100 px-3 pt-3 pb-2">
           <TutorialStatus />
           <div className="flex items-center justify-between gap-1 pb-3">
@@ -666,13 +638,7 @@ export default function SidebarContent({
                   data-guide="sort-chats"
                   className="btn btn-ghost btn-sm btn-square text-base-content/70 hover:text-base-content"
                 >
-                  {conversationGrouping === "date" ? (
-                    <Calendar size={16} />
-                  ) : conversationGrouping === "created" ? (
-                    <SortAscending size={16} />
-                  ) : (
-                    <FolderTree size={16} />
-                  )}
+                  <Arrange size={18} />
                 </PopoverButton>
                 <PopoverPanel
                   anchor={{ to: "bottom end", gap: 4, padding: 8 }}
@@ -779,69 +745,6 @@ export default function SidebarContent({
               >
                 <Ai size={16} />
               </button>
-              <button
-                type="button"
-                onClick={openSearch}
-                data-guide="search-chats"
-                className={`flex items-center rounded-lg p-1.5 text-base-content/70 hover:text-base-content hover:bg-base-200 transition cursor-pointer ${
-                  searchVisible ? "opacity-0 pointer-events-none" : "opacity-100"
-                }`}
-                aria-label={t("folders.search_label")}
-              >
-                <Search size={16} />
-              </button>
-            </div>
-          </div>
-          <div
-            className={`relative overflow-hidden transform-gpu transition-[max-height,opacity,transform,padding] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              searchVisible
-                ? "max-h-16 opacity-100 pt-3 pb-1 translate-y-0"
-                : "max-h-0 opacity-0 pt-0 pb-0 -translate-y-1 pointer-events-none"
-            }`}
-          >
-            <div className="relative rounded-xl border border-base-300 bg-base-200 transition">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50 pointer-events-none" />
-              <input
-                ref={searchInputRef}
-                data-guide="search-input"
-                type="text"
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="none"
-                spellCheck={false}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key !== "Escape") return;
-                  e.preventDefault();
-                  if (hasSearch) {
-                    setSearchQuery("");
-                  } else {
-                    setSearchOpen(false);
-                  }
-                }}
-                placeholder={t("folders.search_placeholder")}
-                className="w-full bg-transparent pl-9 pr-9 py-2 text-xs text-base-content placeholder:text-base-content/50 focus:outline-none"
-              />
-              {searchQuery.length > 0 ? (
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 text-base-content/50 hover:text-base-content/70"
-                  aria-label={t("folders.clear_search")}
-                  onClick={() => setSearchQuery("")}
-                >
-                  <Close size={16} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 text-base-content/50 hover:text-base-content/70"
-                  aria-label={t("common.cancel")}
-                  onClick={closeSearch}
-                >
-                  <Close size={16} />
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -852,20 +755,6 @@ export default function SidebarContent({
         >
           {/* Conversations, grouped by topic */}
           <div className="pl-3 pr-2 pt-2 pb-1 space-y-1">
-            {hasSearch ? (
-              <div className="space-y-1">
-                {noSearchResults ? (
-                  <div className="text-center text-xs text-base-content/70 py-4">
-                    <Trans
-                      i18nKey="folders.search_no_results"
-                      values={{ query: searchQuery }}
-                    />
-                  </div>
-                ) : (
-                  visibleConversations.map((conv) => renderConversationRow(conv))
-                )}
-              </div>
-            ) : (
               <TopicList
                 topics={unpinnedFolders}
                 pinnedTopics={pinnedTopics}
@@ -892,7 +781,6 @@ export default function SidebarContent({
                 isDark={isDark}
                 grouping={conversationGrouping}
               />
-            )}
           </div>
         </div>
 
