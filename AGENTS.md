@@ -460,7 +460,7 @@ the tutorial for the feature itself.
   of any script. Shared types live in `db/dbTypes.ts` and `types/`.
 - **Styling** is Tailwind **v4** via `@tailwindcss/vite` plus **daisyUI 5**, configured entirely
   in `src/index.css` (there is no `tailwind.config.js`). The `chatai` daisyUI theme defines the
-  palette (`primary` #B4388D, `secondary` #695EA2, `accent` #009EE0 — formerly `tertiary`), plus a
+  palette (`primary` #B4388D, `secondary` #695EA2, `accent` #B4388D — formerly `tertiary`), plus a
   custom `chat` color for assistant bubbles; the `mobile` / `middle` / `desktop` breakpoints are
   `@custom-variant`s and the custom shadows and legacy `bg_*` colors live in `@theme`. Prefer
   daisyUI components (`btn`, `input`, `toggle`, …) and semantic colors (`bg-base-100`,
