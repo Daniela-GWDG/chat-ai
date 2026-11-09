@@ -217,7 +217,7 @@ export default function TopicCreateBubble({
             type="button"
             onClick={() => setPickerOpen(false)}
             className="self-end rounded-xl px-4 py-1.5 text-sm font-medium cursor-pointer
-                       bg-accent text-white hover:bg-accent/90 transition-colors"
+                       bg-accent text-accent-content hover:bg-accent/90 transition-colors"
           >
             {t("folders.done")}
           </button>

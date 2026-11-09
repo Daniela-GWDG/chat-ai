@@ -424,17 +424,17 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
           <div className=" rounded-xl border border-base-300 overflow-hidden" role="tablist" aria-label="View mode">
             <button
               onClick={() => setResultViewMode("list")}
-              data-view="simple" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-white" role="tab" aria-selected={resultViewMode === "list"} title="List">
+              data-view="simple" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-content" role="tab" aria-selected={resultViewMode === "list"} title="List">
               <FontAwesomeIcon icon={faList} />
             </button>
             <button
               onClick={() => setResultViewMode("extended")}
-              data-view="extended" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-white" role="tab" aria-selected={resultViewMode === "extended"} title="Extended">
+              data-view="extended" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-content" role="tab" aria-selected={resultViewMode === "extended"} title="Extended">
               <FontAwesomeIcon icon={faRectangleList} />
             </button>
             <button
               onClick={() => setResultViewMode("grid")}
-              data-view="grid" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-white" role="tab" aria-selected={resultViewMode === "grid"} title="Grid">
+              data-view="grid" className="view-btn px-3 py-2 text-sm hover:bg-accent/30 aria-selected:bg-accent aria-selected:text-accent-content" role="tab" aria-selected={resultViewMode === "grid"} title="Grid">
               <FontAwesomeIcon icon={faTableCells} />
             </button>
           </div>
