@@ -53,6 +53,15 @@ describe("Meta chat action markers", () => {
     });
   });
 
+  it("clamps a proposed sidebar width and drops unusable values", () => {
+    expect(
+      getMetaActionProposals('[[SET_SETTING:{"key":"sidebar_width","value":9000}]]')[0],
+    ).toMatchObject({ type: "setting", key: "sidebar_width", value: 480 });
+    expect(
+      getMetaActionProposals('[[SET_SETTING:{"key":"sidebar_width","value":"wide"}]]'),
+    ).toHaveLength(0);
+  });
+
   it("ignores unsupported settings and malformed actions", () => {
     const text = [
       '[[SET_SETTING:{"key":"not_a_setting","value":true}]]',

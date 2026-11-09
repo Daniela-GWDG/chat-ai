@@ -105,6 +105,7 @@ describe("Meta chat local tools", () => {
 
     await expect(run("list_memories")).resolves.toContain("Remember the milk");
     await expect(run("get_user_settings")).resolves.toContain("Default model: Test Model");
+    await expect(run("get_user_settings")).resolves.toContain("Sidebar width: 264 px");
     await expect(run("list_models")).resolves.toContain("Other Model");
     await expect(run("list_personas")).resolves.toContain("writing/editor.json");
   });

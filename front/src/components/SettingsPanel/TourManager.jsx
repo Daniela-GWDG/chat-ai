@@ -203,7 +203,7 @@ export default function TourManager() {
         buttonNext: {
           backgroundColor: "#009EE0",
           fontSize: 14,
-          fontWeight: 600,
+          fontWeight: 500,
           padding: "10px 20px",
           borderRadius: 8,
           border: "none",

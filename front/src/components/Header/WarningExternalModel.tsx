@@ -1,8 +1,8 @@
 import { Trans } from "react-i18next";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { Locked, WarningAltFilled, Close } from "@carbon/icons-react";
+import { Security, WarningAltFilled } from "@carbon/icons-react";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
+import TooltipBubble from "../Others/TooltipBubble";
 
 function isSafeSettings(localState) {
   const modelName = localState?.settings?.model?.name;
@@ -48,27 +48,20 @@ export function DataSafetyText({ localState, userData }) {
 /** Everything the two states differ by — colours, icon and message. */
 const TONES = {
   safe: {
-    Icon: Locked,
+    Icon: Security,
     button:
       `bg-success/10 hover:bg-success/20 border-success/30 text-success`,
-    text: "text-success",
   },
   warning: {
     Icon: WarningAltFilled,
     button:
       `bg-warning/10 hover:bg-warning/20 border-warning/30 text-warning`,
-    text: "text-warning",
   },
 };
-
-const PANEL_WIDTH = 224; // w-56, needed to place the portalled panel
 
 export default function WarningExternalModel({
   localState,
   userData,
-  // Render the panel through a portal, for callers whose container clips
-  // absolutely positioned children (the prompt box is an overflow container).
-  portalPanel = false,
   // Smaller trigger, so the button fits a toolbar row of 24px icons.
   compact = false,
 }) {
@@ -86,21 +79,18 @@ export default function WarningExternalModel({
   const isPopoverVisible = (showTextBox && !isSafe) || (isHovering && !suppressHoverTooltip);
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const [panelPosition, setPanelPosition] = useState({ left: 0, bottom: 0 });
+  const [buttonRect, setButtonRect] = useState(null);
 
-  // Keep the portalled panel pinned above its button.
+  // Keep the bubble pinned to its button.
   const measure = useCallback(() => {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const maxLeft = window.innerWidth - PANEL_WIDTH - 8;
-    setPanelPosition({
-      left: Math.max(8, Math.min(rect.right - PANEL_WIDTH, maxLeft)),
-      bottom: window.innerHeight - rect.top + 8,
-    });
+    const { top, left, width, height } = rect;
+    setButtonRect({ top, left, width, height });
   }, []);
 
   useLayoutEffect(() => {
-    if (!portalPanel || !isPopoverVisible) return;
+    if (!isPopoverVisible) return;
     measure();
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, true);
@@ -108,7 +98,7 @@ export default function WarningExternalModel({
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [portalPanel, isPopoverVisible, measure]);
+  }, [isPopoverVisible, measure]);
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -121,13 +111,9 @@ export default function WarningExternalModel({
     }
   };
 
-  const handleCloseTooltip = () => {
-    setShowTextBox(false);
-    setSuppressHoverTooltip(true);
-  };
-
   const handleToggleButton = () => {
-    setSuppressHoverTooltip(false);
+    // Dismissing an open warning must also hide it while the pointer is still here.
+    setSuppressHoverTooltip(showTextBox && !isSafe);
     setShowTextBox((prev) => !prev);
   };
 
@@ -139,41 +125,6 @@ export default function WarningExternalModel({
       ? "alert.data_security_warning_mpg"
       : "alert.data_security_warning";
 
-  const panel = (
-    <div
-      className={`${
-        portalPanel ? "fixed z-[999999]" : "absolute right-0 bottom-full mb-2 z-20"
-      } p-4 bg-base-100
- border border-base-300
-         rounded-lg shadow-xl w-56 max-w-[calc(100vw-2rem)]`}
-      style={
-        portalPanel
-          ? { left: panelPosition.left, bottom: panelPosition.bottom }
-          : undefined
-      }
-    >
-      <div className={`${tone.text} text-sm leading-relaxed`}>
-        <Trans i18nKey={messageKey} />
-      </div>
-      <button
-        onClick={handleCloseTooltip}
-        className="btn btn-ghost btn-xs btn-square absolute top-2 right-2 text-base-content/70"
-        title="Close"
-      >
-        <Close size={16} />
-      </button>
-      {/* The tail's offsets assume the inline anchor, so it is inline only. */}
-      {!portalPanel && (
-        <div
-          className="absolute -bottom-1 right-17.5 md:right-6.5 w-2 h-2
- bg-base-100
- border-r border-b border-base-300
-                        transform rotate-45"
-        ></div>
-      )}
-    </div>
-  );
-
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <button
@@ -181,15 +132,24 @@ export default function WarningExternalModel({
         onClick={handleToggleButton}
         onFocus={() => setSuppressHoverTooltip(false)}
         className={`flex items-center justify-center gap-2 relative border
-                    rounded-xl text-sm font-medium transition-colors cursor-pointer
+                    rounded-full text-sm font-medium transition-colors cursor-pointer
                     ${compact ? "h-8 w-8 p-1.5" : "h-10 w-10 px-2 py-1"}
                     ${tone.button}`}
       >
-        <ToneIcon size={compact ? 20 : 24} />
+        <ToneIcon size={compact ? 18 : 24} />
       </button>
 
-      {isPopoverVisible &&
-        (portalPanel ? createPortal(panel, document.body) : panel)}
+      {isPopoverVisible && (
+        // The mobile header sits at the top edge near the right side, so its
+        // bubble opens downwards and aligns to the button's right edge.
+        <TooltipBubble
+          rect={buttonRect}
+          placement={compact ? "top" : "bottom"}
+          align={compact ? undefined : "end"}
+        >
+          <Trans i18nKey={messageKey} />
+        </TooltipBubble>
+      )}
     </div>
   );
 }

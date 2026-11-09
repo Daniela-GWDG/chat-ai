@@ -157,7 +157,7 @@ export default function MountFolderButton({ localState, setLocalState }) {
           className="h-[30px] w-[30px] flex items-center justify-center cursor-pointer focus:outline-none"
           aria-label={t("conversation.local_tools")}
         >
-          <ToolBox size={24} className="text-accent" />
+          <ToolBox size={18} className="text-accent" />
         </PopoverButton>
       </Tooltip>
 

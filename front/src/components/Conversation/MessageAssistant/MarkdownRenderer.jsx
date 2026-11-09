@@ -54,7 +54,7 @@ const MarkdownImage = ({ src, alt, ...props }) => {
 const MarkdownLink = ({ href, children }) => {
   const navigate = useNavigate();
   const className =
-    "text-info hover:text-info underline transition-colors text-sm";
+    "text-info hover:text-info underline transition-colors text-base";
   const actionLinkClassName =
     "btn btn-accent btn-xs ml-1 inline-flex w-fit gap-1 align-middle";
 
@@ -184,7 +184,7 @@ export const rendererComponents = {
 
     if (isInline) {
       return (
-        <code className="px-1.5 py-0.5 rounded bg-base-200 text-primary font-mono text-xs">
+        <code className="px-1.5 py-0.5 rounded bg-base-200 text-primary font-mono text-sm">
           {content}
         </code>
       );
@@ -221,11 +221,11 @@ export const rendererComponents = {
     return <pre {...props}>{children}</pre>;
   },
 
-  p: ({ children }) => <div className="text-sm">{children}</div>,
+  p: ({ children }) => <div className="text-base">{children}</div>,
   a: MarkdownLink,
   h1: ({ children, id }) => (
     <h1
-      className="text-xl font-bold mt-6 mb-4 text-base-content"
+      className="text-2xl font-bold mt-6 mb-4 text-base-content"
       id={id}
     >
       {children}
@@ -233,7 +233,7 @@ export const rendererComponents = {
   ),
   h2: ({ children, id }) => (
     <h2
-      className="text-lg font-semibold mt-5 mb-3 text-base-content"
+      className="text-xl font-semibold mt-5 mb-3 text-base-content"
       id={id}
     >
       {children}
@@ -241,7 +241,7 @@ export const rendererComponents = {
   ),
   h3: ({ children, id }) => (
     <h3
-      className="text-base font-medium mt-4 mb-2 text-base-content"
+      className="text-lg font-medium mt-4 mb-2 text-base-content"
       id={id}
     >
       {children}
@@ -249,7 +249,7 @@ export const rendererComponents = {
   ),
   h4: ({ children, id }) => (
     <h4
-      className="text-sm font-medium mt-3 mb-2 text-base-content"
+      className="text-base font-medium mt-3 mb-2 text-base-content"
       id={id}
     >
       {children}
@@ -257,7 +257,7 @@ export const rendererComponents = {
   ),
   h5: ({ children, id }) => (
     <h5
-      className="text-xs font-medium mt-2 mb-1 text-base-content"
+      className="text-sm font-medium mt-2 mb-1 text-base-content"
       id={id}
     >
       {children}
@@ -265,39 +265,39 @@ export const rendererComponents = {
   ),
   h6: ({ children, id }) => (
     <h6
-      className="text-xs font-medium text-base-content/70 mt-2 mb-1"
+      className="text-sm font-medium text-base-content/70 mt-2 mb-1"
       id={id}
     >
       {children}
     </h6>
   ),
   strong: ({ children }) => (
-    <strong className="font-bold text-base-content text-sm">
+    <strong className="font-bold text-base-content text-base">
       {children}
     </strong>
   ),
   em: ({ children }) => (
-    <em className="italic text-base-content text-sm">
+    <em className="italic text-base-content text-base">
       {children}
     </em>
   ),
   ul: ({ children }) => (
-    <ul className="list-disc pl-6 mb-4 space-y-1 text-sm">{children}</ul>
+    <ul className="list-disc pl-6 mb-4 space-y-1 text-base">{children}</ul>
   ),
   ol: ({ children }) => (
-    <ol className="list-decimal pl-6 mb-4 space-y-1 text-sm">{children}</ol>
+    <ol className="list-decimal pl-6 mb-4 space-y-1 text-base">{children}</ol>
   ),
   li: ({ children }) => (
-    <li className="text-base-content text-sm">{children}</li>
+    <li className="text-base-content text-base">{children}</li>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-info pl-4 py-2 my-4 italic text-base-content bg-base-200/50 rounded-r text-sm">
+    <blockquote className="border-l-4 border-info pl-4 py-2 my-4 italic text-base-content bg-base-200/50 rounded-r text-base">
       {children}
     </blockquote>
   ),
   table: ({ children }) => (
     <div className="w-full overflow-x-auto my-4">
-      <table className="w-full border-collapse border border-base-300 rounded-lg overflow-hidden text-sm">
+      <table className="w-full border-collapse border border-base-300 rounded-lg overflow-hidden text-base">
         {children}
       </table>
     </div>
@@ -314,12 +314,12 @@ export const rendererComponents = {
     </tr>
   ),
   th: ({ children }) => (
-    <th className="border border-base-300 px-4 py-3 text-left font-semibold text-base-content bg-base-200 text-sm">
+    <th className="border border-base-300 px-4 py-3 text-left font-semibold text-base-content bg-base-200 text-base">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="border border-base-300 px-4 py-2 text-base-content text-sm">
+    <td className="border border-base-300 px-4 py-2 text-base-content text-base">
       {children}
     </td>
   ),
@@ -1074,7 +1074,7 @@ const MarkdownRenderer = memo(
       switch (renderMode) {
         case "Plaintext":
           return (
-            <pre className="whitespace-pre-wrap font-mono text-sm overflow-x-auto">
+            <pre className="whitespace-pre-wrap font-mono text-base overflow-x-auto">
               {contentToRender}
             </pre>
           );

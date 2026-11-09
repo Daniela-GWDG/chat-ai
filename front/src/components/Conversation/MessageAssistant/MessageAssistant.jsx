@@ -218,7 +218,7 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
           {loading && <Typing />}
           {!loading && (
             <div className="flex flex-col items-center justify-start gap-3 py-1">
-              <div className="text-error text-sm font-medium text-center">
+              <div className="bg-error-soft text-error text-sm font-medium text-center rounded-lg px-3 py-1.5">
               {errorMessage}
               </div>
               <button
@@ -254,7 +254,7 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                     setEditMode(false);
                   }
                 }}
-                className="p-2 outline-none rounded-sm w-full text-sm text-base-content bg-base-100 resize-y overflow-y-auto"
+                className="p-2 outline-none rounded-sm w-full text-base text-base-content bg-base-100 resize-y overflow-y-auto"
                 placeholder="Edit response..."
                 style={{
                   minHeight: `${MIN_HEIGHT}px`,
@@ -300,7 +300,7 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                     setFeedbackMode(false);
                   }
                 }}
-                className="p-2 outline-none rounded-sm w-full text-sm text-base-content bg-base-100 resize-y overflow-y-auto"
+                className="p-2 outline-none rounded-sm w-full text-base text-base-content bg-base-100 resize-y overflow-y-auto"
                 placeholder="Provide feedback..."
                 style={{
                   minHeight: `${MIN_HEIGHT}px`,

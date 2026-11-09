@@ -101,7 +101,7 @@ export default function ChatPage() {
           grid
           grid-cols-1 grid-rows-[1fr_auto]
           md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto]
-          md:gap-x-2 gap-y-1 md:pt-1
+          md:gap-x-2 gap-y-1 md:gap-y-0
           bg-base-200
           overflow-hidden
         "
@@ -113,7 +113,7 @@ export default function ChatPage() {
           modelsData={modelsData}
         />
 
-        <div className="flex min-h-0 min-w-0 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-col md:py-1">
           {localState?.persona && (
             <PersonaChatBanner persona={localState.persona} />
           )}

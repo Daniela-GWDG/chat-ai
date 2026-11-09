@@ -6,6 +6,8 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import store, { persistor } from "./Redux/store/store.jsx"; // Import Redux store and persistor
 import App from "./App.jsx"; // Import main App component
+import "@fontsource-variable/ibm-plex-sans/wght.css"; // Self-hosted UI font
+import "@fontsource-variable/ibm-plex-sans/wght-italic.css";
 import "./index.css"; // Import global CSS styles
 import { TabTitleManager } from "./hooks/useTabTitle.jsx";
 

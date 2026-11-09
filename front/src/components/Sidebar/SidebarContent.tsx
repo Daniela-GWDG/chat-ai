@@ -540,7 +540,6 @@ export default function SidebarContent({
         label={summary}
         position="right"
         enterDelay={350}
-        multiline
         disabled={!showSummary}
         containerClassName="block w-full"
       >
@@ -553,7 +552,7 @@ export default function SidebarContent({
           onDragEnd={handleConversationDragEnd}
           className={`sidebar-wrapper group relative px-2 py-1 rounded-xl touch-manipulation border border-transparent ${
             isActive
-              ? "bg-base-200 text-base-content shadow-sm"
+              ? "bg-base-200 text-base-content"
               : "text-base-content hover:bg-base-200 transition-all duration-100"
           } ${isDragging ? "border-accent/60 bg-accent/10 dark:bg-accent/20" : ""}`}
           data-current={isActive ? "true" : "false"}
@@ -646,7 +645,7 @@ export default function SidebarContent({
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Conversations header, with the search field it reveals */}
-        <div className="sticky top-0 z-20 bg-base-100 px-3 pt-3 pb-2 shadow-[0_2px_6px_rgba(15,23,42,0.08)] dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+        <div className="sticky top-0 z-20 bg-base-100 px-3 pt-3 pb-2">
           <TutorialStatus />
           <div className="flex items-center justify-between gap-1 pb-3">
             <NewChatButton topicId={localState?.folderId} variant={"sidebar"} onNewConversation={handleNewConversation} />
@@ -898,7 +897,7 @@ export default function SidebarContent({
         </div>
 
         {/* Pinned footer: the user block */}
-        <div className="sticky bottom-0 bg-base-100 pt-3 pb-4 shadow-[0_-2px_6px_rgba(15,23,42,0.08)] dark:shadow-[0_-2px_6px_rgba(0,0,0,0.5)]">
+        <div className="sticky bottom-0 bg-base-100 pt-3 pb-4">
           <div className="flex flex-col gap-3 mx-3">
             {showUsageInSidebar && userData && (
               <SidebarUsageSummary data={userData} />

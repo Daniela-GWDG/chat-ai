@@ -32,7 +32,7 @@ export default function ModelButton({ localState, setLocalState, modelsData }) {
           />
         </span>
         <span className="truncate font-medium">{selectedModel?.name}</span>
-        <ChevronDown size={16} className="flex-shrink-0 text-accent" />
+        <ChevronDown size={18} className="flex-shrink-0 text-accent" />
       </PopoverButton>
 
       <Transition

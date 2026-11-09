@@ -47,7 +47,7 @@ export default function SidebarRail({
 
   const { isTouch } = useWindowSize();
   return (
-    <div className="bg-base-100 rounded-xl shadow-md
+    <div className="bg-base-100 border-r border-base-300
           overflow-hidden h-full flex flex-col items-center justify-between gap-2"
     >
         {/* Top - Logo and new chat */}

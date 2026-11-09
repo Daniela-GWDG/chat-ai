@@ -134,7 +134,7 @@ export default function PromptTextArea({
         <textarea
             autoFocus
             ref={textareaRef}
-            className={`p-4 md:p-5 transition-opacity duration-300 ease-in-out outline-none text-base w-full text-base-content bg-base-100 overflow-y-auto ${
+            className={`p-4 md:p-5 transition-opacity duration-300 ease-in-out outline-none text-base w-full text-base-content bg-base-100 placeholder:text-[#767676] dark:placeholder:text-[#929292] ${prompt ? "overflow-y-auto" : "overflow-y-hidden"} ${
               choices.length > 0 ? "" : "rounded-t-2xl"
             }`}
             value={prompt}

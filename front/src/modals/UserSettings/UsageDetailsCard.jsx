@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@carbon/icons-react";
 import Tooltip from "../../components/Others/Tooltip";
 
 const NEAR_EXHAUSTED_PERCENT = 80;
@@ -30,7 +30,11 @@ function UsageMetricRow({
   return (
     <div className="min-w-0">
       <div className="flex items-baseline justify-between gap-2 min-w-0">
-        {showDetail && inlineDetail ? (
+        {compact ? (
+          <span className="block min-w-0 flex-1 truncate text-[11px] font-medium text-base-content">
+            {label}
+          </span>
+        ) : showDetail && inlineDetail ? (
           <Tooltip text={inlineDetail} className="block min-w-0 flex-1">
             <span className="block min-w-0 truncate text-[11px] font-medium text-base-content">
               {label}
@@ -197,17 +201,18 @@ export default function UsageDetailsCard({
         type="button"
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={canExpand ? isOpen : undefined}
-        className="flex w-full items-center justify-between gap-2 text-left"
+        className="flex w-full items-center gap-2 text-left"
       >
-        <span className="min-w-0 truncate text-[11px] font-medium text-base-content">
-          {label}
-        </span>
         {canExpand && (
           <ChevronDown
-            className={`h-3.5 w-3.5 shrink-0 text-base-content/50 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            size={12}
+            className={`shrink-0 text-base-content/50 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
             aria-hidden="true"
           />
         )}
+        <span className="min-w-0 truncate text-xs font-medium text-base-content">
+          {label}
+        </span>
       </button>
 
       {isOpen ? (

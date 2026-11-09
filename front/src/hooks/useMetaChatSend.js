@@ -75,6 +75,7 @@ Supported setting keys and values:
 - document_conversion_mode: "server", "browser", or "choice"
 - send_with_enter: true, false, or null
 - timeout: milliseconds (5000-900000)
+- sidebar_width: pixels (264-480)
 
 Supported per-chat setting keys and values:
 - model: a model id from list_models

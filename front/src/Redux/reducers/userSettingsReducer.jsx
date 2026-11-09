@@ -1,5 +1,6 @@
 // userMemorySlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { SIDEBAR_DEFAULT_WIDTH, parseSidebarWidth } from "../../utils/sidebarWidth";
 
 const initialState = {
   memories: [],
@@ -17,6 +18,7 @@ const initialState = {
   conversation_summaries: true,
   // null = device default (Enter on desktop, Shift+Enter on mobile).
   send_with_enter: null,
+  sidebar_width: SIDEBAR_DEFAULT_WIDTH,
 };
 
 const MEMORY_MODES = [0, 1, 2];
@@ -63,6 +65,8 @@ function importUserSettingsState(state, incoming) {
   if (typeof incoming.send_with_enter === "boolean" || incoming.send_with_enter === null) {
     state.send_with_enter = incoming.send_with_enter;
   }
+  const sidebarWidth = parseSidebarWidth(incoming.sidebar_width);
+  if (sidebarWidth !== null) state.sidebar_width = sidebarWidth;
   if (incoming.model !== undefined) state.model = incoming.model;
 }
 
@@ -171,6 +175,11 @@ const userSettingsSlice = createSlice({
       state.send_with_enter = Boolean(action.payload);
     },
 
+    setSidebarWidth: (state, action) => {
+      const width = parseSidebarWidth(action.payload);
+      if (width !== null) state.sidebar_width = width;
+    },
+
     importUserSettings: (state, action) => {
       importUserSettingsState(state, action.payload);
     },
@@ -202,8 +211,11 @@ export const {
   setHtmlLoadExternal, setHtmlSanitization, setSetTitleOnce, setRenderTypst,
   setRenderLatex, setCollapseReasoningWhileStreaming, setDocumentConversionMode,
   setConversationSummaries,
-  setSendWithEnter, importUserSettings
+  setSendWithEnter, setSidebarWidth, importUserSettings
 } = userSettingsSlice.actions;
+
+export const selectSidebarWidth = (state) =>
+  parseSidebarWidth(state.user_settings.sidebar_width) ?? SIDEBAR_DEFAULT_WIDTH;
 
 // Selectors
 export const selectAllMemories = (state) => state.user_settings.memories;

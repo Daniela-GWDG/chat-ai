@@ -186,7 +186,7 @@ export default function MetaChatPage() {
             grid
             grid-cols-1 grid-rows-[1fr_auto]
             md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto]
-            md:gap-x-2 gap-y-1 md:pt-1
+            md:gap-x-2 gap-y-1 md:gap-y-0
             bg-base-200
             overflow-hidden
           "
@@ -198,8 +198,8 @@ export default function MetaChatPage() {
             modelsData={modelsData}
           />
 
-          <div className="flex min-h-0 min-w-0 flex-col">
-            <div className="mx-auto mb-2 flex w-full md:max-w-[85vw] xl:max-w-[1300px] items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 px-3 py-2 shadow-sm">
+          <div className="flex min-h-0 min-w-0 flex-col md:py-1">
+            <div className="mx-auto mb-2 flex w-full md:max-w-[min(85vw,960px)] items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 px-3 py-2 shadow-sm">
               <Ai
                 size={16}
                 className="mt-0.5 shrink-0 text-warning"

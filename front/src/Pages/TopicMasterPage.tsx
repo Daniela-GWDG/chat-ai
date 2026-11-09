@@ -112,7 +112,7 @@ export default function TopicMasterPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 grid-rows-[1fr_auto] gap-y-1 overflow-hidden bg-base-200 md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] md:gap-x-2 md:pt-1">
+      <div className="grid grid-cols-1 grid-rows-[1fr_auto] gap-y-1 overflow-hidden bg-base-200 md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] md:gap-x-2 md:gap-y-0">
         <SidebarWrapper
           localState={draftState}
           setLocalState={setDraftState}
@@ -120,7 +120,7 @@ export default function TopicMasterPage() {
           modelsData={modelsData}
         />
 
-        <main className="relative flex min-h-0 min-w-0 flex-col overflow-hidden">
+        <main className="relative flex min-h-0 min-w-0 flex-col overflow-hidden md:py-1">
           {topicMissing ? (
             <div className="flex flex-1 items-center justify-center p-6">
               <div className="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 p-6 text-center shadow-sm">

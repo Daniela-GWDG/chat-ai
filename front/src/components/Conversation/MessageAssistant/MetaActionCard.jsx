@@ -31,6 +31,7 @@ import {
   selectAllMemories,
   selectUserSettings,
 } from "../../../Redux/reducers/userSettingsReducer";
+import { SIDEBAR_DEFAULT_WIDTH } from "../../../utils/sidebarWidth";
 
 const cloneMcpServers = (servers) => JSON.parse(JSON.stringify(servers ?? []));
 
@@ -162,6 +163,7 @@ export default function MetaActionCard({
     document_conversion_mode:
       "user_settings.chat_preferences.document_conversion.label",
     timeout: "user_settings.timeout.title",
+    sidebar_width: "user_settings.sidebar_width.label",
     temperature: "meta_chat.setting_temperature",
     top_p: "meta_chat.setting_top_p",
     reasoning_effort: "settings.reasoning_effort.title",
@@ -207,6 +209,9 @@ export default function MetaActionCard({
       return `${Math.round(Number(value) / 1000)} ${t(
         "user_settings.timeout.seconds_short",
       )}`;
+    }
+    if (key === "sidebar_width") {
+      return `${value ?? SIDEBAR_DEFAULT_WIDTH} px`;
     }
     if (typeof value === "boolean") {
       return value ? t("meta_chat.setting_on") : t("meta_chat.setting_off");

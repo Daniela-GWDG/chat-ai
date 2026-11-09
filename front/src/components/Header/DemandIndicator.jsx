@@ -31,11 +31,11 @@ export default function DemandIndicator({ demand, status }) {
   return (
     <div className="flex items-center gap-2" data-value="4" data-max="4" data-online="true"
     title={hoverText}>
-      <div className="relative inline-flex items-end gap-0.5 h-4" aria-hidden="true">
-        <span className={`w-1 rounded-sm transition-all duration-200 h-1.5 opacity-100 ${colors[0]} `}></span>
-        <span className={`w-1 rounded-sm transition-all duration-200 h-2 opacity-100 ${colors[1]} `}></span>
-        <span className={`w-1 rounded-sm transition-all duration-200 h-3 opacity-100 ${colors[2]} `}></span>
-        <span className={`w-1 rounded-sm transition-all duration-200 h-4 opacity-100 ${colors[3]} `}></span>
+      <div className="relative inline-flex items-end gap-0.5 h-3" aria-hidden="true">
+        <span className={`w-[3px] transition-all duration-200 h-1 opacity-100 ${colors[0]} `}></span>
+        <span className={`w-[3px] transition-all duration-200 h-1.5 opacity-100 ${colors[1]} `}></span>
+        <span className={`w-[3px] transition-all duration-200 h-2 opacity-100 ${colors[2]} `}></span>
+        <span className={`w-[3px] transition-all duration-200 h-3 opacity-100 ${colors[3]} `}></span>
         {unavailable &&
           /*
             <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-0 left-0 w-2 h-2 text-error cursor-pointer select-none z-10" viewBox="0 0 12 12" fill="currentColor">
@@ -49,7 +49,7 @@ export default function DemandIndicator({ demand, status }) {
           <svg
            
             xmlns="http://www.w3.org/2000/svg"
-            className="absolute inset-0 w-4 h-4 text-accent"
+            className="absolute -top-0.5 left-0 w-4 h-4 text-accent"
           >
             <g transform="translate(6, 6) scale(0.2)">
           <circle

@@ -155,7 +155,7 @@ export default function Prompt({
     <div className="prompt-area overflow-x-hidden w-full flex flex-shrink-0 flex-col 
  bg-base-100 text-base-content mobile:h-fit justify-center 
     sm:overflow-y-auto rounded-2xl shadow-bottom dark:shadow-darkBottom
-    md:max-w-[85vw] xl:max-w-[1300px] transition-[max-width] duration-300 ease-in-out motion-reduce:transition-none mx-auto">
+    md:max-w-[min(85vw,960px)] transition-[max-width] duration-300 ease-in-out motion-reduce:transition-none mx-auto">
         {/* Attachments Container */}
         <AttachmentsContainer
           localState={localState}
@@ -228,7 +228,6 @@ export default function Prompt({
               <WarningExternalModel
                 localState={localState}
                 userData={userData}
-                portalPanel
                 compact
               />
             </div>

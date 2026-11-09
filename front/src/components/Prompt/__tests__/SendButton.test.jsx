@@ -35,7 +35,7 @@ describe("SendButton", () => {
       />,
     );
     const icon = container.querySelector('[data-guide="send"]');
-    expect(icon).toHaveClass("text-success");
+    expect(icon).toHaveClass("text-accent");
     fireEvent.click(icon);
     expect(handleSend).toHaveBeenCalled();
   });

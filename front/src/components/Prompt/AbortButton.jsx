@@ -23,8 +23,8 @@ export default function AbortButton({
     return loading && (
          <Tooltip text={t("common.abort")}>
             {/* Abort Button */}
-            <button className="h-7 w-7 cursor-pointer" onClick={handleAbort}>
-            <StopFilled size={28} className="cursor-pointer text-accent" />
+            <button className="h-7 w-7 flex items-center justify-center cursor-pointer" onClick={handleAbort}>
+            <StopFilled size={18} className="cursor-pointer text-accent" />
             </button>
         </Tooltip>
     );

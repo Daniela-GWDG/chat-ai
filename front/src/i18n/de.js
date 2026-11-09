@@ -526,6 +526,11 @@ export default {
       step3:
         "Exportieren Sie lokale Daten oder löschen Sie Chats, Erinnerungen, Einstellungen und Anhänge.",
     },
+    resize_sidebar: {
+      title: "Seitenleiste anpassen",
+      step1:
+        "Ziehen Sie den rechten Rand der Seitenleiste, um ihre Breite zu ändern. Ein Doppelklick stellt die Standardbreite wieder her.",
+    },
     dark_mode: {
       title: "Design wechseln",
       step1:
@@ -834,9 +839,9 @@ export default {
     codemode_running: "Code wird ausgeführt…",
     codemode_output: "Code-Ausgabe",
     close_chat: "Chat schließen",
-    speech_mode_title: "Sprachgespräch",
-    speech_mode_button: "Sprachgespräch starten",
-    speech_mode_close: "Sprachgespräch beenden",
+    speech_mode_title: "Sprachmodus",
+    speech_mode_button: "Sprachmodus starten",
+    speech_mode_close: "Sprachmodus beenden",
     speech_mode_listening: "Ich höre zu",
     speech_mode_capturing: "Ich höre zu",
     speech_mode_thinking: "Ich denke nach",
@@ -1133,6 +1138,9 @@ export default {
       current: "Aktuell: {{currentModel}}",
       description: "Wählen Sie das Standardmodell für neue Gespräche aus.",
       list_label: "Verfügbare Standardmodelle",
+    },
+    sidebar_width: {
+      label: "Breite der Seitenleiste",
     },
     timeout: {
       title: "Wartezeit für Antworten",

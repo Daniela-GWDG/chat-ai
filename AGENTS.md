@@ -461,7 +461,7 @@ the tutorial for the feature itself.
 - **Styling** is Tailwind **v4** via `@tailwindcss/vite` plus **daisyUI 5**, configured entirely
   in `src/index.css` (there is no `tailwind.config.js`). The `chatai` daisyUI theme defines the
   palette (`primary` #B4388D, `secondary` #695EA2, `accent` #B4388D — formerly `tertiary`), plus a
-  custom `chat` color for assistant bubbles; the `mobile` / `middle` / `desktop` breakpoints are
+  custom `chat` / `chat-border` colors for user message bubbles; the `mobile` / `middle` / `desktop` breakpoints are
   `@custom-variant`s and the custom shadows and legacy `bg_*` colors live in `@theme`. Prefer
   daisyUI components (`btn`, `input`, `toggle`, …) and semantic colors (`bg-base-100`,
   `text-base-content/70`) over raw Tailwind grays — they switch with dark mode on their own.
@@ -469,7 +469,9 @@ the tutorial for the feature itself.
 - **Dark mode** is the `dark` class, toggled on `document.body` by `App.jsx` from
   `interface_settings.dark_mode`. `index.css` re-declares the daisyUI color variables under `.dark`
   (daisyUI themes are otherwise keyed on `data-theme`) and maps Tailwind's `dark:` variant to that
-  class. The source of truth is that Redux flag, not the OS preference.
+  class. The source of truth is that Redux flag, not the OS preference. An `@theme` color defined as
+  `var(--x)` resolves on `:root`, so overriding `--x` under `.dark` (on `<body>`) has no effect unless
+  the `--color-*` variable is re-declared there too (see `--color-chat`).
 - **i18n:** user-facing strings go through `react-i18next` `t()`. `i18n/en.js` and `i18n/de.js`
   currently have identical top-level key sets — add every new key to **both**.
 - **Modals** are opened through the `useModal()` hook from `modals/ModalContext.jsx` and built on

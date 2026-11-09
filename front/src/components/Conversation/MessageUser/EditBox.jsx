@@ -59,7 +59,7 @@ export default function EditBox({
  items-end border border-base-300 rounded-xl bg-base-100 p-2.5 flex flex-col gap-1.5">
       <textarea
         ref={editBox}
-        className="p-1.5 outline-none text-sm rounded-xl w-full text-base-content bg-base-100 resize-none overflow-y-auto"
+        className="p-1.5 outline-none text-base rounded-xl w-full text-base-content bg-base-100 resize-none overflow-y-auto"
         defaultValue={message.content[0]?.text}
         style={{
           resize: `vertical`,

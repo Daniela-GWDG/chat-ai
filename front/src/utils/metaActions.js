@@ -1,3 +1,5 @@
+import { parseSidebarWidth } from "./sidebarWidth";
+
 const ACTION_TYPES =
   "RENAME_CHAT|MOVE_CHAT|PIN_CHAT|PIN_TOPIC|SET_SETTING|SET_CONVERSATION_SETTING|MCP_SERVER|ADD_MEMORY|UPDATE_MEMORY|DELETE_MEMORY|CLEAR_MEMORIES";
 const ACTION_SOURCE = `\\[\\[(${ACTION_TYPES}):\\s*(\\{[\\s\\S]*?\\})\\]\\]`;
@@ -19,6 +21,7 @@ const SUPPORTED_SETTING_KEYS = new Set([
   "conversation_summaries",
   "send_with_enter",
   "timeout",
+  "sidebar_width",
 ]);
 
 const SUPPORTED_CONVERSATION_SETTING_KEYS = new Set([
@@ -81,10 +84,14 @@ export function getMetaActionProposals(text) {
       const key = String(payload.key || "").trim();
       if (!SUPPORTED_SETTING_KEYS.has(key)) continue;
       if (!Object.prototype.hasOwnProperty.call(payload, "value")) continue;
+      const value =
+        key === "sidebar_width" ? parseSidebarWidth(payload.value) : payload.value;
+      // Clamped up front so the applied value matches what a revert compares.
+      if (key === "sidebar_width" && value === null) continue;
       proposals.set(`setting:${key}`, {
         type: "setting",
         key,
-        value: payload.value,
+        value,
       });
       continue;
     }

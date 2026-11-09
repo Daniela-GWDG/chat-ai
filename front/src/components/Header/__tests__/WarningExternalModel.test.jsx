@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Security } from "@carbon/icons-react";
 import { describe, expect, it } from "vitest";
 import WarningExternalModel, { DataSafetyText } from "../WarningExternalModel";
 
@@ -52,5 +53,41 @@ describe("data safety warning", () => {
     );
     expect(screen.getByText(/external model or external tools/i)).toBeInTheDocument();
     expect(screen.getAllByRole("button").length).toBeGreaterThan(0);
+  });
+
+  it("shows the warning as a tooltip that the button dismisses", () => {
+    render(
+      <WarningExternalModel
+        localState={localState({ model: { name: "External" }, tools: {} })}
+        userData={{}}
+        compact
+      />,
+    );
+    const text = screen.getByText(/external model or external tools/i);
+    expect(text.closest(".tooltip")).toHaveClass("tooltip-open", "tooltip-top");
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+
+    const trigger = screen.getByRole("button");
+    fireEvent.mouseEnter(trigger.parentElement);
+    fireEvent.click(trigger);
+    expect(screen.queryByText(/external model or external tools/i)).not.toBeInTheDocument();
+  });
+
+  describe("safe-state icon", () => {
+    const safeState = localState({ model: { name: "Internal" }, tools: {} });
+    const iconMarkup = (Icon) =>
+      render(<Icon size={18} />).container.querySelector("svg").innerHTML;
+    const triggerMarkup = (props) =>
+      render(
+        <WarningExternalModel localState={safeState} userData={{}} {...props} />,
+      ).container.querySelector("button svg").innerHTML;
+
+    it("uses the shield in the compact prompt toolbar", () => {
+      expect(triggerMarkup({ compact: true })).toBe(iconMarkup(Security));
+    });
+
+    it("uses the shield in the header", () => {
+      expect(triggerMarkup({})).toBe(iconMarkup(Security));
+    });
   });
 });

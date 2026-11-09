@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import {
-  BookmarkAdd,
   Calendar,
   ChevronDown,
   Edit,
+  Folder,
   OverflowMenuVertical,
   Pin,
   PinFilled,
@@ -256,13 +256,13 @@ export default function TopicList({
               className="flex-shrink-0 pointer-events-none"
               style={{ color: hex }}
             />
-          ) : (
+          ) : id !== UNSORTED_TOPIC_ID ? (
             <span
               aria-hidden="true"
               className="h-2 w-2 rounded-full flex-shrink-0 pointer-events-none"
               style={{ backgroundColor: withAlpha(hex, isDark ? 0.7 : 0.5) }}
             />
-          )}
+          ) : null}
 
           <span
             className="flex-1 truncate select-none pointer-events-none font-medium"
@@ -271,7 +271,7 @@ export default function TopicList({
             {label}
           </span>
 
-          <span className="text-[11px] select-none pointer-events-none font-semibold text-base-content/70">
+          <span className="text-[11px] select-none pointer-events-none font-normal text-base-content">
             {count > 999 ? "999+" : count}
           </span>
 
@@ -357,7 +357,7 @@ export default function TopicList({
         data-guide="create-topic"
         className="w-full flex items-center text-xs text-secondary dark:text-primary font-semibold cursor-pointer"
       >
-        <BookmarkAdd size={18} className="flex-shrink-0" />
+        <Folder size={18} className="flex-shrink-0" />
           <span className="truncate px-2">{t("folders.create_button")}</span>
       </button>
       </div>

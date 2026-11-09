@@ -1,4 +1,4 @@
-import { AudioWaveform } from "lucide-react";
+import { VoiceMode } from "@carbon/icons-react";
 import { useTranslation } from "react-i18next";
 
 import Tooltip from "../Others/Tooltip";
@@ -10,12 +10,12 @@ export default function SpeechModeButton({ onClick, disabled = false }) {
       <button
         type="button"
         data-guide="speech-mode"
-        className="btn btn-circle btn-sm h-[30px] w-[30px] min-h-0"
+        className="h-[30px] w-[30px] flex items-center justify-center cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         onClick={onClick}
         disabled={disabled}
         aria-label={t("conversation.speech_mode_button")}
       >
-        <AudioWaveform size={18} className="text-accent" />
+        <VoiceMode size={18} className="text-accent" />
       </button>
     </Tooltip>
   );

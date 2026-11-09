@@ -15,6 +15,7 @@ import Motto from "./Motto";
 import UndoButton from "./UndoButton";
 import Tooltip from "../Others/Tooltip";
 import CloseChatButton from "./CloseChatButton";
+import FloatingIconButton from "./FloatingIconButton";
 
 export default function Conversation({
   localState,
@@ -422,7 +423,7 @@ export default function Conversation({
               }}
           >
           <div
-            className="p-1.5 flex flex-col gap-1.5 h-full md:max-w-[85vw] xl:max-w-[1300px] transition-[max-width] duration-300 ease-in-out motion-reduce:transition-none mx-auto"
+            className="p-1.5 pt-10 flex flex-col gap-1.5 h-full md:max-w-[min(85vw,960px)] transition-[max-width] duration-300 ease-in-out motion-reduce:transition-none mx-auto"
           >
             {localState.messages.slice(0, -1)?.map((message, message_index) => (
               <div
@@ -469,20 +470,18 @@ export default function Conversation({
           {/* Floating previous-message / scroll-to-top buttons */}
           {showTopScrollButtons && (
             <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-              <Tooltip text={t("common.previous_message")}>
-                <button
+              <Tooltip text={t("common.previous_message")} placement="bottom">
+                <FloatingIconButton
                   onClick={handlePreviousMessage}
                   aria-label={t("common.previous_message")}
-                  className="btn btn-circle shadow-lg"
                 >
                   <ChevronUp className="w-5 h-5" />
-                </button>
+                </FloatingIconButton>
               </Tooltip>
-              <Tooltip text={t("common.scroll_to_top")}>
-                <button
+              <Tooltip text={t("common.scroll_to_top")} placement="bottom">
+                <FloatingIconButton
                   onClick={scrollToTop}
                   aria-label={t("common.scroll_to_top")}
-                  className="btn btn-circle shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"
@@ -497,32 +496,30 @@ export default function Conversation({
                       d="M5 10l7-7m0 0l7 7m-7-7v18"
                     />
                   </svg>
-                </button>
+                </FloatingIconButton>
               </Tooltip>
             </div>
           )}
         </div>
 
         <div
-          className="relative px-1.5 flex flex-col w-full max-h-0 md:max-w-[85vw] xl:max-w-[1300px] mx-auto"
+          className="relative px-1.5 flex flex-col w-full max-h-0 md:max-w-[min(85vw,960px)] mx-auto"
         >
         {/* Floating next-message / scroll-to-bottom buttons */}
           {showScrollButton && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
               <Tooltip text={t("common.next_message")}>
-                <button
+                <FloatingIconButton
                   onClick={handleNextMessage}
                   aria-label={t("common.next_message")}
-                  className="btn btn-circle shadow-lg"
                 >
                   <ChevronDown className="w-5 h-5" />
-                </button>
+                </FloatingIconButton>
               </Tooltip>
               <Tooltip text={t("common.scroll")}>
-                <button
+                <FloatingIconButton
                   onClick={handleScrollButtonClick}
                   aria-label="Scroll to bottom"
-                  className="btn btn-circle shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"
@@ -537,7 +534,7 @@ export default function Conversation({
                       d="M19 14l-7 7m0 0l-7-7m7 7V3"
                     />
                   </svg>
-                </button>
+                </FloatingIconButton>
               </Tooltip>
             </div>
           )}

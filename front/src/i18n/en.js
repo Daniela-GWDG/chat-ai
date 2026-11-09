@@ -511,6 +511,11 @@ export default {
       step3:
         "Export local data or clear chats, memories, settings, and attachments.",
     },
+    resize_sidebar: {
+      title: "Resize the sidebar",
+      step1:
+        "Drag the right edge of the sidebar to change its width. Double-click the edge to restore the default width.",
+    },
     dark_mode: {
       title: "Switch theme",
       step1: "Use the theme toggle in the footer to switch between light and dark mode.",
@@ -820,9 +825,9 @@ export default {
     codemode_running: "Running code…",
     codemode_output: "Code output",
     close_chat: "Close chat",
-    speech_mode_title: "Voice conversation",
-    speech_mode_button: "Start voice conversation",
-    speech_mode_close: "Close voice conversation",
+    speech_mode_title: "Voice mode",
+    speech_mode_button: "Start voice mode",
+    speech_mode_close: "Close voice mode",
     speech_mode_listening: "Listening",
     speech_mode_capturing: "I'm listening",
     speech_mode_thinking: "Thinking",
@@ -1112,6 +1117,9 @@ export default {
       current: "Current: {{currentModel}}",
       description: "Select the default model for new chats.",
       list_label: "Available default models",
+    },
+    sidebar_width: {
+      label: "Sidebar width",
     },
     timeout: {
       title: "Request Timeout",

@@ -42,7 +42,7 @@ export default React.memo(({
             >
             {/* Message content */}
             {!editMode && (
-                <div className="flex flex-row w-fit p-2.5 gap-1.5 text-base-content overflow-y-auto border border-base-300 rounded-xl bg-chat items-start">
+                <div className="flex flex-row w-fit p-2.5 gap-1.5 text-base-content overflow-y-auto border border-chat-border rounded-xl bg-chat items-start">
                     {/* Display message text */}
                     <MessageTextContainer message={message} />
                 </div>

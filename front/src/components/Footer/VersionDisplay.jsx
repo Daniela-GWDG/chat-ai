@@ -7,7 +7,7 @@ export default function VersionDisplay() {
         href="https://github.com/gwdg/chat-ai"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-info hover:underline inline-flex items-center"
+        className="text-base-content hover:underline inline-flex items-center"
     >
         {packageJson.displayName}
         {" v"}

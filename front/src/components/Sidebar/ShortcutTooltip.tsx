@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import TooltipBubble from "../Others/TooltipBubble";
 
 type TooltipPosition = "right" | "top" | "left";
 
@@ -9,7 +9,6 @@ interface ShortcutTooltipProps {
   shortcut?: string;
   position?: TooltipPosition;
   enterDelay?: number;
-  multiline?: boolean;
   containerClassName?: string;
   disabled?: boolean;
 }
@@ -20,13 +19,12 @@ export default function ShortcutTooltip({
   shortcut,
   position = "right",
   enterDelay = 0,
-  multiline = false,
   containerClassName = "inline-flex",
   disabled = false,
 }: ShortcutTooltipProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
-  const [coords, setCoords] = useState({ left: 0, top: 0 });
+  const [rect, setRect] = useState<Pick<DOMRect, "top" | "left" | "width" | "height"> | null>(null);
   const [isClient, setIsClient] = useState(false);
   const delayRef = useRef<number | null>(null);
   const suppressHoverRef = useRef(false);
@@ -41,15 +39,9 @@ export default function ShortcutTooltip({
   const updatePosition = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-    const rect = el.getBoundingClientRect();
-    if (position === "right") {
-      setCoords({ left: rect.right + 12, top: rect.top + rect.height / 2 });
-    } else if (position === "left") {
-      setCoords({ left: rect.left - 12, top: rect.top + rect.height / 2 });
-    } else {
-      setCoords({ left: rect.left + rect.width / 2, top: rect.top - 8 });
-    }
-  }, [position]);
+    const { top, left, width, height } = el.getBoundingClientRect();
+    setRect({ top, left, width, height });
+  }, []);
 
   useEffect(() => {
     if (!visible || !isClient) return;
@@ -64,32 +56,16 @@ export default function ShortcutTooltip({
   }, [visible, isClient, updatePosition]);
 
   const tooltip =
-    isClient && visible && !disabled
-      ? createPortal(
-          <div
-            className={`pointer-events-none fixed z-50 rounded bg-neutral text-xs text-neutral-content border border-base-300 shadow ${
-              multiline
-                ? "max-w-xs whitespace-normal px-2.5 py-2 text-left leading-snug"
-                : "whitespace-nowrap px-2 py-1"
-            } ${
-              position === "right"
-                ? "-translate-y-1/2"
-                : position === "left"
-                  ? "-translate-x-full -translate-y-1/2"
-                  : "-translate-x-1/2 -translate-y-full"
-            }`}
-            style={{ left: coords.left, top: coords.top }}
-          >
-            <span>{label}</span>
-            {shortcut ? (
-              <span className="ml-2 text-base-content/50">
-                {shortcut}
-              </span>
-            ) : null}
-          </div>,
-          document.body
-        )
-      : null;
+    isClient && visible && !disabled ? (
+      <TooltipBubble rect={rect} placement={position}>
+        <span>{label}</span>
+        {shortcut ? (
+          <span className="ml-2 text-base-content/50">
+            {shortcut}
+          </span>
+        ) : null}
+      </TooltipBubble>
+    ) : null;
 
   const showTooltip = useCallback(() => {
     if (disabled || suppressHoverRef.current) return;

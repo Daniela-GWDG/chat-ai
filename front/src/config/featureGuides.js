@@ -807,6 +807,19 @@ export const featureGuides = {
       },
     ],
   },
+  resize_sidebar: {
+    titleKey: "feature_guide.resize_sidebar.title",
+    prompt:
+      "On desktop screens, drag the right edge of the expanded sidebar to change its width. Double-click the edge to restore the default width.",
+    keywords: ["resize sidebar", "sidebar width", "wider sidebar", "narrow sidebar"],
+    steps: [
+      {
+        target: '[data-guide="sidebar-resize"]',
+        textKey: "feature_guide.resize_sidebar.step1",
+        completeOnTargetClick: true,
+      },
+    ],
+  },
   dark_mode: {
     titleKey: "feature_guide.dark_mode.title",
     prompt:
@@ -1070,6 +1083,7 @@ export const FEATURE_CATEGORIES = {
     "document_conversion",
     "data_management",
     "dark_mode",
+    "resize_sidebar",
   ],
   other: ["feedback", "speech_output"],
 };

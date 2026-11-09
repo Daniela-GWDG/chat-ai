@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Tooltip from "../Others/Tooltip";
+import FloatingIconButton from "./FloatingIconButton";
 import { Undo2 } from "lucide-react";
 
 export default function UndoButton({ localState, setLocalState }) {
@@ -44,14 +45,10 @@ export default function UndoButton({ localState, setLocalState }) {
   };
 
   return (
-    <Tooltip text={t("common.undo")}>
-      <button
-        className="btn btn-circle shadow-lg"
-        onClick={handleUndo}
-        disabled={loading}
-      >
-        <Undo2 className="cursor-pointer h-5 w-5 text-accent hover:text-info transition-colors" />
-      </button>
+    <Tooltip text={t("common.undo")} placement="left">
+      <FloatingIconButton onClick={handleUndo} disabled={loading}>
+        <Undo2 className="h-5 w-5" />
+      </FloatingIconButton>
     </Tooltip>
   );
 }

@@ -44,11 +44,11 @@ export default function SendButton({localState, setLocalState, handleSend, promp
 
     return !loading && ( (prompt !== "" || attachments.length > 0)  ? (
          <Tooltip text={t(sendShortcutKey)}>
-            <SendFilled size={28} className={"cursor-pointer " + (isSafe ? "text-success" : "text-warning")} onClick={handleSend} data-guide="send" />
+            <SendFilled size={18} className={"cursor-pointer " + (isSafe ? "text-accent" : "text-warning")} onClick={handleSend} data-guide="send" />
         </Tooltip>
     ) : (
         <Tooltip text={t(sendShortcutKey)}>
-            <SendFilled size={28} className={"opacity-10 " + (isSafe ? "text-success" : "text-warning")} data-guide="send" />
+            <SendFilled size={18} className={"opacity-10 " + (isSafe ? "text-accent" : "text-warning")} data-guide="send" />
         </Tooltip>
     ))
     

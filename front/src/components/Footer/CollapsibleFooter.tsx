@@ -1,6 +1,4 @@
 
-import { useState } from "react";
-
 import VersionDisplay from "./VersionDisplay";
 import LanguageSelector from "./LanguageSelector";
 import { Link } from "react-router";
@@ -8,25 +6,26 @@ import { Trans } from "react-i18next";
 import ThemeToggle from "../Header/ThemeToggle";
 
 export default function CollapsibleFooter({ className }: { className?: string }) {
-  const [open, setOpen] = useState(false);
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className={`bg-base-100 rounded-xl text-xs md:text-sm ${className}`}>
-      {/* Header / handle: always visible */}
-      <div className="flex justify-between">
-        
-        <div className=" h-[3vh] top-0 flex items-center justify-center gap-3 truncate overflow-hidden">
-          <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="footer-content"
-          onClick={() => {}}
-          className="w-full h-[3vh] flex items-center justify-center gap-2 rounded-t-xl"
-        >
-        </button>
+    <footer className={`bg-base-100 border-t border-base-300 text-xs md:text-sm ${className}`}>
+      {/* Equal outer columns keep the certification centred on the page */}
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center">
+
+        {/* Left section */}
+        <div className="interface-toggles h-[3vh] flex items-center justify-self-start pl-1 gap-2">
+          <ThemeToggle />
+          <LanguageSelector />
+        </div>
+
+        {/* Centre section */}
+        <p className="hidden md:block text-center whitespace-nowrap text-[#767676] dark:text-[#929292]">
+          <Trans i18nKey="footer.iso_certified" />
+        </p>
+
+        {/* Right section */}
+        <div className="h-[3vh] min-w-0 flex items-center justify-self-end justify-end gap-6 pr-3 truncate overflow-hidden">
           {/* Version Display - Desktop and Tablet */}
-          <div className="hidden md:block flex flex-col md:flex-row justify-center items-center gap-4 text-base-content w-full md:p-0 py-2">
+          <div className="hidden md:block text-base-content">
             <VersionDisplay />
           </div>
           {/* Imprint */}
@@ -36,7 +35,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center text-info hover:underline">
+            <p className="text-center text-base-content hover:underline">
               <Trans i18nKey="footer.imprint" />
             </p>
           </Link>
@@ -47,7 +46,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
           }
           target="_blank"
           >
-          <p className="text-center text-info hover:underline">
+          <p className="text-center text-base-content hover:underline">
               <Trans i18nKey="footer.privacy"></Trans>
           </p>
           </Link>
@@ -58,7 +57,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center whitespace-nowrap truncate text-info hover:underline">
+            <p className="text-center whitespace-nowrap truncate text-base-content hover:underline">
               <Trans i18nKey="footer.terms" />
             </p>
           </Link>
@@ -69,19 +68,10 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center h-full text-info hover:underline">
+            <p className="text-center h-full text-base-content hover:underline">
               <Trans i18nKey="footer.docs" />
             </p>
           </Link>
-        </div>
-
-        {/* Right section */}
-        <div className="interface-toggles h-[3vh] top-0 flex items-center pr-3 gap-2"> 
-          <p className="hidden md:block text-center w-full flex flex-grow whitespace-nowrap overflow-visible text-base-content">
-            <Trans i18nKey="footer.iso_certified" />
-          </p>
-          <ThemeToggle />
-          <LanguageSelector />
         </div>
 
       </div>

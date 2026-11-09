@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 import { useModal } from "../../modals/ModalContext";
 import Tooltip from "../Others/Tooltip";
+import FloatingIconButton from "./FloatingIconButton";
 import { deleteConversation } from "../../db";
 import { getDefaultConversation } from "../../utils/conversationUtils";
 import { selectUserSettings } from "../../Redux/reducers/userSettingsReducer";
@@ -65,16 +66,15 @@ export default function CloseChatButton({ localState, setLocalState }) {
 
   return (
     <div className="absolute right-2 top-2 z-20">
-      <Tooltip text={label}>
-        <button
-          type="button"
+      <Tooltip text={label} placement="left">
+        <FloatingIconButton
+          danger
           onClick={handleClose}
           data-guide="close-chat"
           aria-label={label}
-          className="btn btn-ghost btn-sm btn-square rounded-full bg-base-100/80 text-base-content/70 backdrop-blur hover:bg-error/10 hover:text-error"
         >
-          <X className="h-4 w-4" />
-        </button>
+          <X className="h-5 w-5" />
+        </FloatingIconButton>
       </Tooltip>
     </div>
   );

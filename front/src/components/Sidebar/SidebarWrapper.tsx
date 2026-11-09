@@ -6,12 +6,17 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 
 import SidebarPanel from "./SidebarPanel";
 import SidebarContent from "./SidebarContent";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SidebarDrawer from "./SidebarDrawer";
+import SidebarResizeHandle from "./SidebarResizeHandle";
 import { createConversation } from "../../db";
 import { getDefaultConversation } from "../../utils/conversationUtils";
 import { useNavigate } from "react-router";
-import { selectUserSettings } from "../../Redux/reducers/userSettingsReducer";
+import {
+  selectSidebarWidth,
+  selectUserSettings,
+  setSidebarWidth as setStoredSidebarWidth,
+} from "../../Redux/reducers/userSettingsReducer";
 
 export default function SidebarWrapper({ 
   localState, 
@@ -23,6 +28,10 @@ export default function SidebarWrapper({
   const navigate = useNavigate();
   const showSidebar = useSelector(selectShowSidebar);
   const userSettings = useSelector(selectUserSettings);
+  const storedSidebarWidth = useSelector(selectSidebarWidth);
+  // Only set during a drag, so the store is written once per resize.
+  const [dragWidth, setDragWidth] = useState<number | null>(null);
+  const sidebarWidth = dragWidth ?? storedSidebarWidth;
   const { isMobile, isTablet, isDesktop } = useWindowSize();
 
   useEffect(() => {
@@ -125,11 +134,24 @@ export default function SidebarWrapper({
 
         {(isDesktop) && (
 
-          <div className={`h-full
-                        transition-all duration-300 ease-in-out overflow-hidden
-          ${showSidebar ? "opacity-100 w-[15rem]" : "w-[4rem] opacity-0 pointer-events-none"}`}>
+          <div
+            className={`h-full overflow-hidden
+                        ${dragWidth === null ? "transition-all duration-300 ease-in-out" : ""}
+            ${showSidebar ? "opacity-100" : "w-[4rem] opacity-0 pointer-events-none"}`}
+            style={showSidebar ? { width: sidebarWidth } : undefined}
+          >
             <SidebarPanel>{sidebarContent}</SidebarPanel>
           </div>
+        )}
+        {isDesktop && showSidebar && (
+          <SidebarResizeHandle
+            width={sidebarWidth}
+            onPreview={setDragWidth}
+            onCommit={(width) => {
+              dispatch(setStoredSidebarWidth(width));
+              setDragWidth(null);
+            }}
+          />
         )}
       </div>
       {(!isDesktop) && (

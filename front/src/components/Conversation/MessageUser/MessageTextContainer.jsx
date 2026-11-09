@@ -6,7 +6,7 @@ const MIN_HEIGHT = 26;
 export default function MessageTextContainer({ message }) {
     return (
         <pre
-            className="font-sans flex-grow min-w-0 text-sm"
+            className="font-sans flex-grow min-w-0 text-base"
             style={{
                 overflow: "hidden",
                 whiteSpace: "pre-wrap",

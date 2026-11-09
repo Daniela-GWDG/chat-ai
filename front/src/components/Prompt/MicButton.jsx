@@ -212,11 +212,11 @@ export default function MicButton({
             }
             >
             <button
-                className={`btn btn-circle btn-sm h-[30px] w-[30px] min-h-0 ${
+                className={
                 isRecording
-                    ? "btn-error animate-pulse"
-                    : ""
-                }`}
+                    ? "btn btn-circle btn-sm h-[30px] w-[30px] min-h-0 btn-error animate-pulse"
+                    : "h-[30px] w-[30px] flex items-center justify-center cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                }
                 type="button"
                 data-guide="mic"
                 onClick={handleAudioClick}

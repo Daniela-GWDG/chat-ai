@@ -11,6 +11,8 @@ import userSettingsReducer, {
   selectConversationSummaries,
   selectCollapseReasoningWhileStreaming,
   setCollapseReasoningWhileStreaming,
+  selectSidebarWidth,
+  setSidebarWidth,
 } from "../userSettingsReducer";
 import interfaceSettingsReducer, {
   agreeWebSearch,
@@ -85,6 +87,20 @@ describe("user settings reducer", () => {
       importUserSettings({ collapse_reasoning_while_streaming: true }),
     );
     expect(state.collapse_reasoning_while_streaming).toBe(true);
+  });
+
+  it("stores a clamped sidebar width and restores it from a backup", () => {
+    let state = init(userSettingsReducer);
+    const width = (s) => selectSidebarWidth({ user_settings: s });
+    expect(width(state)).toBe(264);
+    state = userSettingsReducer(state, setSidebarWidth(9000));
+    expect(width(state)).toBe(480);
+    state = userSettingsReducer(state, setSidebarWidth("invalid"));
+    expect(width(state)).toBe(480);
+    state = userSettingsReducer(state, importUserSettings({ sidebar_width: 320 }));
+    expect(width(state)).toBe(320);
+    expect(selectSidebarWidth({ user_settings: {} })).toBe(264);
+    expect(selectSidebarWidth({ user_settings: { sidebar_width: 240 } })).toBe(264);
   });
 
   it("falls back to safe selector values", () => {

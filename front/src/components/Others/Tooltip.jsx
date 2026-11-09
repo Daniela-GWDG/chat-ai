@@ -1,43 +1,18 @@
 import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
+import TooltipBubble from "./TooltipBubble";
 
-function Tooltip({ text, children, placement = "top", offset = 8, className = "" }) {
+function Tooltip({ text, children, placement = "top", className = "" }) {
   const ref = useRef(null);
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState(null);
+  const [rect, setRect] = useState(null);
 
   useEffect(() => {
     if (!open) return;
     const update = () => {
       const el = ref.current;
       if (!el) return;
-      const r = el.getBoundingClientRect();
-
-      let top, left, transform;
-
-      switch (placement) {
-        case "bottom":
-          top = r.bottom + offset;
-          left = r.left + r.width / 2;
-          transform = "translate(-50%, 0)"; // center horizontally
-          break;
-        case "left":
-          top = r.top + r.height / 2;
-          left = r.left - offset;
-          transform = "translate(-100%, -50%)"; // shift left fully
-          break;
-        case "right":
-          top = r.top + r.height / 2;
-          left = r.right + offset;
-          transform = "translate(0, -50%)"; // just shift vertically
-          break;
-        default: // top
-          top = r.top - offset;
-          left = r.left + r.width / 2;
-          transform = "translate(-50%, -100%)"; // center horizontally, above
-      }
-
-      setPos({ top, left, transform });
+      const { top, left, width, height } = el.getBoundingClientRect();
+      setRect({ top, left, width, height });
     };
 
     update();
@@ -47,7 +22,7 @@ function Tooltip({ text, children, placement = "top", offset = 8, className = ""
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
-  }, [open, placement, offset]);
+  }, [open]);
 
   return (
     <>
@@ -60,24 +35,11 @@ function Tooltip({ text, children, placement = "top", offset = 8, className = ""
         {children}
       </span>
 
-      {open && pos && typeof document !== "undefined" &&
-        createPortal(
-          <div
-            style={{
-              position: "fixed",
-              top: pos.top,
-              left: pos.left,
-              transform: pos.transform,
-              zIndex: 9999
-            }}
-            className="bg-neutral text-neutral-content text-xs rounded px-2 py-1
-                       border border-base-300 max-w-[200px] break-words
-                       pointer-events-none shadow"
-          >
-            {text}
-          </div>,
-          document.body
-        )}
+      {open && (
+        <TooltipBubble rect={rect} placement={placement}>
+          {text}
+        </TooltipBubble>
+      )}
     </>
   );
 }

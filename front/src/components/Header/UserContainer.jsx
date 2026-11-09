@@ -26,7 +26,7 @@ export default function UserContainer({
   };
 
   const avatar = userData?.username ? (
-    <div className="user-profile-button w-9 h-9 rounded-lg border-2 border-accent flex items-center justify-center bg-base-200">
+    <div className="user-profile-button w-9 h-9 rounded-full border border-accent flex items-center justify-center bg-base-200">
       <span className="text-accent font-medium text-sm">
         {getInitials(userData.username)}
       </span>
