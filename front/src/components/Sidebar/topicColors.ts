@@ -22,15 +22,15 @@ export type TopicColorId =
   | "violet"
   | "fuchsia";
 
-export const TOPIC_COLORS: { id: TopicColorId; label: string; hex: string }[] = [
-  { id: "rose", label: "Rose", hex: "#E11D48" },
-  { id: "orange", label: "Orange", hex: "#EA580C" },
-  { id: "amber", label: "Amber", hex: "#D97706" },
-  { id: "emerald", label: "Emerald", hex: "#059669" },
-  { id: "teal", label: "Teal", hex: "#0D9488" },
-  { id: "cyan", label: "Cyan", hex: "#0891B2" },
-  { id: "violet", label: "Violet", hex: "#7C3AED" },
-  { id: "fuchsia", label: "Fuchsia", hex: "#C026D3" },
+export const TOPIC_COLORS: { id: TopicColorId; label: string; hex: string; darkHex: string }[] = [
+  { id: "rose", label: "Rose", hex: "#E11D48", darkHex: "#FB7185" },
+  { id: "orange", label: "Orange", hex: "#EA580C", darkHex: "#FB923C" },
+  { id: "amber", label: "Amber", hex: "#D97706", darkHex: "#FBBF24" },
+  { id: "emerald", label: "Emerald", hex: "#059669", darkHex: "#34D399" },
+  { id: "teal", label: "Teal", hex: "#0D9488", darkHex: "#2DD4BF" },
+  { id: "cyan", label: "Cyan", hex: "#0891B2", darkHex: "#22D3EE" },
+  { id: "violet", label: "Violet", hex: "#7C3AED", darkHex: "#A78BFA" },
+  { id: "fuchsia", label: "Fuchsia", hex: "#C026D3", darkHex: "#E879F9" },
 ];
 
 const BY_ID = new Map(TOPIC_COLORS.map((c) => [c.id, c]));
@@ -38,6 +38,11 @@ const BY_ID = new Map(TOPIC_COLORS.map((c) => [c.id, c]));
 /** Resolve a colour by id, falling back to the first swatch. */
 export function topicColorById(id?: string | null) {
   return (id && BY_ID.get(id as TopicColorId)) || TOPIC_COLORS[0];
+}
+
+/** The swatch colour for the active theme; the saturated hues are too dark on dark. */
+export function topicHex(color: { hex: string; darkHex: string }, isDark: boolean) {
+  return isDark ? color.darkHex : color.hex;
 }
 
 /** Stable, order-independent index so a topic keeps its colour forever. */

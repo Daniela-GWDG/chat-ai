@@ -14,6 +14,9 @@ function createIconButton(variantClasses) {
 }
 
 /** Sidebar actions and the theme toggle. Use with size 20 icons. */
+/** Extra classes for SortIconButton inside a sidebar row, whose own hover is base-200. */
+export const ROW_ACTION_BUTTON = "-my-1.5 [&:hover]:bg-base-300";
+
 /** Sidebar text button: daisyUI ghost with the same grey hover as the sidebar rows. */
 export const SIDEBAR_GHOST_BUTTON =
   "btn btn-ghost -ml-1 hover:bg-base-200 hover:border-transparent";

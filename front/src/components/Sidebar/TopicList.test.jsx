@@ -1,10 +1,17 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-import TopicList, { UNSORTED_TOPIC_ID } from "./TopicList";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import TopicList, { PINNED_TOPIC_ID, TOPICS_SECTION_ID, UNSORTED_TOPIC_ID } from "./TopicList";
+import { toggleTopic } from "../../Redux/reducers/interfaceSettingsSlice";
+
+const redux = vi.hoisted(() => ({ dispatch: vi.fn(), collapsed: [], pathname: "/" }));
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key) => key }) }));
-vi.mock("react-redux", () => ({ useDispatch: () => vi.fn(), useSelector: () => [] }));
-vi.mock("react-router", () => ({ useLocation: () => ({ pathname: "/" }) }));
+vi.mock("react-redux", async (importOriginal) => ({
+  ...(await importOriginal()),
+  useDispatch: () => redux.dispatch,
+  useSelector: () => redux.collapsed,
+}));
+vi.mock("react-router", () => ({ useLocation: () => ({ pathname: redux.pathname }) }));
 vi.mock("../../modals/ModalContext", () => ({ useModal: () => ({ openModal: vi.fn() }) }));
 
 const makeProps = (overrides = {}) => ({
@@ -17,6 +24,7 @@ const makeProps = (overrides = {}) => ({
   onDeleteTopic: vi.fn(),
   onToggleTopicPinned: vi.fn(),
   onOpenTopic: vi.fn(),
+  onNewChatInTopic: vi.fn(),
   draggingConversationId: null,
   dragOverTopicId: null,
   onDragEnterTopic: vi.fn(),
@@ -73,6 +81,107 @@ describe("TopicList", () => {
       />,
     );
     expect(container.querySelector('[data-guide="pinned-chats"]')).not.toBeNull();
+  });
+
+  describe("pinned section", () => {
+    const pinned = { pinnedConversations: [{ id: "c2", title: "Pinned chat" }] };
+
+    beforeEach(() => {
+      redux.collapsed = [];
+      redux.dispatch.mockClear();
+    });
+
+    it("has a header like the Chats section, with a count and no pin icon", () => {
+      render(<TopicList {...makeProps(pinned)} />);
+      const header = screen.getByRole("button", { name: /folders\.pinned/ });
+      expect(header).toHaveAttribute("aria-expanded", "true");
+      expect(header).toHaveTextContent("1");
+      expect(header).toHaveClass("-mx-2");
+      expect(screen.getByText("Pinned chat")).toBeInTheDocument();
+    });
+
+    it("toggles when the header is clicked", () => {
+      render(<TopicList {...makeProps(pinned)} />);
+      fireEvent.click(screen.getByRole("button", { name: /folders\.pinned/ }));
+      expect(redux.dispatch).toHaveBeenCalledWith(toggleTopic(PINNED_TOPIC_ID));
+    });
+
+    it("hides its entries when collapsed", () => {
+      redux.collapsed = [PINNED_TOPIC_ID];
+      render(<TopicList {...makeProps(pinned)} />);
+      expect(screen.getByRole("button", { name: /folders\.pinned/ })).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
+      expect(screen.queryByText("Pinned chat")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("topics section", () => {
+    const withTopic = { topics: [{ id: "t1", name: "UX Writing" }] };
+
+    beforeEach(() => {
+      redux.collapsed = [];
+      redux.dispatch.mockClear();
+    });
+
+    it("groups topics under a collapsible header with a count", () => {
+      render(<TopicList {...makeProps(withTopic)} />);
+      const header = screen.getByRole("button", { name: /folders\.topics_section/ });
+      expect(header).toHaveTextContent("1");
+      fireEvent.click(header);
+      expect(redux.dispatch).toHaveBeenCalledWith(toggleTopic(TOPICS_SECTION_ID));
+    });
+
+    it("hides the header when there are no topics", () => {
+      render(<TopicList {...makeProps()} />);
+      expect(screen.queryByText("folders.topics_section")).not.toBeInTheDocument();
+    });
+
+    it("hides topics when the section is collapsed", () => {
+      redux.collapsed = [TOPICS_SECTION_ID];
+      render(<TopicList {...makeProps(withTopic)} />);
+      expect(screen.queryByText("UX Writing")).not.toBeInTheDocument();
+    });
+
+    it("adds no space below an empty expanded topic", () => {
+      render(<TopicList {...makeProps(withTopic)} />);
+      const row = screen.getByText("UX Writing").parentElement;
+      expect(row.nextElementSibling).toBeNull();
+    });
+
+    it("selects a topic by clicking the row without toggling it", () => {
+      const props = makeProps(withTopic);
+      render(<TopicList {...props} />);
+      fireEvent.click(screen.getByText("UX Writing"));
+      expect(props.onOpenTopic).toHaveBeenCalledWith("t1");
+      expect(redux.dispatch).not.toHaveBeenCalled();
+    });
+
+    it("toggles only through the icon control", () => {
+      const props = makeProps(withTopic);
+      render(<TopicList {...props} />);
+      const row = screen.getByText("UX Writing").parentElement;
+      fireEvent.click(within(row).getByLabelText("folders.collapse_topic"));
+      expect(redux.dispatch).toHaveBeenCalledWith(toggleTopic("t1"));
+      expect(props.onOpenTopic).not.toHaveBeenCalled();
+    });
+
+    it("starts a new chat in the topic from the inline button", () => {
+      const props = makeProps(withTopic);
+      render(<TopicList {...props} />);
+      fireEvent.click(screen.getByLabelText("folders.new_chat_in_topic"));
+      expect(props.onNewChatInTopic).toHaveBeenCalledWith("t1");
+      expect(props.onOpenTopic).not.toHaveBeenCalled();
+    });
+
+    it("shows the inline actions while the topic is selected", () => {
+      redux.pathname = "/topic/t1";
+      render(<TopicList {...makeProps(withTopic)} />);
+      expect(screen.getByLabelText("folders.new_chat_in_topic")).toHaveClass("opacity-100");
+      expect(screen.getByLabelText("folders.topic_options")).toHaveClass("opacity-100");
+      redux.pathname = "/";
+    });
   });
 
   it("still accepts dropped chats on the Chats section", () => {

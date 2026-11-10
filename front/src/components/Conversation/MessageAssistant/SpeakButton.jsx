@@ -88,7 +88,7 @@ export default function SpeakButton({
         <button onClick={handleSpeak} data-guide="speak" className="inline-grid h-[18px] w-[18px] cursor-pointer" disabled={isSpeaking}>
         <VolumeUp
             size={18}
-            className="opacity-20 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-accent"
+            className="cursor-pointer text-accent"
         />
         </button>
         </Tooltip>
@@ -96,7 +96,7 @@ export default function SpeakButton({
         <Tooltip text={t("common.stop")} className="inline-flex">
         <button onClick={handleStop} data-guide="speak" className="inline-grid h-[22px] w-[22px] cursor-pointer" disabled={!isSpeaking}>
         <Square
-            className="opacity-20 group-hover:opacity-100 transition-opacity duration-300 h-[22px] w-[22px] cursor-pointer text-accent"
+            className="h-[22px] w-[22px] cursor-pointer text-accent"
             alt="stop_icon"
         />
         </button>

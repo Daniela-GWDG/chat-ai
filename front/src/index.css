@@ -44,8 +44,8 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
-  --chat: #f2f3ff;
-  --chat-border: #dfe1f7;
+  --chat: #e4e6fb;
+  --chat-border: #cdd0f2;
   --error-soft: #ffeded;
 }
 
@@ -123,7 +123,7 @@
 /* Light mode (default) */
 :root {
   /* … keep your other vars … */
-  --scroll-thumb: #9ca3af; /* Tailwind gray-400 */
+  --scroll-thumb: #d1d5db; /* Tailwind gray-300 */
   --scroll-track: transparent;
 
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);

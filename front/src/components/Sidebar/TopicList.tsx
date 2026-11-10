@@ -6,6 +6,7 @@ import { useLocation } from "react-router";
 import {
   Calendar,
   ChevronDown,
+  Add,
   Edit,
   OverflowMenuVertical,
   Pin,
@@ -15,10 +16,11 @@ import {
 } from "@carbon/icons-react";
 
 import type { FolderRow } from "../../db/dbTypes";
-import { topicColor, withAlpha } from "./topicColors";
+import { topicColor, topicHex, withAlpha } from "./topicColors";
 import { isTopicIconId, topicIcon } from "./topicIcons";
 
 import { useModal } from "../../modals/ModalContext";
+import { ROW_ACTION_BUTTON, SortIconButton } from "../Others/IconButtons";
 import { selectCollapsedTopics, toggleTopic } from "../../Redux/reducers/interfaceSettingsSlice";
 
 /**
@@ -26,6 +28,8 @@ import { selectCollapsedTopics, toggleTopic } from "../../Redux/reducers/interfa
  * grouping only — no row for it exists in the database.
  */
 export const UNSORTED_TOPIC_ID = "__unsorted__";
+export const PINNED_TOPIC_ID = "__pinned__";
+export const TOPICS_SECTION_ID = "__topics__";
 export const DATE_TOPIC_ID = "__by_date__";
 export const CREATED_TOPIC_ID = "__by_created__";
 
@@ -51,6 +55,7 @@ export default function TopicList({
   onDeleteTopic,
   onToggleTopicPinned,
   onOpenTopic,
+  onNewChatInTopic,
   draggingConversationId,
   dragOverTopicId,
   onDragEnterTopic,
@@ -72,6 +77,7 @@ export default function TopicList({
   onDeleteTopic: (topic: TopicRef) => void;
   onToggleTopicPinned: (topic: TopicRef) => void;
   onOpenTopic: (topicId: string) => void;
+  onNewChatInTopic: (topicId: string) => void;
   draggingConversationId: string | null;
   dragOverTopicId: string | null;
   onDragEnterTopic: (topicId: string) => void;
@@ -100,6 +106,10 @@ export default function TopicList({
     : null;
 
   const collapsedTopicIds = useSelector(selectCollapsedTopics) || [];
+  const pinnedCollapsed = collapsedTopicIds.includes(PINNED_TOPIC_ID);
+  const topicsCollapsed = collapsedTopicIds.includes(TOPICS_SECTION_ID);
+  const pinnedCount = pinnedTopics.length + pinnedConversations.length;
+  const neutralHex = isDark ? "#94A3B8" : "#64748B";
 
   const [menuTopicId, setMenuTopicId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -160,6 +170,42 @@ export default function TopicList({
     };
   }, [menuTopicId, closeTopicMenu]);
 
+  const renderSectionHeader = (
+    id: string,
+    label: string,
+    count: number,
+    isCollapsed: boolean,
+  ) => (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={!isCollapsed}
+      onClick={() => toggleTopicCollapse(id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleTopicCollapse(id);
+        }
+      }}
+      className="group -mx-2 flex h-10 items-center gap-1.5 px-[15px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+    >
+      <span className="-ml-[3px] flex-shrink-0">
+        <ChevronDown
+          size={16}
+          className={`pointer-events-none transition-transform duration-200 ${
+            isCollapsed ? "-rotate-90" : "rotate-0"
+          }`}
+        />
+      </span>
+      <span className="flex-1 truncate select-none pointer-events-none font-medium">
+        {label}
+      </span>
+      <span className="min-w-5 text-right text-[11px] select-none pointer-events-none font-normal text-base-content">
+        {count > 999 ? "999+" : count}
+      </span>
+    </div>
+  );
+
   // Row hover is base-200, so buttons inside it need a darker hover. The
   // negative margin keeps the row as tall as the topic rows.
   const headerActions = sortActions ? (
@@ -187,6 +233,31 @@ export default function TopicList({
       draggingConversationId !== null && dragOverTopicId === id;
     const isActiveTopic = activeTopicId === id;
     const count = conversations.length;
+    const glyph = emoji ? (
+            <span
+              aria-hidden="true"
+              className="flex-shrink-0 pointer-events-none text-sm leading-none"
+              style={{ color: hex }}
+            >
+              {emoji}
+            </span>
+          ) : Icon ? (
+            <Icon
+              size={16}
+              className="flex-shrink-0 pointer-events-none"
+              style={{ color: hex }}
+            />
+          ) : id !== UNSORTED_TOPIC_ID ? (
+            <span
+              aria-hidden="true"
+              className="h-2 w-2 rounded-full flex-shrink-0 pointer-events-none"
+              style={{ backgroundColor: withAlpha(hex, isDark ? 0.7 : 0.5) }}
+            />
+          ) : null;
+    const actionVisibility =
+      menuTopicId === id || isActiveTopic || window.innerWidth < 1024
+        ? "opacity-100"
+        : "opacity-0 group-hover:opacity-100";
 
     return (
       <div 
@@ -223,56 +294,65 @@ export default function TopicList({
               onOpenTopic(id);
             }
           }}
-          className={`group -mx-2 flex items-center gap-2 px-[15px] py-2 text-xs transition cursor-pointer border text-base-content ${
+          className={`group -mx-2 flex h-10 items-center gap-1.5 px-[15px] text-xs transition cursor-pointer border text-base-content ${
             isActiveTopic
               ? "border-transparent bg-base-200"
               : "border-transparent hover:bg-base-200"
           } ${isDropTarget ? "border-accent/60" : ""}`}
           // style={ isDropTarget ? { backgroundColor: topicTint(hex, isDark) } : undefined }
         >
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleTopicCollapse(id);
-            }}
-            aria-expanded={!isCollapsed}
-            aria-label={
-              isCollapsed
-                ? t("folders.expand_topic")
-                : t("folders.collapse_topic")
-            }
-            className="flex-shrink-0 rounded-lg p-1 text-base-content transition-colors hover:bg-base-300"
-          >
-            <ChevronDown
-              size={12}
-              className={`pointer-events-none transition-transform duration-200 ${
-                isCollapsed ? "-rotate-90" : "rotate-0"
-              }`}
-            />
-          </button>
-
-          {emoji ? (
-            <span
-              aria-hidden="true"
-              className="flex-shrink-0 pointer-events-none text-sm leading-none"
-              style={{ color: hex }}
+          {!topic && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleTopicCollapse(id);
+              }}
+              aria-expanded={!isCollapsed}
+              aria-label={
+                isCollapsed
+                  ? t("folders.expand_topic")
+                  : t("folders.collapse_topic")
+              }
+              className="-ml-[3px] flex-shrink-0 cursor-pointer text-base-content"
             >
-              {emoji}
-            </span>
-          ) : Icon ? (
-            <Icon
-              size={16}
-              className="flex-shrink-0 pointer-events-none"
-              style={{ color: hex }}
-            />
-          ) : id !== UNSORTED_TOPIC_ID ? (
-            <span
-              aria-hidden="true"
-              className="h-2 w-2 rounded-full flex-shrink-0 pointer-events-none"
-              style={{ backgroundColor: withAlpha(hex, isDark ? 0.7 : 0.5) }}
-            />
-          ) : null}
+              <ChevronDown
+                size={16}
+                className={`pointer-events-none transition-transform duration-200 ${
+                  isCollapsed ? "-rotate-90" : "rotate-0"
+                }`}
+              />
+            </button>
+          )}
+
+          {topic ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleTopicCollapse(id);
+              }}
+              aria-expanded={!isCollapsed}
+              aria-label={
+                isCollapsed
+                  ? t("folders.expand_topic")
+                  : t("folders.collapse_topic")
+              }
+              className="group/icon -ml-1 -my-1 box-content flex h-4 w-4 flex-shrink-0 items-center justify-center p-1 cursor-pointer"
+            >
+              <span className="flex items-center justify-center group-hover/icon:hidden group-focus-visible/icon:hidden">
+                {glyph}
+              </span>
+              <ChevronDown
+                size={16}
+                className={`hidden pointer-events-none transition-transform duration-200 group-hover/icon:block group-focus-visible/icon:block ${
+                  isCollapsed ? "-rotate-90" : "rotate-0"
+                }`}
+              />
+            </button>
+          ) : (
+            glyph
+          )}
 
           <span
             className="flex-1 truncate select-none pointer-events-none font-medium"
@@ -282,44 +362,48 @@ export default function TopicList({
           </span>
 
           {topic && (
-            <button
-              type="button"
-              ref={(el) => {
-                menuButtonRefs.current[id] = el;
-              }}
-              onClick={(e) => toggleTopicMenu(e, id)}
-              data-guide="topic-menu"
-              aria-label={t("folders.topic_options")}
-              aria-haspopup="menu"
-              aria-expanded={menuTopicId === id}
-              className={`flex-shrink-0 rounded-lg p-1 hover:bg-base-300 transition ${
-                menuTopicId === id || window.innerWidth < 1024
-                  ? "opacity-100"
-                  : "opacity-0 group-hover:opacity-100"
-              }`}
-            >
-              <OverflowMenuVertical
-                size={16}
-                className="text-base-content/70"
-              />
-            </button>
+            <div className="flex shrink-0 items-center gap-1">
+              <SortIconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onNewChatInTopic(id);
+                }}
+                data-guide="topic-new-chat"
+                aria-label={t("folders.new_chat_in_topic")}
+                title={t("folders.new_chat_in_topic")}
+                className={`${ROW_ACTION_BUTTON} ${actionVisibility}`}
+              >
+                <Add size={18} />
+              </SortIconButton>
+              <SortIconButton
+                ref={(el) => {
+                  menuButtonRefs.current[id] = el;
+                }}
+                onClick={(e) => toggleTopicMenu(e, id)}
+                data-guide="topic-menu"
+                aria-label={t("folders.topic_options")}
+                aria-haspopup="menu"
+                aria-expanded={menuTopicId === id}
+                className={`${ROW_ACTION_BUTTON} ${actionVisibility}`}
+              >
+                <OverflowMenuVertical size={18} />
+              </SortIconButton>
+            </div>
           )}
 
           {actions}
 
-          <span className="text-[11px] select-none pointer-events-none font-normal text-base-content">
+          <span className="min-w-5 text-right text-[11px] select-none pointer-events-none font-normal text-base-content">
             {count > 999 ? "999+" : count}
           </span>
         </div>
 
-        {!isCollapsed && (
+        {!isCollapsed && count > 0 && (
           <div
-            className="ml-[17.5px] mt-1 pl-1 border-l flex flex-col gap-1"
+            className={`${topic ? "ml-[15.5px] pl-[8.5px]" : "ml-[12.5px] pl-[11.5px]"} mt-1 border-l flex flex-col gap-1`}
             style={{ borderColor: withAlpha(hex, isDark ? 0.5 : 0.35) }}
           >
-            {count > 0 && (
-              conversations.map((conv) => renderConversationRow(conv))
-            ) }
+            {conversations.map((conv) => renderConversationRow(conv))}
           </div>
         )}
       </div>
@@ -331,53 +415,70 @@ export default function TopicList({
       {(pinnedTopics.length > 0 || pinnedConversations.length > 0) && (
         <div
           data-guide="pinned-chats"
-          className="flex flex-col gap-1 pb-1 mb-1 border-b border-base-300"
+          className="flex flex-col gap-1"
         >
-          <div className="flex items-center gap-2 px-2 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-wide text-base-content/70">
-            <PinFilled size={12} className="flex-shrink-0" />
-            <span className="truncate">{t("folders.pinned")}</span>
-          </div>
-          {pinnedTopics.map((topic) => {
-            const color = topicColor(topic);
-            const emoji =
-              topic.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
-            return renderRow({
-              id: topic.id,
-              label: topic.name,
-              conversations: conversationsByTopic.get(topic.id) ?? [],
-              hex: color.hex,
-              Icon: emoji ? null : topicIcon(topic),
-              emoji,
-              topic,
-            });
-          })}
-          {pinnedConversations.map((conv) =>
-            renderConversationRow(conv, { showModified: true }),
+          {renderSectionHeader(PINNED_TOPIC_ID, t("folders.pinned"), pinnedCount, pinnedCollapsed)}
+          {!pinnedCollapsed && (
+            <div className="flex flex-col gap-1">
+              {pinnedTopics.map((topic) => {
+                const color = topicColor(topic);
+                const emoji =
+                  topic.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
+                return renderRow({
+                  id: topic.id,
+                  label: topic.name,
+                  conversations: conversationsByTopic.get(topic.id) ?? [],
+                  hex: topicHex(color, isDark),
+                  Icon: emoji ? null : topicIcon(topic),
+                  emoji,
+                  topic,
+                });
+              })}
+              {pinnedConversations.length > 0 && (
+                <div
+                  className="ml-[12.5px] pl-[11.5px] mt-1 border-l flex flex-col gap-1"
+                  style={{ borderColor: withAlpha(neutralHex, isDark ? 0.5 : 0.35) }}
+                >
+                  {pinnedConversations.map((conv) =>
+                    renderConversationRow(conv, { showModified: true }),
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
       {grouping === "topic" && (
         <>
-      {topics.map((topic) => {
-        const color = topicColor(topic);
-        const emoji =
-          topic.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
-        return renderRow({
-          id: topic.id,
-          label: topic.name,
-          conversations: conversationsByTopic.get(topic.id) ?? [],
-          hex: color.hex,
-          Icon: emoji ? null : topicIcon(topic),
-          emoji,
-          topic,
-        });
-      })}
+      {topics.length > 0 && (
+        <div className="flex flex-col gap-1">
+          {renderSectionHeader(TOPICS_SECTION_ID, t("folders.topics_section"), topics.length, topicsCollapsed)}
+          {!topicsCollapsed && (
+            <>
+            {topics.map((topic) => {
+              const color = topicColor(topic);
+              const emoji =
+                topic.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
+              return renderRow({
+                id: topic.id,
+                label: topic.name,
+                conversations: conversationsByTopic.get(topic.id) ?? [],
+                hex: topicHex(color, isDark),
+                Icon: emoji ? null : topicIcon(topic),
+                emoji,
+                topic,
+              });
+            })}
+            </>
+          )}
+        </div>
+      )}
 
       {renderRow({
         id: UNSORTED_TOPIC_ID,
         label: t("folders.title"),
         conversations: unsortedConversations,
-        hex: isDark ? "#94A3B8" : "#64748B",
+        hex: neutralHex,
         Icon: null,
         actions: headerActions,
       })}
@@ -427,7 +528,7 @@ export default function TopicList({
                       {bucketCount > 999 ? "999+" : bucketCount}
                     </span>
                     <ChevronDown
-                      size={12}
+                      size={16}
                       className={`flex-shrink-0 pointer-events-none text-base-content transition-transform duration-200 ${
                         bucketCollapsed ? "-rotate-90" : "rotate-0"
                       }`}

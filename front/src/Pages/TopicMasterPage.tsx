@@ -21,7 +21,9 @@ import Header from "../components/Header/Header";
 import SidebarWrapper from "../components/Sidebar/SidebarWrapper";
 import TopicComposer from "../components/TopicMaster/TopicComposer";
 import { UNSORTED_TOPIC_ID } from "../components/Sidebar/TopicList";
-import { topicColor } from "../components/Sidebar/topicColors";
+import { selectTopicConversations } from "../utils/topicConversations";
+import { topicColor, topicHex } from "../components/Sidebar/topicColors";
+import { selectDarkMode } from "../Redux/reducers/interfaceSettingsSlice";
 import { isTopicIconId, topicIcon } from "../components/Sidebar/topicIcons";
 
 function sortByRecent(first: ConversationRow, second: ConversationRow) {
@@ -36,6 +38,7 @@ export default function TopicMasterPage() {
   const { t, i18n } = useTranslation();
   const userSettings = useSelector(selectUserSettings);
   const showSummaries = useSelector(selectConversationSummaries);
+  const isDark = useSelector(selectDarkMode);
   const modelsData = useUpdateModelsData();
   const userData = useUpdateUserData();
 
@@ -60,19 +63,13 @@ export default function TopicMasterPage() {
     return () => clearTimeout(timeout);
   }, [folders.length]);
 
-  const topicConversations = useMemo(() => {
-    const knownTopicIds = new Set(folders.map((folder) => folder.id));
-    const matching = isUnsorted
-      ? conversations.filter(
-          (conversation) =>
-            !conversation.folderId ||
-            !knownTopicIds.has(conversation.folderId),
-        )
-      : conversations.filter(
-          (conversation) => conversation.folderId === topicId,
-        );
-    return [...matching].sort(sortByRecent);
-  }, [conversations, folders, isUnsorted, topicId]);
+  const topicConversations = useMemo(
+    () =>
+      [...selectTopicConversations(conversations, folders, topicId, isUnsorted)].sort(
+        sortByRecent,
+      ),
+    [conversations, folders, isUnsorted, topicId],
+  );
 
   const folderId = isUnsorted ? null : topicId;
   const [draftState, setDraftState] = useState(() =>
@@ -94,7 +91,7 @@ export default function TopicMasterPage() {
 
   const emoji = topic?.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
   const TopicIcon = topic ? topicIcon(topic) : Folder;
-  const colorHex = topic ? topicColor(topic).hex : undefined;
+  const colorHex = topic ? topicHex(topicColor(topic), isDark) : undefined;
 
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr]">
@@ -153,7 +150,7 @@ export default function TopicMasterPage() {
                   </button>
                   {!isUnsorted && (
                     <span
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-base-200"
+                      className="flex shrink-0 items-center justify-center"
                       style={colorHex ? { color: colorHex } : undefined}
                     >
                       {emoji ? (
@@ -185,9 +182,6 @@ export default function TopicMasterPage() {
                 <div className="mx-auto flex w-full max-w-3xl flex-col gap-2">
                   {topicConversations.length === 0 ? (
                     <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-base-100 text-base-content/40 shadow-sm">
-                        <Chat size={22} />
-                      </div>
                       <h2 className="text-base font-semibold text-base-content">
                         {t("topic_view.empty_title")}
                       </h2>

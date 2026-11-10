@@ -10,7 +10,7 @@ export default function ForkButton({ handleForkConversation }) {
             {" "}
             <FlowBranch
                 size={18}
-                className="opacity-25 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-accent"
+                className="cursor-pointer text-accent"
             />
         </button>
         </Tooltip>

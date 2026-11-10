@@ -20,7 +20,7 @@ import DeleteChatModal from "../components/Sidebar/Modals/DeleteChatModal";
 import RenameChatModal from "../components/Sidebar/Modals/RenameChatModal";
 import ExportChatModal from "../components/Sidebar/Modals/ExportChatModal";
 import ImportPersonaModal from "../components/Sidebar/Modals/ImportPersonaModal";
-import FolderEditorModal from "../components/Sidebar/Modals/FolderEditorModal";
+import TopicEditorModal from "../components/Sidebar/Modals/TopicEditorModal";
 import DeleteFolderModal from "../components/Sidebar/Modals/DeleteFolderModal";
 import MoveChatModal from "../components/Sidebar/Modals/MoveChatModal";
 import OrganizeChatsModal from "../components/Sidebar/Modals/OrganizeChatsModal";
@@ -95,15 +95,10 @@ export function ModalProvider({ children }) {
         <ImportPersonaModal isOpen onClose={closeModal} {...modalProps} />
       )}
       {modalType === "createFolder" && (
-        <FolderEditorModal
-          mode="create"
-          isOpen
-          onClose={closeModal}
-          {...modalProps}
-        />
+        <TopicEditorModal isOpen onClose={closeModal} />
       )}
       {modalType === "renameFolder" && (
-        <FolderEditorModal
+        <TopicEditorModal
           mode="rename"
           isOpen
           onClose={closeModal}

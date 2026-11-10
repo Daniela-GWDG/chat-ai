@@ -59,7 +59,6 @@ import TopicList, {
   UNSORTED_TOPIC_ID,
   dateBucketCollapseId,
 } from "./TopicList";
-import TopicCreateBubble from "./TopicCreateBubble";
 import SidebarUserCard from "./SidebarUserCard";
 import NewTopicButton from "./Buttons/NewTopicButton";
 import AiServicesMenu from "./AiServicesMenu";
@@ -74,7 +73,7 @@ import ExportChatButton from "./Buttons/ExportChatButton";
 import DeleteChatButton from "./Buttons/DeleteChatButton";
 import RenameChatButton from "./Buttons/RenameChatButton";
 import TutorialStatus from "../Others/TutorialStatus";
-import { NavIconButton, SortIconButton } from "../Others/IconButtons";
+import { NavIconButton, ROW_ACTION_BUTTON, SortIconButton } from "../Others/IconButtons";
 
 export default function SidebarContent({
   localState,
@@ -102,10 +101,7 @@ export default function SidebarContent({
   const conversationGrouping = useSelector(selectConversationGrouping);
   const summariesEnabled = useSelector(selectConversationSummaries);
 
-  const { isDesktop, windowWidth } = useWindowSize();
-  // Below this the sidebar is an overlay drawer (see Sidebar.jsx), which leaves
-  // an anchored bubble nowhere to go — those widths keep the dialog.
-  const sidebarIsDocked = windowWidth >= 1081;
+  const { isDesktop } = useWindowSize();
   const conversations = useConversationList() || [];
   const folders = useFolderList() || [];
   const orderedConversations = useMemo(
@@ -276,18 +272,7 @@ export default function SidebarContent({
     dispatch(toggleSidebar());
   }
 
-  const [createTopicAnchor, setCreateTopicAnchor] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-
-  const handleCreateFolder = (anchor: { x: number; y: number }) => {
-    if (sidebarIsDocked) {
-      setCreateTopicAnchor(anchor);
-      return;
-    }
-    openModal("createFolder");
-  };
+  const handleCreateFolder = () => openModal("createFolder");
 
   const handleRenameFolder = (folder: {
     id: string;
@@ -557,18 +542,15 @@ export default function SidebarContent({
                   : "opacity-0"
               }`}
             >
-              <button
+              <SortIconButton
                 ref={(el) => (menuButtonRefs.current[id] = el)}
                 onClick={(e) => openMenu(e, id)}
                 data-guide="conversation-menu"
-                className={`p-1.5 hover:bg-base-300 rounded-lg transition-all duration-200 touch-manipulation flex items-center justify-center 
-                  hover:scale-110 active:scale-95 cursor-pointer`}
-                style={{
-                  WebkitTapHighlightColor: "transparent",
-                }}
+                className={`${ROW_ACTION_BUTTON} touch-manipulation`}
+                style={{ WebkitTapHighlightColor: "transparent" }}
               >
-                <OverflowMenuVertical size={16} className="text-base-content/70" />
-              </button>
+                <OverflowMenuVertical size={18} />
+              </SortIconButton>
             </div>
           </div>
         </div>
@@ -769,6 +751,7 @@ export default function SidebarContent({
                 onDeleteTopic={handleDeleteFolder}
                 onToggleTopicPinned={handleToggleTopicPinned}
                 onOpenTopic={handleOpenTopic}
+                onNewChatInTopic={handleNewConversation}
                 draggingConversationId={draggingConversationId}
                 dragOverTopicId={dragOverTopicId}
                 onDragEnterTopic={setDragOverTopicId}
@@ -804,12 +787,6 @@ export default function SidebarContent({
           </div>
         </div>
       </div>
-
-      <TopicCreateBubble
-        isOpen={createTopicAnchor !== null}
-        onClose={() => setCreateTopicAnchor(null)}
-        anchor={createTopicAnchor ?? { x: 0, y: 0 }}
-      />
 
       {/* MENU RENDERED OUTSIDE - PORTAL STYLE */}
       {activeMenu && (

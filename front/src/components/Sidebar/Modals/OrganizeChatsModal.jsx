@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { selectDarkMode } from "../../../Redux/reducers/interfaceSettingsSlice";
 import { useNavigate } from "react-router-dom";
 import { TrashCan } from "@carbon/icons-react";
 
@@ -17,7 +18,7 @@ import {
   updateConversationMeta,
 } from "../../../db";
 import { selectConversationSort } from "../../../Redux/reducers/interfaceSettingsSlice";
-import { TOPIC_COLORS, topicColor, topicColorById, withAlpha } from "../topicColors";
+import { TOPIC_COLORS, topicColor, topicColorById, topicHex, withAlpha } from "../topicColors";
 import {
   DEFAULT_TOPIC_ICON,
   TOPIC_ICONS,
@@ -39,6 +40,7 @@ export default function OrganizeChatsModal({
   notifySuccess,
 }) {
   const { t, i18n } = useTranslation();
+  const isDark = useSelector(selectDarkMode);
   const navigate = useNavigate();
   const { notifyError } = useToast();
   const conversationSort = useSelector(selectConversationSort);
@@ -593,6 +595,7 @@ export default function OrganizeChatsModal({
                     icon: DEFAULT_TOPIC_ICON.id,
                   };
                   const color = topicColorById(style.color);
+                  const colorHex = topicHex(color, isDark);
                   const hasKnownIcon = isTopicIconId(style.icon);
                   const TopicIcon = hasKnownIcon
                     ? topicIconById(style.icon).Icon
@@ -625,7 +628,7 @@ export default function OrganizeChatsModal({
                           {hasKnownIcon && TopicIcon ? (
                             <TopicIcon
                               size={16}
-                              style={{ color: color.hex }}
+                              style={{ color: colorHex }}
                             />
                           ) : (
                             <span className="text-base leading-none">
@@ -708,7 +711,7 @@ export default function OrganizeChatsModal({
                                     ? "ring-2 ring-accent ring-offset-1 ring-offset-base-100"
                                     : "hover:scale-110"
                                 }`}
-                                style={{ backgroundColor: option.hex }}
+                                style={{ backgroundColor: topicHex(option, isDark) }}
                               />
                             ))}
                           </div>
@@ -743,10 +746,10 @@ export default function OrganizeChatsModal({
                                     selected
                                       ? {
                                           backgroundColor: withAlpha(
-                                            color.hex,
+                                            colorHex,
                                             0.18,
                                           ),
-                                          color: color.hex,
+                                          color: colorHex,
                                         }
                                       : undefined
                                   }
@@ -762,7 +765,7 @@ export default function OrganizeChatsModal({
                       <div
                         className="ml-2 flex flex-col gap-0.5 border-l border-base-300 pl-2"
                         style={{
-                          borderColor: withAlpha(color.hex, 0.4),
+                          borderColor: withAlpha(colorHex, 0.4),
                         }}
                       >
                         {topic.conversations.map((conversation) => {

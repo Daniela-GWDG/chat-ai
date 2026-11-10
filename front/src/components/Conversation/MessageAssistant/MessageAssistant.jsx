@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
+import { keepViewportPosition } from "../../../utils/keepViewportPosition";
 import MarkdownRenderer from "./MarkdownRenderer";
 import FeatureGuideCard from "../../Others/FeatureGuideCard";
 import UseCaseGuideCard from "../../Others/UseCaseGuideCard";
@@ -48,6 +49,21 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
     ? []
     : getMetaActionProposals(message?.content?.[0]?.text);
   const [renderMode, setRenderMode] = useState("Default");
+  const renderModeControlRef = useRef(null);
+  const renderModeControlTop = useRef(null);
+
+  const changeRenderMode = (mode) => {
+    renderModeControlTop.current =
+      renderModeControlRef.current?.getBoundingClientRect().top ?? null;
+    setRenderMode(mode);
+  };
+
+  // The answer above the control changes height; keep the control where it was.
+  useLayoutEffect(() => {
+    if (renderModeControlTop.current === null) return;
+    keepViewportPosition(renderModeControlRef.current, renderModeControlTop.current);
+    renderModeControlTop.current = null;
+  }, [renderMode]);
   // Define render modes with better styling
   const renderModes = ["Default", "Markdown", "Plaintext"];
   
@@ -389,29 +405,23 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                   <ForkButton handleForkConversation={handleForkConversation} />
                   <EditButton setEditMode={setEditMode} />
                   {/* Vertical seperator like | */}
-                  <div className="hidden md:flex w-px h-6 bg-base-300 opacity-25 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="hidden md:flex w-px h-6 bg-base-300"></div>
                   {/* Render Mode Selector on the bottom left*/}
-                  <div className="hidden md:flex h-6 bg-base-300 rounded-xl overflow-hidden opacity-25 group-hover:opacity-100 transition-opacity duration-300 ">
+                  <div ref={renderModeControlRef} className="join hidden md:inline-flex">
                     {renderModes.map((mode) => (
                       <button
                         key={mode}
-                        onClick={() => !loading && setRenderMode(mode)}
-                        className={`px-2 text-xs font-medium rounded-xl transition-all duration-300 ease-in-out min-w-[60px] cursor-pointer select-none
-                    ${loading ? "cursor-not-allowed opacity-25" : ""}
-                    ${
-                      renderMode === mode
-                        ? "bg-accent text-accent-content rounded-xl"
-                        : "bg-base-300 text-base-content/70 hover:bg-base-300"
-                    }
-                    `}
-                        disabled={loading}
+                        type="button"
+                        onClick={() => changeRenderMode(mode)}
+                        aria-pressed={renderMode === mode}
+                        className={`join-item btn btn-xs min-w-[60px] ${renderMode === mode ? "btn-accent" : "bg-base-100 border-base-300 hover:bg-base-200"}`}
                       >
                         {mode}
                       </button>
                     ))}
                   </div>
                   { /* Show message metadata */
-                  message?.meta && (<div className="w-px h-6 bg-base-300 opacity-25 group-hover:opacity-100 transition-opacity duration-300"></div>)}
+                  message?.meta && (<div className="w-px h-6 bg-base-300"></div>)}
                   {
                   message?.meta && (
                     <MetaBox meta={message.meta} /> 
