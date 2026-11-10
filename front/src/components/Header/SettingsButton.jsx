@@ -4,13 +4,14 @@ import { useTranslation } from "react-i18next";
 import { SettingsAdjust } from "@carbon/icons-react";
 import Tooltip from "../Others/Tooltip";
 import SettingsContent from "../SettingsPanel/SettingsContent";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function SettingsButton({ localState, setLocalState, userData, modelsData }) {
     const { t } = useTranslation();
     return (
         <Popover className="settings-toggle relative flex">
             <Tooltip text={t("settings.chat_settings")}>
-                <PopoverButton className="flex cursor-pointer focus:outline-none">
+                <PopoverButton as={PromptIconButton}>
                     <SettingsAdjust size={18} className="cursor-pointer text-accent" />
                 </PopoverButton>
             </Tooltip>

@@ -4,6 +4,7 @@ import Joyride from "react-joyride-react-19";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { useModal } from "../../modals/ModalContext";
+import TourTooltip from "./TourTooltip";
 import {
   closeTour,
   selectShowTour,
@@ -34,7 +35,6 @@ export default function TourManager() {
       placement: "top",
       disableBeacon: true,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -44,7 +44,6 @@ export default function TourManager() {
       placement: "bottom",
       disableBeacon: false,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -54,7 +53,6 @@ export default function TourManager() {
       placement: isMobile? "center": "right",
       disableBeacon: true,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -64,7 +62,6 @@ export default function TourManager() {
       placement: "top",
       disableBeacon: true,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -74,7 +71,6 @@ export default function TourManager() {
       placement: "left",
       disableBeacon: true,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -84,7 +80,6 @@ export default function TourManager() {
       placement: "top",
       disableBeacon: true,
       styles: {
-        tooltip: { border: "none", boxShadow: "none" },
         spotlight: { border: "none" },
       },
     },
@@ -166,12 +161,13 @@ export default function TourManager() {
       steps={tourSteps}
       run={runTour}
       continuous
-      showProgress
       showSkipButton
       disableOverlay={false}
       disableOverlayClose
       disableScrolling
       callback={handleJoyrideCallback}
+      tooltipComponent={TourTooltip}
+      floaterProps={{ styles: { arrow: { length: 4, spread: 10 } } }}
       locale={{
         back: t("tour.back"),
         close: t("tour.close"),
@@ -180,7 +176,11 @@ export default function TourManager() {
         skip: t("tour.skip"),
       }}
       styles={{
-        options: { primaryColor: "#009EE0", zIndex: 20000 },
+        options: {
+          arrowColor: "var(--color-base-100)",
+          primaryColor: "#009EE0",
+          zIndex: 20000,
+        },
         overlay: {
           backgroundColor: "rgba(0,0,0,0.75)",
           mixBlendMode: "normal",
@@ -189,40 +189,6 @@ export default function TourManager() {
           borderRadius: 8,
           border: "2px solid #009EE0",
           backgroundColor: "transparent",
-        },
-        tooltip: {
-          borderRadius: 12,
-          fontSize: 16,
-          fontFamily: "inherit",
-          padding: 20,
-          boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-          backgroundColor: "var(--tooltip-bg, #ffffff)",
-          color: "var(--tooltip-text, #333333)",
-        },
-        tooltipContent: { padding: 0 },
-        buttonNext: {
-          backgroundColor: "#009EE0",
-          fontSize: 14,
-          fontWeight: 500,
-          padding: "10px 20px",
-          borderRadius: 8,
-          border: "none",
-        },
-        buttonBack: {
-          color: "#6b7280",
-          fontSize: 14,
-          padding: "10px 16px",
-          marginRight: 12,
-          border: "1px solid #d1d5db",
-          borderRadius: 8,
-          backgroundColor: "transparent",
-        },
-        buttonSkip: {
-          color: "#6b7280",
-          fontSize: 14,
-          padding: "10px 16px",
-          backgroundColor: "transparent",
-          border: "none",
         },
       }}
     />

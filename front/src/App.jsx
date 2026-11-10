@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import PublicRoute from "./Route/PublicRoute";
 import { BrowserRouter } from "react-router";
 import { ToastProvider } from "./components/Others/ToastProvider";
+import TitleTooltips from "./components/Others/TitleTooltips";
 import { ModalProvider } from "./modals/ModalContext";
 import { FeatureGuideProvider } from "./context/FeatureGuideContext";
 
@@ -29,6 +30,7 @@ function App() {
   return (
     <BrowserRouter key={i18n.language}>
       <ToastProvider/>
+      <TitleTooltips />
       <ModalProvider>
         <FeatureGuideProvider>
           <PublicRoute />

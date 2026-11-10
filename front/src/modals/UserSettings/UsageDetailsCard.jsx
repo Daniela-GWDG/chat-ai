@@ -196,7 +196,7 @@ export default function UsageDetailsCard({
   if (!metrics.length) return null;
 
   return (
-    <div className="w-full min-w-0 rounded-xl bg-base-200 px-3 py-2">
+    <div className="w-full min-w-0 rounded-xl bg-base-200 px-2 py-2">
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
@@ -206,7 +206,7 @@ export default function UsageDetailsCard({
         {canExpand && (
           <ChevronDown
             size={12}
-            className={`shrink-0 text-base-content transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
+            className={`-ml-1 shrink-0 text-base-content transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
             aria-hidden="true"
           />
         )}

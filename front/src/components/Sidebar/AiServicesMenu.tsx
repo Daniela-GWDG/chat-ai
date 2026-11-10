@@ -1,7 +1,7 @@
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import Logo from '../../assets/logos/chat_ai.svg'
-import LogoSmall from '../../assets/logos/chat_ai_small.ico'
+import ChatAiLogo from '../Header/ChatAiLogo'
+import LogoSmall from '../../assets/logos/chat_ai_mark.png'
 import ImageAiLogo from '../../assets/logos/image-ai.svg'
 import VoiceAiLogo from '../../assets/logos/voice-ai.svg'
 
@@ -37,9 +37,9 @@ export default function AiServicesMenu() {
     <Popover className="relative ">
       <PopoverButton
         aria-label="Open AI services menu"
-        className="focus:outline-none m-1 p-2 inline-flex items-center rounded-lg hover:bg-base-200 cursor-pointer transition-colors duration-150 "
+        className="focus:outline-none my-1 p-2 inline-flex items-center rounded-lg cursor-pointer"
       >
-        <img className="h-10 w-auto object-contain" src={Logo} alt="Chat AI Logo" />
+        <ChatAiLogo className="h-7 w-auto" />
       </PopoverButton>
 
       <Transition

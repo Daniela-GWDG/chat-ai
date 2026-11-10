@@ -3,6 +3,7 @@ import { BrainstormFilled } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
+import { NavIconButton } from "../../Others/IconButtons";
 
 export default function SummarizeChatButton({
   localState,
@@ -42,14 +43,13 @@ export default function SummarizeChatButton({
       <ShortcutTooltip
         label={t("common.summarize")}
     >
-        <button
+        <NavIconButton
         onClick={handleSummarizeChat}
         data-guide="summarize-chat"
-        className="btn btn-ghost btn-square hover:bg-success/10 hover:text-success"
         aria-label={t("common.summarize")}
         >
-        <BrainstormFilled size={22} className="text-accent" />
-        </button>
+        <BrainstormFilled size={20} className="text-accent" />
+        </NavIconButton>
     </ShortcutTooltip>
     )
   }

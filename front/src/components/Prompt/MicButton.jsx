@@ -7,6 +7,7 @@ import { useAttachments } from "../../hooks/useAttachments";
 
 import { isAgentEnabled } from "../../apis/agentEndpoints";
 import { Microphone } from "@carbon/icons-react";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function MicButton({
     localState,
@@ -211,12 +212,8 @@ export default function MicButton({
                 : t("common.record_start")
             }
             >
-            <button
-                className={
-                isRecording
-                    ? "btn btn-circle btn-sm h-[30px] w-[30px] min-h-0 btn-error animate-pulse"
-                    : "h-[30px] w-[30px] flex items-center justify-center cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                }
+            <PromptIconButton
+                className={isRecording ? "!bg-error animate-pulse" : ""}
                 type="button"
                 data-guide="mic"
                 onClick={handleAudioClick}
@@ -234,7 +231,7 @@ export default function MicButton({
                 // Microphone icon when not recording
                 <Microphone size={18} className="text-accent" />
                 )}
-            </button>
+            </PromptIconButton>
             </Tooltip>
         </>
     );

@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { AddFilled } from "@carbon/icons-react";
+import { Add } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
+import { NavIconButton, SIDEBAR_GHOST_BUTTON } from "../../Others/IconButtons";
 
 
 export default function NewChatButton({
@@ -21,7 +22,7 @@ export default function NewChatButton({
         data-guide="new-chat"
         className="text-accent cursor-pointer flex-shrink-0 p-1.5 gap-1.5 rounded-lg hover:bg-base-200 transition-all duration-200 flex items-center justify-center"
       >
-        <AddFilled size={18} className="text-accent" />
+        <Add size={18} className="text-accent" />
         <span className="truncate text-xs font-semibold py-1 pr-1">
           {t("sidebar.new_conversation")}
         </span>
@@ -35,14 +36,13 @@ export default function NewChatButton({
         label={t("sidebar.new_conversation")}
         shortcut={t("sidebar.shortcut_new_conversation")}
       >
-        <button
+        <NavIconButton
           onClick={() => {onNewConversation(topicId);}}
           data-guide="new-chat"
-          className={`cursor-pointer p-2.5 hover:bg-info/10 hover:text-info rounded-lg flex items-center justify-center`}
           aria-label={t("sidebar.new_conversation")}
         >
-          <AddFilled size={22} className="text-accent" />
-        </button>
+          <Add size={20} className="text-accent" />
+        </NavIconButton>
       </ShortcutTooltip>
     )
   }
@@ -54,18 +54,11 @@ export default function NewChatButton({
         <button
           onClick={() => {onNewConversation(topicId);}}
           data-guide="new-chat"
-          className={`cursor-pointer w-full text-base-content font-medium touch-manipulation transition-colors
-            pl-2 pr-4 py-3 rounded-2xl flex items-center justify-start gap-3 text-sm text-accent
- hover:bg-base-200
-            `}
-          style={{
-            WebkitTapHighlightColor: "transparent"
-          }}
+          className={SIDEBAR_GHOST_BUTTON}
         >
-          <AddFilled size={22} className="text-accent" />
-          <span className="truncate">
-            {t("sidebar.new_conversation")}
-          </span>
+          {/* The glyph sits 5px inside its 20px box; this evens out the side padding. */}
+          <Add size={20} className="-ml-[5px]" />
+          {t("sidebar.new_conversation")}
         </button>
       </>
     );

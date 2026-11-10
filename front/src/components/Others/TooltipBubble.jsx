@@ -27,7 +27,8 @@ export default function TooltipBubble({ rect, placement = "top", align, children
         left: rect.left,
         width: rect.width,
         height: rect.height,
-        zIndex: 9999,
+        // Above the guided tour, whose overlay sits at 20000.
+        zIndex: 20001,
         pointerEvents: "none",
       }}
     >

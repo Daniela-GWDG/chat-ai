@@ -11,8 +11,8 @@ import { useToast } from "../../../hooks/useToast";
 import {
   Folder,
   FolderOpen,
-  Bot,
   Menu,
+  Bot,
 } from "lucide-react";
 
 export default function ImportPersonaModal({

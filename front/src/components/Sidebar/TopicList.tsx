@@ -7,7 +7,6 @@ import {
   Calendar,
   ChevronDown,
   Edit,
-  Folder,
   OverflowMenuVertical,
   Pin,
   PinFilled,
@@ -48,7 +47,6 @@ export default function TopicList({
   pinnedConversations,
   conversationsByTopic,
   unsortedConversations,
-  onCreateTopic,
   onRenameTopic,
   onDeleteTopic,
   onToggleTopicPinned,
@@ -63,13 +61,13 @@ export default function TopicList({
   creationDateGroups,
   isDark,
   grouping,
+  sortActions,
 }: {
   topics: FolderRow[];
   pinnedTopics: FolderRow[];
   pinnedConversations: any[];
   conversationsByTopic: Map<string, any[]>;
   unsortedConversations: any[];
-  onCreateTopic: (anchor: { x: number; y: number }) => void;
   onRenameTopic: (topic: TopicRef) => void;
   onDeleteTopic: (topic: TopicRef) => void;
   onToggleTopicPinned: (topic: TopicRef) => void;
@@ -91,9 +89,9 @@ export default function TopicList({
   creationDateGroups: DateGroup[];
   isDark: boolean;
   grouping: "topic" | "date" | "created";
+  sortActions?: ReactNode;
 }) {
   const { t } = useTranslation();
-  const createButtonRef = useRef<HTMLButtonElement | null>(null);
   const { openModal } = useModal();
   const dispatch = useDispatch();
   const { pathname } = useLocation();
@@ -162,6 +160,17 @@ export default function TopicList({
     };
   }, [menuTopicId, closeTopicMenu]);
 
+  // Row hover is base-200, so buttons inside it need a darker hover. The
+  // negative margin keeps the row as tall as the topic rows.
+  const headerActions = sortActions ? (
+    <div
+      className="-my-1.5 flex shrink-0 items-center gap-1 [&_button:hover]:bg-base-300"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {sortActions}
+    </div>
+  ) : null;
+
   const renderRow = (options: {
     id: string;
     label: string;
@@ -170,8 +179,9 @@ export default function TopicList({
     Icon?: ReturnType<typeof topicIcon> | null;
     emoji?: string | null;
     topic?: TopicRef;
+    actions?: ReactNode;
   }) => {
-    const { id, label, conversations, hex, Icon, emoji, topic } = options;
+    const { id, label, conversations, hex, Icon, emoji, topic, actions } = options;
     const isCollapsed = collapsedTopicIds.includes(id);
     const isDropTarget =
       draggingConversationId !== null && dragOverTopicId === id;
@@ -213,10 +223,10 @@ export default function TopicList({
               onOpenTopic(id);
             }
           }}
-          className={`group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border text-base-content hover:bg-base-200 ${
+          className={`group -mx-2 flex items-center gap-2 px-[15px] py-2 text-xs transition cursor-pointer border text-base-content ${
             isActiveTopic
-              ? "border-accent/40 bg-base-200"
-              : "border-transparent"
+              ? "border-transparent bg-base-200"
+              : "border-transparent hover:bg-base-200"
           } ${isDropTarget ? "border-accent/60" : ""}`}
           // style={ isDropTarget ? { backgroundColor: topicTint(hex, isDark) } : undefined }
         >
@@ -295,6 +305,8 @@ export default function TopicList({
             </button>
           )}
 
+          {actions}
+
           <span className="text-[11px] select-none pointer-events-none font-normal text-base-content">
             {count > 999 ? "999+" : count}
           </span>
@@ -302,7 +314,7 @@ export default function TopicList({
 
         {!isCollapsed && (
           <div
-            className="ml-2 pl-2 border-l flex flex-col gap-1"
+            className="ml-[17.5px] mt-1 pl-1 border-l flex flex-col gap-1"
             style={{ borderColor: withAlpha(hex, isDark ? 0.5 : 0.35) }}
           >
             {count > 0 && (
@@ -346,21 +358,6 @@ export default function TopicList({
       )}
       {grouping === "topic" && (
         <>
-          <div className={`group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200`}>
-      <button
-        type="button"
-        ref={createButtonRef}
-        onClick={() => {
-          const rect = createButtonRef.current?.getBoundingClientRect();
-          onCreateTopic({ x: rect?.right ?? 0, y: rect?.top ?? 0 });
-        }}
-        data-guide="create-topic"
-        className="w-full flex items-center text-xs text-secondary dark:text-primary font-semibold cursor-pointer"
-      >
-        <Folder size={18} className="flex-shrink-0" />
-          <span className="truncate px-2">{t("folders.create_button")}</span>
-      </button>
-      </div>
       {topics.map((topic) => {
         const color = topicColor(topic);
         const emoji =
@@ -378,18 +375,22 @@ export default function TopicList({
 
       {renderRow({
         id: UNSORTED_TOPIC_ID,
-        label: t("folders.uncategorized"),
+        label: t("folders.title"),
         conversations: unsortedConversations,
         hex: isDark ? "#94A3B8" : "#64748B",
         Icon: null,
+        actions: headerActions,
       })}
         </>
       )}
 
       {(grouping === "date" || grouping === "created") && (
         <div className="flex flex-col gap-1">
-          <div className="px-2 pt-3 pb-1 text-[10px] font-semibold text-base-content/70">
-            {t(grouping === "created" ? "folders.by_created" : "folders.by_date")}
+          <div className="flex items-center justify-between pl-2 pr-px pt-3 pb-1 text-[10px] font-semibold text-base-content/70">
+            <span className="truncate">
+              {t(grouping === "created" ? "folders.by_created" : "folders.by_date")}
+            </span>
+            {headerActions}
           </div>
           {(() => {
             const isCreated = grouping === "created";
@@ -413,7 +414,7 @@ export default function TopicList({
                         toggleTopicCollapse(bucketId);
                       }
                     }}
-                    className="group flex items-center gap-2 rounded-lg px-1 py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+                    className="group -mx-2 flex items-center gap-2 px-[15px] py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
                   >
                     <ParentIcon
                       size={14}

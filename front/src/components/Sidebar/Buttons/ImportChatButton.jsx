@@ -4,6 +4,7 @@ import { useImportConversation } from "../../../hooks/useImportConversation";
 import { Upload } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
+import { NavIconButton } from "../../Others/IconButtons";
 
 
 export default function ImportChatButton({
@@ -102,14 +103,13 @@ export default function ImportChatButton({
         />
         <ShortcutTooltip label={t("common.import")}
 >
-          <button
-            className="btn btn-ghost btn-sm btn-square hover:bg-success/10 hover:text-success"
+          <NavIconButton
             onClick={handleClickJSON}
             disabled={loading}
             aria-label={t("common.import")}
           >
-            <Upload size={22} className="text-accent" />
-          </button>
+            <Upload size={20} className="text-accent" />
+          </NavIconButton>
         </ShortcutTooltip>
       </>
     );
@@ -126,14 +126,13 @@ export default function ImportChatButton({
           className="hidden"
         />
         <ShortcutTooltip label={t("common.import")}>
-          <button
-            className="btn btn-ghost btn-square hover:bg-success/10 hover:text-success"
+          <NavIconButton
             onClick={handleClickJSON}
             disabled={loading}
             aria-label={t("common.import")}
           >
-            <Upload size={22} className="text-accent" />
-          </button>
+            <Upload size={20} className="text-accent" />
+          </NavIconButton>
         </ShortcutTooltip>
         </>
       )
@@ -181,20 +180,16 @@ export default function ImportChatButton({
           onChange={handleFilesChangeJSON}
           className="hidden"
         />
-        <button
+        <NavIconButton
           onClick={handleClickJSON}
           disabled={loading}
           data-guide="import-chat"
-          className={`cursor-pointer flex-shrink-0 p-2 rounded-2xl transition-all duration-200 flex items-center justify-center
- hover:bg-base-200 text-base-content transition-all duration-100 ${
-            loading ? "cursor-not-allowed opacity-50" : ""
-          } `}
           style={{
             WebkitTapHighlightColor: "transparent"
           }}
         >
-          <Upload size={24} className="text-accent" />
-        </button>
+          <Upload size={20} className="text-accent" />
+        </NavIconButton>
         </ShortcutTooltip>
       </>
     );

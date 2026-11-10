@@ -7,7 +7,8 @@ import icon_file_text from "../../../assets/icons/file_text.svg";
 import { getConversation } from "../../../db";
 import { useToast } from "../../../hooks/useToast";
 import { jsPDF } from "jspdf";
-import Logo from "../../../assets/logos/chat_ai.png"
+// Inlined because jsPDF needs the image data, not a URL.
+import Logo from "../../../assets/logos/chat_ai_full.png?inline"
 import { processContentItems } from "../../../utils/sendMessage";
 import { hasMcpServerValue, withoutHeaders } from "../../../agent/mcp";
 
@@ -277,9 +278,10 @@ export default function ExportChatModal({
       // Add header to each page
       const addHeader = (isFirstPage) => {
         y = margin;
-        // TODO fix logo
         if (isFirstPage) {
-          doc.addImage(Logo, "PNG", margin, margin, 20, 8);
+          const { width, height } = doc.getImageProperties(Logo);
+          const logoHeight = 8;
+          doc.addImage(Logo, "PNG", margin, margin, (logoHeight * width) / height, logoHeight, undefined, "FAST");
         }
         const date = new Date().toLocaleDateString();
         doc.setFontSize(10);

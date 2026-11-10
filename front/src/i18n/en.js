@@ -56,10 +56,10 @@ export default {
   sidebar: {
     new_conversation: "New Chat",
     import_persona: "Chat with Persona",
-    expand: "Expand",
+    expand: "Expand sidebar",
     extend: "Expand",
     open_sidebar: "Open Sidebar",
-    close_sidebar: "Close Sidebar",
+    close_sidebar: "Collapse sidebar",
     rename_tooltip: "Rename: {{title}}",
     shortcut_new_conversation: "Ctrl + Shift + O",
     user_section: "User",
@@ -102,7 +102,7 @@ export default {
     pin_topic_action: "Pin topic",
     unpin_topic_action: "Unpin topic",
     delete_description:
-      'Delete topic "{{name}}"? Chats remain available and move to "Unsorted Chats".',
+      'Delete topic "{{name}}"? Chats remain available and appear in the list without a topic.',
     name_label: "Topic name",
     name_placeholder: "Enter topic name",
     error_required: "Please enter a topic name.",
@@ -128,7 +128,6 @@ export default {
     chat_count_other: "{{count}} chats",
     empty_title: "No chats in this topic yet",
     empty_body: "Write a prompt below to start the first chat here.",
-    composer_placeholder: "Ask anything — starts a new chat in {{name}}",
     create_error: "Could not start a new chat. Please try again.",
     missing_topic: "This topic no longer exists",
     missing_topic_body:
@@ -194,7 +193,7 @@ export default {
   meta_chat: {
     title: "Meta chat",
     prompt_placeholder: "Ask the meta chat!",
-    open: "Metachat: ask about your chats",
+    open: "Metachat",
     banner_description: "Metachat can help you in two ways:",
     purposes: {
       tutor: "Learn how to use Chat AI features",
@@ -430,11 +429,6 @@ export default {
       step1: "Open the options menu of a topic in the sidebar.",
       step2:
         "Choose Pin topic. Pinned topics stay in the pinned area at the top, regardless of the selected grouping.",
-    },
-    close_chat: {
-      title: "Close a chat",
-      step1:
-        "Use the close button at the top right. It removes the chat from your conversations; in the Meta chat it clears the conversation instead.",
     },
     export_conversation: {
       title: "Export a chat",
@@ -828,7 +822,6 @@ export default {
     tool_failed: "failed",
     codemode_running: "Running code…",
     codemode_output: "Code output",
-    close_chat: "Close chat",
     speech_mode_title: "Voice mode",
     speech_mode_button: "Start voice mode",
     speech_mode_close: "Close voice mode",
@@ -910,6 +903,9 @@ export default {
     about: "About",
     copyright: "{{year}} GWDG  ©  All Rights Reserved",
     iso_certified: "ISO 27001 Certified",
+    switch_to_light: "Switch to light mode",
+    switch_to_dark: "Switch to dark mode",
+    switch_language: "Change language",
   },
   // User Settings Modal
   user_settings: {
@@ -1324,9 +1320,6 @@ export default {
       "Caution! Clearing data will erase all your conversations, history, and settings. Are you sure?",
     clear_messages:
       "Are you sure you want to erase all messages in this conversation?",
-    close_chat:
-      "Close this chat? It will be removed from your conversations.",
-    close_chat_yes: "Close chat",
     regenerate_confirm:
       "Regenerating will delete this response and every message after it, and will apply your current settings. This cannot be undone. To keep this conversation intact, use “Continue in a new chat” instead.",
     regenerate_yes: "Regenerate",

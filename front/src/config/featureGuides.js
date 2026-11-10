@@ -533,25 +533,6 @@ export const featureGuides = {
       },
     ],
   },
-  close_chat: {
-    titleKey: "feature_guide.close_chat.title",
-    prompt:
-      "Use the close button at the top right of the chat. It removes the chat from the conversation list; in the Meta chat it clears the conversation instead.",
-    keywords: [
-      "close chat",
-      "delete chat",
-      "remove chat",
-      "clear meta chat",
-      "clear chat",
-    ],
-    steps: [
-      {
-        target: '[data-guide="close-chat"]',
-        textKey: "feature_guide.close_chat.step1",
-        completeOnTargetClick: true,
-      },
-    ],
-  },
   chat_with_persona: {
     titleKey: "feature_guide.chat_with_persona.title",
     prompt:
@@ -1071,7 +1052,6 @@ export const FEATURE_CATEGORIES = {
     "share_conversation",
     "fork_conversation",
     "summarize_conversation",
-    "close_chat",
   ],
   personas: ["chat_with_persona"],
   settings: [
@@ -1144,7 +1124,6 @@ const germanGuideKeywords = {
   export_conversation: ["chat exportier", "unterhaltung exportier", "chat herunterlad", "chat speicher", "exportier"],
   import_conversation: ["chat importier", "unterhaltung importier", "importier", "chat wiederherstell"],
   chat_with_persona: ["persona", "personas", "mit persona chatten", "persona bibliothek", "persona auswähl", "persona starten"],
-  close_chat: ["chat schließ", "chat lösch", "unterhaltung schließ", "unterhaltung lösch", "chat entfern", "metachat leer", "chat leeren"],
   share_conversation: ["chat teil", "unterhaltung teil", "einstellungen teil"],
   fork_conversation: ["chat abzweig", "unterhaltung abzweig", "chat verzweig", "unterhaltung verzweig", "fork"],
   summarize_conversation: ["chat zusammenfass", "unterhaltung zusammenfass", "zusammenfassung", "zusammenfass"],

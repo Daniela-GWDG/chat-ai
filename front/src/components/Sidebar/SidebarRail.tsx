@@ -4,10 +4,9 @@ import {
 } from "react";
 
 import { useTranslation } from "react-i18next";
-import ChatAiLogoMini from "../../assets/logos/chat_ai_small.ico";
+import ChatAiLogoMini from "../../assets/logos/chat_ai_mark.png";
 
-import { ChevronRight, HorizontalLineSolid } from "@carbon/icons-react";
-import { useWindowSize } from "../../hooks/useWindowSize";
+import { OpenPanelLeft } from "@carbon/icons-react";
 import ImportConversationButton from "./Buttons/ImportChatButton";
 import { useModal } from "../../modals/ModalContext";
 import ShortcutTooltip from "./ShortcutTooltip";
@@ -18,6 +17,7 @@ import SummarizeChatButton from "./Buttons/SummarizeChatButton";
 import ExportChatButton from "./Buttons/ExportChatButton";
 import RenameChatButton from "./Buttons/RenameChatButton";
 import TutorialStatus from "../Others/TutorialStatus";
+import { NavIconButton } from "../Others/IconButtons";
 
 export default function SidebarRail({ 
   localState,
@@ -45,7 +45,6 @@ export default function SidebarRail({
   }, [localState]);
 
 
-  const { isTouch } = useWindowSize();
   return (
     <div className="bg-base-100 border-r border-base-300
           overflow-hidden h-full flex flex-col items-center justify-between gap-2"
@@ -56,20 +55,19 @@ export default function SidebarRail({
           <div className="relative h-10 w-10 group">
             {/* Logo */}
             <img
-              className="absolute inset-0 object-contain transition-opacity duration-200 group-hover:opacity-0"
+              className="absolute inset-1 h-8 w-8 object-contain transition-opacity duration-200 group-hover:opacity-0"
               src={ChatAiLogoMini}
               alt="Chat AI Logo"
             />
 
             {/* Chevron Button */}
-            <ShortcutTooltip label={t("sidebar.expand") }>
-              <button
+            <ShortcutTooltip label={t("sidebar.expand")} containerClassName="absolute inset-0">
+              <NavIconButton className="opacity-0 group-hover:opacity-100"
                 onClick={() => onOpen?.()}
-                className="absolute h-10 w-10 inset-0 grid place-items-center rounded-lg transition duration-200 opacity-0 group-hover:opacity-100 hover:bg-info/10 cursor-pointer"
                 aria-label={t("sidebar.expand")}
               >
-                <ChevronRight size={40} className="text-accent" />
-              </button>
+                <OpenPanelLeft size={20} />
+              </NavIconButton>
             </ShortcutTooltip>
           </div>
 
@@ -85,23 +83,8 @@ export default function SidebarRail({
           <ImportConversationButton variant="rail" topicId={localState?.folderId} />
         </div>
 
-        {/* Center - Expand sidebar button */}
-        <div id="placeholder" className="group flex-1 w-full hover:bg-base-200 cursor-pointer grid place-items-center"
-          onClick={() => onOpen?.()}
-        >
-          <ShortcutTooltip label={t("sidebar.expand") }>
-            <button
-              className={`
-                h-10 w-10 inset-0 grid place-items-center rounded-lg
-                transition duration-200 opacity-0 
- group-hover:opacity-100 hover:bg-base-300 cursor-pointer
-                ${true || isTouch ? "opacity-100" : "opacity-0"}`}
-              aria-label={t("sidebar.expand")}
-            >
-              <ChevronRight size={20} className="text-accent" />
-            </button>
-          </ShortcutTooltip>
-        </div>
+        {/* Center - clicking the empty space expands the sidebar */}
+        <div id="placeholder" className="flex-1 w-full" onClick={() => onOpen?.()} />
 
         {/* Bottom - Current chat actions and user card */}
         <div className="flex flex-col gap-1 items-center">
@@ -126,7 +109,7 @@ export default function SidebarRail({
             setLocalState={setLocalState}
             variant={"rail"}
           />
-          <HorizontalLineSolid size={30} className="text-base-content/30" />
+          <div className="my-2 h-px w-8 bg-base-300" />
           {/* User card */}
           <div
               role="button"

@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trans } from "react-i18next";
 import { Close } from "@carbon/icons-react";
+import { CloseIconButton } from "../components/Others/IconButtons";
 
 /**
  * BaseModal Component
@@ -23,6 +24,8 @@ export default function BaseModal({
   maxWidth = "max-w-md",
   isForced = false,
   minimal = false,
+  // For dialogs that render their own heading and have no close button.
+  hideHeader = false,
   contentClassName = "p-5 pt-0 flex flex-col gap-0",
   titleClassName = "font-semibold text-sm",
   // Shared by the title and the close icon, so the two always match.
@@ -65,6 +68,7 @@ export default function BaseModal({
                 className={`rounded-box bg-base-100 text-base-content w-full ${maxWidth} shadow-lg`}
               >
                 {/* Header */}
+                {!hideHeader && (
                 <div className="flex justify-between items-center p-5 pb-3">
                   <Dialog.Title className={`${titleClassName} ${titleColorClassName}`}>
                     <Trans i18nKey={titleKey} />
@@ -72,15 +76,16 @@ export default function BaseModal({
 
                   {/* Close button */}
                   {!minimal && !isForced && (
-                  <button
+                  <CloseIconButton
                     onClick={onClose}
-                    className="btn btn-ghost btn-sm btn-square"
+                    className={`-my-1 ${titleColorClassName}`}
                     aria-label="Close dialog"
                   >
-                    <Close size={20} className={titleColorClassName} aria-hidden="true" />
-                  </button>
+                    <Close size={20} aria-hidden="true" />
+                  </CloseIconButton>
                   )}
                 </div>
+                )}
 
                 {/* Content */}
                 <div className={contentClassName}>{children}</div>

@@ -5,6 +5,7 @@ import { Tools } from "@carbon/icons-react";
 import Tooltip from "../Others/Tooltip";
 import ToolsContainer from "../SettingsPanel/ToolsContainer";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function ToolsButton({ localState, setLocalState }) {
     const { t } = useTranslation();
@@ -15,7 +16,7 @@ export default function ToolsButton({ localState, setLocalState }) {
     return (
         <Popover className="relative flex">
             <Tooltip text={t("settings.tools_title")}>
-                <PopoverButton className="flex cursor-pointer focus:outline-none" data-guide="tools">
+                <PopoverButton as={PromptIconButton} data-guide="tools">
                     <Tools size={18} className="cursor-pointer text-accent" />
                 </PopoverButton>
             </Tooltip>

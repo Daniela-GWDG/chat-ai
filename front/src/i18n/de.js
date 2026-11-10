@@ -56,10 +56,10 @@ export default {
   sidebar: {
     new_conversation: "Neuer Chat",
     import_persona: "Mit Persona chatten",
-    expand: "Ausklappen",
+    expand: "Seitenleiste ausklappen",
     extend: "Ausklappen",
     open_sidebar: "Seitenleiste öffnen",
-    close_sidebar: "Seitenleiste schließen",
+    close_sidebar: "Seitenleiste einklappen",
     rename_tooltip: "Umbenennen: {{title}}",
     shortcut_new_conversation: "Strg + Shift + O",
     user_section: "Benutzer",
@@ -102,7 +102,7 @@ export default {
     pin_topic_action: "Thema anheften",
     unpin_topic_action: "Thema nicht mehr anheften",
     delete_description:
-      'Thema "{{name}}" löschen? Chats bleiben erhalten und erscheinen unter "Nicht zugeordnete Chats".',
+      'Thema "{{name}}" löschen? Chats bleiben erhalten und erscheinen danach ohne Thema in der Liste.',
     name_label: "Themenname",
     name_placeholder: "Themenname eingeben",
     error_required: "Bitte einen Themennamen eingeben.",
@@ -129,7 +129,6 @@ export default {
     empty_title: "Noch keine Chats in diesem Thema",
     empty_body:
       "Schreiben Sie unten eine Eingabe, um den ersten Chat hier zu starten.",
-    composer_placeholder: "Fragen Sie etwas — startet einen neuen Chat in {{name}}",
     create_error:
       "Neuer Chat konnte nicht gestartet werden. Bitte erneut versuchen.",
     missing_topic: "Dieses Thema existiert nicht mehr",
@@ -197,7 +196,7 @@ export default {
   meta_chat: {
     title: "Meta-Chat",
     prompt_placeholder: "Frag den Meta-Chat!",
-    open: "Metachat: Chats durchsuchen",
+    open: "Metachat",
     banner_description: "Metachat kann Ihnen auf zwei Arten helfen:",
     purposes: {
       tutor: "Die Funktionen von Chat AI kennenlernen",
@@ -445,11 +444,6 @@ export default {
       step1: "Öffnen Sie das Optionenmenü eines Themas in der Seitenleiste.",
       step2:
         "Wählen Sie „Thema anheften“. Angeheftete Themen bleiben unabhängig von der Gruppierung im Bereich „Angeheftet“ oben.",
-    },
-    close_chat: {
-      title: "Einen Chat schließen",
-      step1:
-        "Verwenden Sie die Schließen-Schaltfläche oben rechts. Sie entfernt den Chat aus Ihren Unterhaltungen; im Metachat wird stattdessen die Unterhaltung geleert.",
     },
     export_conversation: {
       title: "Einen Chat exportieren",
@@ -842,7 +836,6 @@ export default {
     tool_failed: "fehlgeschlagen",
     codemode_running: "Code wird ausgeführt…",
     codemode_output: "Code-Ausgabe",
-    close_chat: "Chat schließen",
     speech_mode_title: "Sprachmodus",
     speech_mode_button: "Sprachmodus starten",
     speech_mode_close: "Sprachmodus beenden",
@@ -925,6 +918,9 @@ export default {
     about: "Über uns",
     copyright: "{{year}} GWDG © Alle Rechte vorbehalten",
     iso_certified: "ISO 27001 Zertifiziert",
+    switch_to_light: "Zum hellen Design wechseln",
+    switch_to_dark: "Zum dunklen Design wechseln",
+    switch_language: "Sprache wechseln",
   },
   // User Settings Modal
   user_settings: {
@@ -1324,7 +1320,7 @@ export default {
     },
     back: "Zurück",
     close: "Schließen",
-    last: "Fertigstellen",
+    last: "Abschließen",
     next: "Weiter",
     skip: "Überspringen",
   },
@@ -1343,9 +1339,6 @@ export default {
     clear_data: "Achtung! Die Löschung löscht Ihren Verlauf. Fortfahren?",
     clear_messages:
       "Sind Sie sicher, dass alle Nachrichten gelöscht werden sollen?",
-    close_chat:
-      "Diesen Chat schließen? Er wird aus Ihren Unterhaltungen entfernt.",
-    close_chat_yes: "Chat schließen",
     regenerate_confirm:
       "Beim Regenerieren werden diese Antwort und alle nachfolgenden Nachrichten gelöscht und die aktuellen Einstellungen angewendet. Dies kann nicht rückgängig gemacht werden. Um diese Unterhaltung zu behalten, verwenden Sie stattdessen „In neuem Chat fortfahren“.",
     regenerate_yes: "Regenerieren",

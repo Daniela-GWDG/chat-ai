@@ -177,7 +177,7 @@ export default function Prompt({
         {/* Buttons Section */}
         <div className="px-3 py-2 w-full h-fit grid grid-cols-[1fr_auto_1fr] items-center bg-base-100 rounded-b-2xl relative">
           {/* Buttons on the left */}
-          <div className="flex gap-4 items-center justify-start">
+          <div className="flex gap-2 items-center justify-start">
             {/* Attach Button */}
             <AttachButton
               localState={localState}
@@ -192,7 +192,7 @@ export default function Prompt({
             
           </div>
           {/* Buttons in the center */}
-          <div className="flex gap-4 items-center justify-center">
+          <div className="flex gap-2 items-center justify-center">
             {!metaChatSend && (
               <>
                 {/* Local folder and write access for the agent */}

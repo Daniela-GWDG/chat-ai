@@ -3,6 +3,7 @@ import { Bot } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
+import { NavIconButton } from "../../Others/IconButtons";
 
 
 export default function ImportPersonaButton({
@@ -16,7 +17,7 @@ export default function ImportPersonaButton({
   if (variant === "icon") {
     return (
       <ShortcutTooltip label={t("sidebar.import_persona")}>
-        <button
+        <NavIconButton
           onClick={() => {
             openModal("importPersona", {
               topicId: topicId,
@@ -24,11 +25,10 @@ export default function ImportPersonaButton({
           }}
           data-guide="import-persona"
           aria-label={t("sidebar.import_persona")}
-          className="cursor-pointer flex-shrink-0 p-1.5 rounded-lg hover:bg-base-200 transition-all duration-200 flex items-center justify-center"
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
           <Bot size={20} className="text-accent" />
-        </button>
+        </NavIconButton>
       </ShortcutTooltip>
     )
   }
@@ -36,7 +36,7 @@ export default function ImportPersonaButton({
   if (variant === "rail") {
     return (
       <ShortcutTooltip label={t("sidebar.import_persona")}>
-        <button
+        <NavIconButton
           onClick={() => {
             openModal("importPersona", {
               topicId: topicId,
@@ -44,11 +44,10 @@ export default function ImportPersonaButton({
           }}
           data-guide="import-persona"
           aria-label={t("sidebar.import_persona")}
-          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-lg transition-all duration-200 flex items-center justify-center`}
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
-          <Bot size={22} className="text-accent" />
-        </button>
+          <Bot size={20} className="text-accent" />
+        </NavIconButton>
       </ShortcutTooltip>
     )
   }
@@ -58,7 +57,7 @@ export default function ImportPersonaButton({
     return (
       <>
         <ShortcutTooltip label={t("sidebar.import_persona")}>
-          <button
+          <NavIconButton
           onClick={() => {
             openModal("importPersona", {
               topicId: topicId,
@@ -66,12 +65,10 @@ export default function ImportPersonaButton({
           }}
           data-guide="import-persona"
           aria-label={t("sidebar.import_persona")}
-          className="cursor-pointer flex-shrink-0 p-2 rounded-2xl transition-all duration-200 flex items-center justify-center
- hover:bg-base-200 text-base-content"
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
-          <Bot size={24} className="text-accent" />
-        </button>
+          <Bot size={20} className="text-accent" />
+        </NavIconButton>
       </ShortcutTooltip>
       </>
     );

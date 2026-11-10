@@ -13,21 +13,18 @@ import Prompt from "../Prompt/Prompt";
  * Prompt box for the topic master view.
  *
  * It renders the regular chat Prompt so every control (attachments, settings,
- * model, tools, send) behaves exactly as in a chat. Only the placeholder
- * differs. Sending hands the text and any attachments to a new chat in this
+ * model, tools, send) behaves exactly as in a chat. Sending hands the text and any attachments to a new chat in this
  * topic through router state (see usePendingPrompt), keeping the normal
  * streaming, autosave and title-generation pipeline as the single send path.
  */
 export default function TopicComposer({
   folderId,
-  topicName,
   draftState,
   setDraftState,
   userData,
   modelsData,
 }: {
   folderId: string | null;
-  topicName: string;
   draftState: any;
   setDraftState: (state: any) => void;
   userData?: any;
@@ -84,7 +81,6 @@ export default function TopicComposer({
       userData={userData}
       modelsData={modelsData}
       sendMessage={sendMessage}
-      placeholder={t("topic_view.composer_placeholder", { name: topicName })}
     />
   );
 }

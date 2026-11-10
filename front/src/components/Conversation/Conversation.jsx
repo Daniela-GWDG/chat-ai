@@ -13,7 +13,7 @@ import MessageUser from "./MessageUser/MessageUser";
 import Motto from "./Motto";
 import UndoButton from "./UndoButton";
 import Tooltip from "../Others/Tooltip";
-import CloseChatButton from "./CloseChatButton";
+import ClearMetaChatButton from "./ClearMetaChatButton";
 import FloatingIconButton from "./FloatingIconButton";
 
 export default function Conversation({
@@ -376,7 +376,7 @@ export default function Conversation({
                   ${emptyConversation ? "justify-start" : "justify-between"}`}
     >
       {showCloseButton && (
-        <CloseChatButton localState={localState} setLocalState={setLocalState} />
+        <ClearMetaChatButton localState={localState} setLocalState={setLocalState} />
       )}
 
       {/* Keeps the prompt box in its place while the conversation is empty */}

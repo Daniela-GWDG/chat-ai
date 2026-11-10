@@ -3,6 +3,7 @@ import { Edit } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
+import { NavIconButton } from "../../Others/IconButtons";
 
 
 export default function RenameChatButton({
@@ -48,13 +49,12 @@ export default function RenameChatButton({
       <ShortcutTooltip
         label={t("sidebar.rename_tooltip", { title: localState?.title })}
       >
-        <button
+        <NavIconButton
           onClick={() => {handleRenameChat(localState?.id, localState?.title || "Untitled Chat");}}
-          className={`cursor-pointer p-2.5 hover:bg-success/10 hover:text-success rounded-lg transition-all duration-200 flex items-center justify-center`}
           aria-label={t("sidebar.rename_tooltip", { title: localState?.title })}
         >
-          <Edit size={22} className="text-accent" />
-        </button>
+          <Edit size={20} className="text-accent" />
+        </NavIconButton>
       </ShortcutTooltip>
     )
   }

@@ -1,16 +1,12 @@
-import Logo from "../../assets/logos/chat_ai.svg";
-import LogoSmall from "../../assets/logos/chat_ai_small.ico"
+import ChatAiLogo from "./ChatAiLogo";
+import LogoSmall from "../../assets/logos/chat_ai_mark.png"
 import { Link } from "react-router-dom";
 
 export default function LogoContainer({ isMobile = false }) {
   return !isMobile ? (
     <Link to={"https://chat-ai.academiccloud.de/"}>
     <div className="flex items-center">
-      <img
-        className="h-8 w-auto object-contain"
-        src={Logo}
-        alt="Chat AI Logo"
-      />
+      <ChatAiLogo className="h-8 w-auto" />
     </div>
     </Link>
   ) : (

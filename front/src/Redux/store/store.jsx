@@ -31,7 +31,6 @@ const getDefaultState = () => {
       show_sidebar: true,
       show_tour: true,
       warn_clear_history: true,
-      warn_close_chat: true,
       warn_clear_memory: true,
       warn_clear_settings: true,
       warn_regenerate: true,

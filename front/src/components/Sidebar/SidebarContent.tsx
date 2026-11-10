@@ -61,6 +61,7 @@ import TopicList, {
 } from "./TopicList";
 import TopicCreateBubble from "./TopicCreateBubble";
 import SidebarUserCard from "./SidebarUserCard";
+import NewTopicButton from "./Buttons/NewTopicButton";
 import AiServicesMenu from "./AiServicesMenu";
 import { useToast } from "../../hooks/useToast";
 import SidebarUsageSummary from "../../modals/UserSettings/SidebarUsageSummary";
@@ -73,6 +74,7 @@ import ExportChatButton from "./Buttons/ExportChatButton";
 import DeleteChatButton from "./Buttons/DeleteChatButton";
 import RenameChatButton from "./Buttons/RenameChatButton";
 import TutorialStatus from "../Others/TutorialStatus";
+import { NavIconButton, SortIconButton } from "../Others/IconButtons";
 
 export default function SidebarContent({
   localState,
@@ -578,6 +580,112 @@ export default function SidebarContent({
     (conv) => conv.id === activeMenu,
   );
 
+  const chatSortActions = (
+    <div className="flex items-center gap-1">
+      <Popover className="relative">
+        <PopoverButton
+          as={SortIconButton}
+          aria-label={t("folders.sort_label")}
+          title={t("folders.sort_label")}
+          data-guide="sort-chats"
+        >
+          <Arrange size={18} />
+        </PopoverButton>
+        <PopoverPanel
+          anchor={{ to: "bottom end", gap: 4, padding: 8 }}
+          role="menu"
+          aria-label={t("folders.sort_label")}
+          data-guide="sort-menu"
+          className="z-50 w-52 rounded-xl border border-base-300 bg-base-100 p-1 shadow-lg"
+        >
+          {({ close }) => (
+            <>
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={conversationGrouping === "topic"}
+                onClick={() => {
+                  handleGroupingChange("topic");
+                  close();
+                }}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
+              >
+                <FolderTree size={14} className="shrink-0" />
+                <span className="flex-1 truncate">
+                  {t("folders.sort_by_topic")}
+                </span>
+                {conversationGrouping === "topic" && (
+                  <Checkmark
+                    size={14}
+                    className="shrink-0 text-accent"
+                  />
+                )}
+              </button>
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={conversationGrouping === "date"}
+                onClick={() => {
+                  handleGroupingChange("date");
+                  close();
+                }}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
+              >
+                <Calendar size={14} className="shrink-0" />
+                <span className="flex-1 truncate">
+                  {t("folders.sort_by_date")}
+                </span>
+                {conversationGrouping === "date" && (
+                  <Checkmark
+                    size={14}
+                    className="shrink-0 text-accent"
+                  />
+                )}
+              </button>
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked={conversationGrouping === "created"}
+                onClick={() => {
+                  handleGroupingChange("created");
+                  close();
+                }}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
+              >
+                <SortAscending size={14} className="shrink-0" />
+                <span className="flex-1 truncate">
+                  {t("folders.sort_by_created")}
+                </span>
+                {conversationGrouping === "created" && (
+                  <Checkmark
+                    size={14}
+                    className="shrink-0 text-accent"
+                  />
+                )}
+              </button>
+            </>
+          )}
+        </PopoverPanel>
+      </Popover>
+      <SortIconButton
+        type="button"
+        onClick={() =>
+          openModal("organizeChats", {
+            conversations,
+            folders,
+            localState,
+            setLocalState,
+          })
+        }
+        data-guide="sort-organize"
+        aria-label={t("sorter.button")}
+        title={t("sorter.button")}
+      >
+        <ArrangeHorizontal size={18} />
+      </SortIconButton>
+    </div>
+  );
+
   return (
     <div
       className="flex flex-col select-none h-full w-full transition-all duration-200 ease-in-out"
@@ -586,166 +694,62 @@ export default function SidebarContent({
       }}
     >
       {/* Header with close button */}
-      <div className="flex items-center justify-between px-3 pt-3 pb-2 gap-2">
+      <div className="flex items-center justify-between px-2 pt-3 pb-2 gap-2">
         <AiServicesMenu />
-        <div className="flex items-center gap-1">
-          <button
+        <div className="flex items-center gap-1 -mr-0.5">
+          <NavIconButton
             type="button"
             onClick={openSearch}
             data-guide="search-chats"
-            className="cursor-pointer p-2.5 hover:bg-base-300 rounded-lg transition-all duration-200 flex items-center justify-center text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            title={t("folders.search_label")}
             aria-label={t("folders.search_label")}
           >
             <Search size={20} />
-          </button>
+          </NavIconButton>
           <ShortcutTooltip
             label={t("sidebar.close_sidebar")}
             position="left"
             enterDelay={150}
           >
-            <button
+            <NavIconButton
               type="button"
               onClick={onClose}
               aria-label={t("sidebar.close_sidebar")}
-              className="cursor-pointer p-2.5 hover:bg-base-300 rounded-lg transition-all duration-200 flex items-center justify-center text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
               <OpenPanelLeft size={20} />
-            </button>
+            </NavIconButton>
           </ShortcutTooltip>
         </div>
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Conversations header */}
-        <div className="sticky top-0 z-20 bg-base-100 px-3 pt-3 pb-2">
+        <div className="sticky top-0 z-20 bg-base-100 px-2 pt-3 pb-2">
           <TutorialStatus />
-          <div className="flex items-center justify-between gap-1 pb-3">
+          <div className="flex flex-col gap-1 pb-3">
+          <div className="flex items-center justify-between gap-1 -mr-0.5">
             <NewChatButton topicId={localState?.folderId} variant={"sidebar"} onNewConversation={handleNewConversation} />
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center justify-between">
+            <ShortcutTooltip label={t("meta_chat.open")}>
+              <NavIconButton
+                type="button"
+                onClick={() => navigate("/meta")}
+                data-guide="meta-chat"
+                className={location.pathname === "/meta" ? "bg-accent/10" : ""}
+                aria-label={t("meta_chat.open")}
+              >
+                <Ai size={20} />
+              </NavIconButton>
+            </ShortcutTooltip>
             <ImportPersonaButton topicId={localState?.folderId} variant={"sidebar"} />
             <ImportChatButton topicId={localState?.folderId} variant={"sidebar"} />
           </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-wide text-base-content/70">
-              {t("folders.title")}
-            </span>
-            <div className="flex items-center gap-1">
-              <Popover className="relative">
-                <PopoverButton
-                  aria-label={t("folders.sort_label")}
-                  title={t("folders.sort_label")}
-                  data-guide="sort-chats"
-                  className="btn btn-ghost btn-sm btn-square text-base-content/70 hover:text-base-content"
-                >
-                  <Arrange size={18} />
-                </PopoverButton>
-                <PopoverPanel
-                  anchor={{ to: "bottom end", gap: 4, padding: 8 }}
-                  role="menu"
-                  aria-label={t("folders.sort_label")}
-                  data-guide="sort-menu"
-                  className="z-50 w-52 rounded-xl border border-base-300 bg-base-100 p-1 shadow-lg"
-                >
-                  {({ close }) => (
-                    <>
-                      <button
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={conversationGrouping === "topic"}
-                        onClick={() => {
-                          handleGroupingChange("topic");
-                          close();
-                        }}
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
-                      >
-                        <FolderTree size={14} className="shrink-0" />
-                        <span className="flex-1 truncate">
-                          {t("folders.sort_by_topic")}
-                        </span>
-                        {conversationGrouping === "topic" && (
-                          <Checkmark
-                            size={14}
-                            className="shrink-0 text-accent"
-                          />
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={conversationGrouping === "date"}
-                        onClick={() => {
-                          handleGroupingChange("date");
-                          close();
-                        }}
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
-                      >
-                        <Calendar size={14} className="shrink-0" />
-                        <span className="flex-1 truncate">
-                          {t("folders.sort_by_date")}
-                        </span>
-                        {conversationGrouping === "date" && (
-                          <Checkmark
-                            size={14}
-                            className="shrink-0 text-accent"
-                          />
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={conversationGrouping === "created"}
-                        onClick={() => {
-                          handleGroupingChange("created");
-                          close();
-                        }}
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-base-content/80 transition hover:bg-base-200"
-                      >
-                        <SortAscending size={14} className="shrink-0" />
-                        <span className="flex-1 truncate">
-                          {t("folders.sort_by_created")}
-                        </span>
-                        {conversationGrouping === "created" && (
-                          <Checkmark
-                            size={14}
-                            className="shrink-0 text-accent"
-                          />
-                        )}
-                      </button>
-                    </>
-                  )}
-                </PopoverPanel>
-              </Popover>
-              <button
-                type="button"
-                onClick={() =>
-                  openModal("organizeChats", {
-                    conversations,
-                    folders,
-                    localState,
-                    setLocalState,
-                  })
-                }
-                data-guide="sort-organize"
-                className="btn btn-ghost btn-sm btn-square text-base-content/70 hover:text-base-content"
-                aria-label={t("sorter.button")}
-                title={t("sorter.button")}
-              >
-                <ArrangeHorizontal size={16} />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate("/meta")}
-                data-guide="meta-chat"
-                className={`btn btn-ghost btn-sm btn-square text-base-content/70 hover:text-base-content ${
-                  location.pathname === "/meta" ? "btn-active" : ""
-                }`}
-                aria-label={t("meta_chat.open")}
-                title={t("meta_chat.open")}
-              >
-                <Ai size={16} />
-              </button>
+          {conversationGrouping === "topic" && (
+            <div>
+              <NewTopicButton onCreateTopic={handleCreateFolder} />
             </div>
+          )}
           </div>
         </div>
 
@@ -754,14 +758,13 @@ export default function SidebarContent({
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {/* Conversations, grouped by topic */}
-          <div className="pl-3 pr-2 pt-2 pb-1 space-y-1">
+          <div className="px-2 pt-2 pb-1 space-y-1">
               <TopicList
                 topics={unpinnedFolders}
                 pinnedTopics={pinnedTopics}
                 pinnedConversations={pinnedConversations}
                 conversationsByTopic={conversationsByTopic}
                 unsortedConversations={unsortedConversations}
-                onCreateTopic={handleCreateFolder}
                 onRenameTopic={handleRenameFolder}
                 onDeleteTopic={handleDeleteFolder}
                 onToggleTopicPinned={handleToggleTopicPinned}
@@ -780,15 +783,18 @@ export default function SidebarContent({
                 creationDateGroups={creationDateGroups}
                 isDark={isDark}
                 grouping={conversationGrouping}
+                sortActions={chatSortActions}
               />
           </div>
         </div>
 
         {/* Pinned footer: the user block */}
-        <div className="sticky bottom-0 bg-base-100 pt-3 pb-4">
-          <div className="flex flex-col gap-3 mx-3">
+        <div className="sticky bottom-0 bg-base-100 pt-3">
+          <div className="flex flex-col gap-3">
             {showUsageInSidebar && userData && (
-              <SidebarUsageSummary data={userData} />
+              <div className="mx-2">
+                <SidebarUsageSummary data={userData} />
+              </div>
             )}
             <SidebarUserCard
               localState={localState}

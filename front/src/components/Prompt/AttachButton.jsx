@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useToast } from "../../hooks/useToast";
 import { useAttachments } from "../../hooks/useAttachments";
 import { Attachment } from "@carbon/icons-react";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function AttachButton({
     localState, 
@@ -50,7 +51,9 @@ export default function AttachButton({
                     onChange={handleFilesChange}
                     className="hidden"
                 />
-                <Attachment size={18} className="cursor-pointer flex text-accent" onClick={handleClick} data-guide="attach-file" />
+                <PromptIconButton onClick={handleClick} data-guide="attach-file" aria-label={t("conversation.prompt.attach")}>
+                    <Attachment size={18} />
+                </PromptIconButton>
             </Tooltip>
         </>
     );

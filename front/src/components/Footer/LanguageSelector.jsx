@@ -5,7 +5,7 @@ import flag_german from "../../assets/flags/german.svg";
 
 export default function LanguageSelector() {
   // Initialize internationalization hooks
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   // Language configuration object mapping language codes to their flag icons
   const lngs = {
     en: flag_english,
@@ -21,6 +21,8 @@ export default function LanguageSelector() {
           <button
             key={lng}
             type="submit"
+            title={t("footer.switch_language")}
+            aria-label={t("footer.switch_language")}
             onClick={() => {
               console.log("Language changed to:", lng);
               i18n.changeLanguage(lng);

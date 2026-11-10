@@ -14,7 +14,6 @@ import {
   selectConversationSummaries,
   selectUserSettings,
 } from "../Redux/reducers/userSettingsReducer";
-import { selectDarkMode } from "../Redux/reducers/interfaceSettingsSlice";
 
 import AnnouncementBar from "../components/Header/AnnouncementBar";
 import CollapsibleFooter from "../components/Footer/CollapsibleFooter";
@@ -37,7 +36,6 @@ export default function TopicMasterPage() {
   const { t, i18n } = useTranslation();
   const userSettings = useSelector(selectUserSettings);
   const showSummaries = useSelector(selectConversationSummaries);
-  const isDark = useSelector(selectDarkMode);
   const modelsData = useUpdateModelsData();
   const userData = useUpdateUserData();
 
@@ -90,14 +88,13 @@ export default function TopicMasterPage() {
   }, [folderId]);
 
   const topicName = isUnsorted
-    ? t("folders.uncategorized")
+    ? t("folders.title")
     : topic?.name ?? t("topic_view.loading");
   const topicMissing = !isUnsorted && foldersSettled && !topic;
 
   const emoji = topic?.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
   const TopicIcon = topic ? topicIcon(topic) : Folder;
-  const unsortedHex = isDark ? "#94A3B8" : "#64748B";
-  const colorHex = topic ? topicColor(topic).hex : isUnsorted ? unsortedHex : undefined;
+  const colorHex = topic ? topicColor(topic).hex : undefined;
 
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr]">
@@ -112,7 +109,7 @@ export default function TopicMasterPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 grid-rows-[1fr_auto] gap-y-1 overflow-hidden bg-base-200 md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] md:gap-x-2 md:gap-y-0">
+      <div className="grid grid-cols-1 grid-rows-[1fr_auto] gap-y-1 overflow-hidden bg-base-200 md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] md:gap-y-0">
         <SidebarWrapper
           localState={draftState}
           setLocalState={setDraftState}
@@ -120,7 +117,7 @@ export default function TopicMasterPage() {
           modelsData={modelsData}
         />
 
-        <main className="relative flex min-h-0 min-w-0 flex-col overflow-hidden md:py-1">
+        <main className="relative flex min-h-0 min-w-0 flex-col overflow-hidden md:pb-1">
           {topicMissing ? (
             <div className="flex flex-1 items-center justify-center p-6">
               <div className="w-full max-w-md rounded-2xl border border-base-300 bg-base-100 p-6 text-center shadow-sm">
@@ -154,27 +151,23 @@ export default function TopicMasterPage() {
                   >
                     <ChevronLeft size={18} />
                   </button>
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-base-200"
-                    style={colorHex ? { color: colorHex } : undefined}
-                  >
-                    {emoji ? (
-                      <span aria-hidden="true" className="text-lg leading-none">
-                        {emoji}
-                      </span>
-                    ) : isUnsorted ? (
-                      <span
-                        aria-hidden="true"
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: unsortedHex }}
-                      />
-                    ) : (
-                      <TopicIcon
-                        size={20}
-                        className={colorHex ? undefined : "text-base-content/60"}
-                      />
-                    )}
-                  </span>
+                  {!isUnsorted && (
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-base-200"
+                      style={colorHex ? { color: colorHex } : undefined}
+                    >
+                      {emoji ? (
+                        <span aria-hidden="true" className="text-lg leading-none">
+                          {emoji}
+                        </span>
+                      ) : (
+                        <TopicIcon
+                          size={20}
+                          className={colorHex ? undefined : "text-base-content/60"}
+                        />
+                      )}
+                    </span>
+                  )}
                   <div className="min-w-0 flex-1">
                     <h1 className="truncate text-base font-semibold text-base-content">
                       {topicName}
@@ -250,7 +243,6 @@ export default function TopicMasterPage() {
                 <div className="mx-auto w-full max-w-3xl">
                   <TopicComposer
                     folderId={folderId}
-                    topicName={topicName}
                     draftState={draftState}
                     setDraftState={setDraftState}
                     userData={userData}

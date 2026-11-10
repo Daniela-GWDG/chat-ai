@@ -11,6 +11,7 @@ import { useToast } from "../../hooks/useToast";
 import { isAgentEnabled, modelSupportsTools } from "../../apis/agentEndpoints";
 import { useModal } from "../../modals/ModalContext";
 import { canMountLocalDirectory, mountLocalDirectory, setAccessPrompt } from "../../agent/workspace";
+import { PromptIconButton } from "../Others/IconButtons";
 
 // Gives the agent access to local files: a folder shared for this conversation and the
 // permission to write into the workspace. After a reload the browser forgets the folder
@@ -152,9 +153,8 @@ export default function MountFolderButton({ localState, setLocalState }) {
   return (
     <Popover className="relative flex">
       <Tooltip text={t("conversation.local_tools")}>
-        <PopoverButton
+        <PopoverButton as={PromptIconButton}
           data-guide="local-tools"
-          className="h-[30px] w-[30px] flex items-center justify-center cursor-pointer focus:outline-none"
           aria-label={t("conversation.local_tools")}
         >
           <ToolBox size={18} className="text-accent" />

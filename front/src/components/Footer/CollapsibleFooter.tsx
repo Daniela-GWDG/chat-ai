@@ -12,7 +12,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
       <div className="grid grid-cols-[auto_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center">
 
         {/* Left section */}
-        <div className="interface-toggles h-[3vh] flex items-center justify-self-start pl-1 gap-2">
+        <div className="interface-toggles h-12 flex items-center justify-self-start pl-1 gap-2">
           <ThemeToggle />
           <LanguageSelector />
         </div>
@@ -23,7 +23,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
         </p>
 
         {/* Right section */}
-        <div className="h-[3vh] min-w-0 flex items-center justify-self-end justify-end gap-6 pr-3 truncate overflow-hidden">
+        <div className="h-12 min-w-0 flex items-center justify-self-end justify-end gap-6 pr-3 truncate overflow-hidden">
           {/* Version Display - Desktop and Tablet */}
           <div className="hidden md:block text-base-content">
             <VersionDisplay />

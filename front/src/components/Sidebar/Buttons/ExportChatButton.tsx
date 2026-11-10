@@ -3,6 +3,7 @@ import { Download } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
+import { NavIconButton } from "../../Others/IconButtons";
 
 
 export default function ExportChatButton({
@@ -56,14 +57,13 @@ export default function ExportChatButton({
       <ShortcutTooltip
         label={t("common.export")}
       >
-        <button
+        <NavIconButton
           onClick={handleExportChat}
           data-guide="export-chat"
-          className="btn btn-ghost btn-square hover:bg-success/10 hover:text-success"
           aria-label={t("common.export")}
         >
-          <Download size={22} className="text-accent" />
-        </button>
+          <Download size={20} className="text-accent" />
+        </NavIconButton>
       </ShortcutTooltip>
     )
   }

@@ -7,6 +7,7 @@ import { Image } from "@carbon/icons-react";
 
 import { useAttachments } from "../../hooks/useAttachments";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function AttachMediaButton({
     localState,
@@ -74,14 +75,13 @@ export default function AttachMediaButton({
             className="hidden"
             />
             <Tooltip text={t("conversation.prompt.attach_media")}>
-            <button
-                className="h-6 w-6 cursor-pointer"
+            <PromptIconButton
                 data-guide="attach-media"
                 onClick={() => hiddenFileInputImage.current?.click()}
                 disabled={loading}
             >
                 <Image size={18} className="cursor-pointer text-accent" />
-            </button>
+            </PromptIconButton>
             </Tooltip>
         </>
     )
