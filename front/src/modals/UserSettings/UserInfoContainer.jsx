@@ -11,6 +11,7 @@ import {
 import UserLimitsDisplay from "./UserLimitsDisplay";
 import OrgLimitsDisplay from "./OrgLimitsDisplay";
 import ProfilePreferenceSwitch from "./ProfilePreferenceSwitch";
+import { UsageDetailsPanel } from "./SidebarUsageSummary";
 
 export default function UserInfoContainer({ userData }) {
   const dispatch = useDispatch();
@@ -76,6 +77,8 @@ export default function UserInfoContainer({ userData }) {
           </div>
         </dl>
       </section>
+
+      <UsageDetailsPanel data={userData} />
 
       {userData?.limits && (
         <section className="flex flex-col gap-3 border-t border-base-300 pt-5">

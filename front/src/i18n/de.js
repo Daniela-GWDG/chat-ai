@@ -50,7 +50,6 @@ export default {
   feedback:{
     thumbsup:"The response is good.",
     thumbsdown: "The response is not so good.",
-    send: "Send a detailed feedback describing your observation."
   },
   // Sidebar
   sidebar: {
@@ -68,10 +67,8 @@ export default {
     title: "Chats",
     all: "Alle Chats",
     uncategorized: "Nicht zugeordnete Chats",
-    by_date: "Alle Chats nach Datum",
-    by_created: "Alle Chats nach Erstellungsdatum",
     sort_label: "Chats sortieren",
-    sort_by_topic: "Nach Thema",
+    sort_reset: "Standard wiederherstellen",
     sort_by_date: "Nach Datum",
     sort_by_created: "Nach Erstellungsdatum",
     modified: "Geändert {{date}}",
@@ -114,7 +111,6 @@ export default {
     suggestion_writing: "Schreiben",
     suggestion_health: "Gesundheit",
     suggestion_research: "Forschung",
-    creating: "Wird erstellt…",
     choose_color: "Farbe wählen",
     choose_icon: "Symbol wählen",
     error_generic: "Aktion konnte nicht ausgeführt werden. Bitte erneut versuchen.",
@@ -139,7 +135,7 @@ export default {
     loading: "Thema wird geladen…",
   },
   sorter: {
-    button: "Sortieren & organisieren",
+    button: "Smart Sorting",
     title: "Chats sortieren & organisieren",
     intro:
       "Prüfe die Vorschläge unten. Änderungen werden erst beim Anwenden übernommen.",
@@ -329,6 +325,11 @@ export default {
       step3:
         "Warte auf die verarbeitete Markdown-Datei und sende dann deine Nachricht.",
     },
+    filter_models: {
+      title: "Modelle filtern",
+      step1: "Öffne die Modellauswahl im Eingabefeld.",
+      step2: "Filtere die Liste nach Bereitstellung, Eingabe oder Zweck. Es ist immer ein Filter aktiv, die Suche wirkt zusätzlich.",
+    },
     select_model: {
       title: "Ein Modell auswählen",
       step1:
@@ -423,7 +424,7 @@ export default {
     },
     sort_organize: {
       title: "Chats sortieren & organisieren",
-      step1: "Klicke in der Kopfzeile der Seitenleiste auf „Sortieren & organisieren“.",
+      step1: "Klicke in der Werkzeugzeile der Seitenleiste auf „Smart Sorting“.",
       step2:
         "Prüfe die vorgeschlagenen Themen, Titel und Löschungen. Änderungen werden erst beim Anwenden übernommen.",
       step3:
@@ -432,7 +433,7 @@ export default {
     sort_group_chats: {
       title: "Chats sortieren und gruppieren",
       step1: "Öffne das Sortiermenü in der Seitenleiste.",
-      step2: "Wähle die Gruppierung nach Thema, Datum oder Erstellungsdatum.",
+      step2: "Gruppiere die Chats im Abschnitt „Chats“ nach Datum oder Erstellungsdatum. Standard wiederherstellen hebt die Gruppierung auf, Themen bleiben davon unberührt.",
     },
     pin_chat: {
       title: "Einen Chat anheften",
@@ -958,6 +959,7 @@ export default {
     },
     usage: {
       title: "Nutzung",
+      show_details: "Nutzung anzeigen",
       description:
         "Überblick über deine monatliche Nutzung und das Organisationsbudget.",
       monthly: "Monatlich",
@@ -1284,13 +1286,29 @@ export default {
       "top_p ist ein Schieberegler von 0 bis 1, der den Gesamtbestand der Wahrscheinlichkeiten anpasst, die für das nächste Token in Betracht gezogen werden. Ein top_p von 0,1 würde bedeuten, dass nur die oberen 10% der kumulativen Wahrscheinlichkeiten berücksichtigt werden. Die Variation von top_p hat einen ähnlichen Effekt auf Vorhersagbarkeit und Kreativität wie die Temperatur.",
   },
   model_selector: {
+    filter: "Filter",
+    filter_clear: "Filter entfernen",
+    section_deployment: "Bereitstellung",
+    section_input: "Eingabe",
+    section_purpose: "Zweck",
+    input_image: "Bild",
+    input_video: "Video",
+    input_audio: "Audio",
+    input_arcana: "Arcana",
+    purpose_reasoning: "Komplexe Aufgaben (Thinking)",
+    purpose_coding: "Programmieren",
+    purpose_writing: "Schreiben & Alltag",
+    purpose_fast: "Schnelle Antworten",
+    purpose_long_documents: "Lange Dokumente",
+    purpose_translation: "Übersetzen & Mehrsprachigkeit",
+    no_results: "Kein Modell gefunden. Versuche einen anderen Suchbegriff.",
     change_model: "Modell wechseln",
     docs_hint_text: "Unsicher, welches Modell du wählen sollst?",
     docs_hint_link: "Lies die Modellübersicht.",
     scope_filter: "Modelle filtern",
     scope_all: "Alle Modelle",
-    scope_internal: "Nur interne",
-    scope_external: "Nur externe",
+    scope_internal: "Intern",
+    scope_external: "Extern",
   },
   // Tour
   tour: {
@@ -1334,7 +1352,7 @@ export default {
     mcp_name_changed_connect: "Verbinden und aktualisieren",
     folder_access:
       "Der Assistent möchte den lokalen Ordner <strong>{{name}}</strong> wieder verwenden. Nach einem Neuladen muss der Zugriff erneut erlaubt werden.",
-    title: "Warning",
+    title: "Warnung",
     bad_request:
       "Fehlerhafte Anfrage wurde gesendet: Bitte lösche die Konversation, versuche es innerhalb des Limits erneut, und speichere deinen Chatverlauf für spätere Zwecke.",
     clear_data: "Achtung! Die Löschung löscht deinen Verlauf. Fortfahren?",

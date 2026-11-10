@@ -66,8 +66,8 @@ export default function RenameChatModal({
         title: title.trim(),
         flush: true,
       }));
-      onClose();
     }
+    onClose();
   };
 
   const handleKeyDown = (e) => {
@@ -89,9 +89,12 @@ export default function RenameChatModal({
       isOpen={isOpen}
       onClose={onClose}
       titleKey="rename_conversation.title"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
       maxWidth="max-w-md"
+      contentClassName="p-0"
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5">
         {/* Input Field */}
         <div className="flex flex-col gap-1">
           <input
@@ -103,20 +106,22 @@ export default function RenameChatModal({
             className={`input w-full ${error ? "input-error" : ""}`}
             placeholder={t("rename_conversation.enter_name")}
           />
-          {error && <p className="text-error text-sm pl-1">{error}</p>}
+          {error && <p className="text-xs text-error" role="alert">{error}</p>}
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-end gap-3 w-full pt-2">
+        <div className="flex justify-end gap-2">
           <button
-            className="btn min-w-[100px] select-none"
+            type="button"
+            className="btn btn-ghost"
             onClick={onClose}
           >
             {t("common.cancel")}
           </button>
 
           <button
-            className="btn btn-accent min-w-[100px] select-none"
+            type="button"
+            className="btn btn-accent"
             onClick={handleRename}
           >
             <Trans i18nKey="common.rename" />

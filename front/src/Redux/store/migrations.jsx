@@ -105,5 +105,15 @@ export const migrations = {
       state.user_settings.conversation_summaries ?? true;
     console.log("Migrating redux to v7");
   },
-  // Future migrations here (e.g., 8: (state) => {...})
+  8: (state) => {
+    // Date buckets used to start collapsed; they are expanded by default now.
+    const collapsed = state.interface_settings?.collapsed_topics ?? [];
+    if (state.interface_settings) {
+      state.interface_settings.collapsed_topics = collapsed.filter(
+        (id) => !id.startsWith("__by_date__:") && !id.startsWith("__by_created__:"),
+      );
+    }
+    console.log("Migrating redux to v8");
+  },
+  // Future migrations here (e.g., 9: (state) => {...})
 };

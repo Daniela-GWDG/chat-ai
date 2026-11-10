@@ -26,17 +26,19 @@ export default function DeleteChatButton({
 
   if (variant === "menu") {
     return (
-        <button
+        <li>
+<button
             onClick={(e) => {
             e.stopPropagation();
             handleDeleteChat();
             closeMenu();
             }}
-            className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-error transition-colors hover:bg-error/10"
+            className="text-error"
         >
-            <TrashCan size={14} />
+            <TrashCan size={16} />
             {t("common.delete")}
         </button>
+</li>
     )
   }
 

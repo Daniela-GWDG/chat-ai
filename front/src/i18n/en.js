@@ -50,7 +50,6 @@ export default {
   feedback:{
     thumbsup:"The response is good.",
     thumbsdown: "The response is not so good.",
-    send: "Send a detailed feedback describing your observation."
   },
   // Sidebar
   sidebar: {
@@ -68,10 +67,8 @@ export default {
     title: "Chats",
     all: "All chats",
     uncategorized: "Unsorted Chats",
-    by_date: "All chats by date",
-    by_created: "All chats by creation date",
     sort_label: "Sort chats",
-    sort_by_topic: "By topic",
+    sort_reset: "Restore default",
     sort_by_date: "By date",
     sort_by_created: "By creation date",
     modified: "Modified {{date}}",
@@ -114,7 +111,6 @@ export default {
     suggestion_writing: "Writing",
     suggestion_health: "Health",
     suggestion_research: "Research",
-    creating: "Creating…",
     choose_color: "Choose a colour",
     choose_icon: "Choose an icon",
     error_generic: "Could not complete the action. Please try again.",
@@ -137,7 +133,7 @@ export default {
     loading: "Loading topic…",
   },
   sorter: {
-    button: "Sort & organize",
+    button: "Smart Sorting",
     title: "Sort & organize chats",
     intro:
       "Review the suggestions below. Nothing is changed until you apply them.",
@@ -318,6 +314,11 @@ export default {
       step3:
         "Wait for the processed Markdown file, then send your message.",
     },
+    filter_models: {
+      title: "Filter models",
+      step1: "Open the model selector in the prompt box.",
+      step2: "Filter the list by deployment, input, or purpose. One filter applies at a time, and the search works on top of it.",
+    },
     select_model: {
       title: "Select a model",
       step1:
@@ -408,7 +409,7 @@ export default {
     },
     sort_organize: {
       title: "Sort & organize chats",
-      step1: "Click Sort & organize in the sidebar header.",
+      step1: "Click Smart Sorting in the sidebar tools row.",
       step2:
         "Review the suggested topics, titles, and deletions. Nothing changes until you apply them.",
       step3:
@@ -417,7 +418,7 @@ export default {
     sort_group_chats: {
       title: "Sort and group chats",
       step1: "Open the sort menu in the sidebar.",
-      step2: "Choose grouping by topic, date, or creation date.",
+      step2: "Group the chats in the Chats section by date or creation date. Restore default removes the grouping; topics are not affected.",
     },
     pin_chat: {
       title: "Pin a chat",
@@ -941,6 +942,7 @@ export default {
     },
     usage: {
       title: "Usage",
+      show_details: "Show usage",
       description:
         "Monitor your monthly usage and organization budget usage.",
       monthly: "Monthly",
@@ -1264,13 +1266,29 @@ export default {
       "top_p is a slider from 0 to 1 which adjusts the total population of probabilities considered for the next token. A top_p of 0.1 would mean only the top 10% of cumulative probabilities is considered. Variating top_p has a similar effect on predictability and creativity as temperature.",
   },
   model_selector: {
+    filter: "Filter",
+    filter_clear: "Remove filter",
+    section_deployment: "Deployment",
+    section_input: "Input",
+    section_purpose: "Purpose",
+    input_image: "Image",
+    input_video: "Video",
+    input_audio: "Audio",
+    input_arcana: "Arcana",
+    purpose_reasoning: "Complex tasks (Thinking)",
+    purpose_coding: "Coding",
+    purpose_writing: "Writing & everyday",
+    purpose_fast: "Fast answers",
+    purpose_long_documents: "Long documents",
+    purpose_translation: "Translation & multilingual",
+    no_results: "No models found. Try a different search term.",
     change_model: "Change model",
     docs_hint_text: "Need help deciding which model fits best?",
     docs_hint_link: "Read the model overview.",
     scope_filter: "Filter models",
     scope_all: "All models",
-    scope_internal: "Internal only",
-    scope_external: "External only",
+    scope_internal: "Internal",
+    scope_external: "External",
   },
   // Tour
   tour: {

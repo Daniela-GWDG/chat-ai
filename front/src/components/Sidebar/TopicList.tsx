@@ -4,14 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import {
-  Calendar,
   ChevronDown,
   Add,
   Edit,
   OverflowMenuVertical,
   Pin,
   PinFilled,
-  SortAscending,
   TrashCan,
 } from "@carbon/icons-react";
 
@@ -113,7 +111,7 @@ export default function TopicList({
 
   const [menuTopicId, setMenuTopicId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLUListElement | null>(null);
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleTopicCollapse = useCallback((topicId: string) => {
@@ -226,8 +224,9 @@ export default function TopicList({
     emoji?: string | null;
     topic?: TopicRef;
     actions?: ReactNode;
+    body?: ReactNode;
   }) => {
-    const { id, label, conversations, hex, Icon, emoji, topic, actions } = options;
+    const { id, label, conversations, hex, Icon, emoji, topic, actions, body } = options;
     const isCollapsed = collapsedTopicIds.includes(id);
     const isDropTarget =
       draggingConversationId !== null && dragOverTopicId === id;
@@ -254,6 +253,8 @@ export default function TopicList({
               style={{ backgroundColor: withAlpha(hex, isDark ? 0.7 : 0.5) }}
             />
           ) : null;
+    // A topic row selects the topic; the Chats row folds like the other sections.
+    const activateRow = () => (topic ? onOpenTopic(id) : toggleTopicCollapse(id));
     const actionVisibility =
       menuTopicId === id || isActiveTopic || window.innerWidth < 1024
         ? "opacity-100"
@@ -285,16 +286,17 @@ export default function TopicList({
           role="button"
           tabIndex={0}
           aria-current={isActiveTopic ? "page" : undefined}
-          onClick={() => onOpenTopic(id)}
+          aria-expanded={topic ? undefined : !isCollapsed}
+          onClick={activateRow}
           onKeyDown={(e) => {
             // Let the collapse/options buttons handle their own keys.
             if (e.target !== e.currentTarget) return;
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              onOpenTopic(id);
+              activateRow();
             }
           }}
-          className={`group -mx-2 flex h-10 items-center gap-1.5 px-[15px] text-xs transition cursor-pointer border text-base-content ${
+          className={`group flex h-10 items-center gap-1.5 ${topic ? "ml-[18px] rounded-lg pl-2 pr-[7px]" : "-mx-2 px-[15px]"} text-xs transition cursor-pointer border text-base-content ${
             isActiveTopic
               ? "border-transparent bg-base-200"
               : "border-transparent hover:bg-base-200"
@@ -302,27 +304,14 @@ export default function TopicList({
           // style={ isDropTarget ? { backgroundColor: topicTint(hex, isDark) } : undefined }
         >
           {!topic && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleTopicCollapse(id);
-              }}
-              aria-expanded={!isCollapsed}
-              aria-label={
-                isCollapsed
-                  ? t("folders.expand_topic")
-                  : t("folders.collapse_topic")
-              }
-              className="-ml-[3px] flex-shrink-0 cursor-pointer text-base-content"
-            >
+            <span className="-ml-[3px] flex-shrink-0 text-base-content">
               <ChevronDown
                 size={16}
                 className={`pointer-events-none transition-transform duration-200 ${
                   isCollapsed ? "-rotate-90" : "rotate-0"
                 }`}
               />
-            </button>
+            </span>
           )}
 
           {topic ? (
@@ -399,16 +388,75 @@ export default function TopicList({
         </div>
 
         {!isCollapsed && count > 0 && (
-          <div
-            className={`${topic ? "ml-[15.5px] pl-[8.5px]" : "ml-[12.5px] pl-[11.5px]"} mt-1 border-l flex flex-col gap-1`}
-            style={{ borderColor: withAlpha(hex, isDark ? 0.5 : 0.35) }}
-          >
-            {conversations.map((conv) => renderConversationRow(conv))}
-          </div>
+          body ?? (
+            <div
+              className={`${topic ? "ml-[34.5px] pl-[8.5px]" : "ml-[12.5px] pl-[11.5px]"} mt-1 border-l flex flex-col gap-1`}
+              style={{ borderColor: withAlpha(hex, isDark ? 0.5 : 0.35) }}
+            >
+              {conversations.map((conv) => renderConversationRow(conv))}
+            </div>
+          )
         )}
       </div>
     );
   };
+
+  // The sort menu only reorganises the Chats section; topics stay as they are.
+  const dateBuckets =
+    grouping === "topic"
+      ? undefined
+      : (() => {
+      const isCreated = grouping === "created";
+      const parentId = isCreated ? CREATED_TOPIC_ID : DATE_TOPIC_ID;
+      const groups = isCreated ? creationDateGroups : dateGroups;
+      return groups.map((group) => {
+        const bucketId = dateBucketCollapseId(parentId, group.key);
+        const bucketCollapsed = collapsedTopicIds.includes(bucketId);
+        const bucketCount = group.conversations.length;
+        return (
+          <div key={group.key}>
+            <div
+              role="button"
+              tabIndex={0}
+              aria-expanded={!bucketCollapsed}
+              onClick={() => toggleTopicCollapse(bucketId)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggleTopicCollapse(bucketId);
+                }
+              }}
+              className="group ml-[18px] flex h-10 items-center gap-1.5 rounded-lg pl-2 pr-[7px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+            >
+              <ChevronDown
+                size={16}
+                className={`-ml-[3px] mr-[7px] flex-shrink-0 pointer-events-none text-base-content transition-transform duration-200 ${
+                  bucketCollapsed ? "-rotate-90" : "rotate-0"
+                }`}
+              />
+              <span className="flex-1 truncate select-none pointer-events-none font-medium">
+                {t(`folders.dateBuckets.${group.key}`)}
+              </span>
+              <span className="min-w-5 text-right text-[11px] select-none pointer-events-none font-normal text-base-content">
+                {bucketCount > 999 ? "999+" : bucketCount}
+              </span>
+            </div>
+            {!bucketCollapsed && (
+              <div className="mt-1 flex flex-col gap-1 pl-[44px]">
+                {group.conversations.map((conv) =>
+                  renderConversationRow(conv, {
+                    showMetadata: false,
+                    ...(isCreated
+                      ? { showCreated: true }
+                      : { showModified: true }),
+                  }),
+                )}
+              </div>
+            )}
+          </div>
+        );
+      });
+        })();
 
   return (
     <div className="flex flex-col gap-1.5 pt-1" data-guide="topic-list">
@@ -435,12 +483,9 @@ export default function TopicList({
                 });
               })}
               {pinnedConversations.length > 0 && (
-                <div
-                  className="ml-[12.5px] pl-[11.5px] mt-1 border-l flex flex-col gap-1"
-                  style={{ borderColor: withAlpha(neutralHex, isDark ? 0.5 : 0.35) }}
-                >
+                <div className="mt-1 flex flex-col gap-1 pl-[25px]">
                   {pinnedConversations.map((conv) =>
-                    renderConversationRow(conv, { showModified: true }),
+                    renderConversationRow(conv),
                   )}
                 </div>
               )}
@@ -448,8 +493,6 @@ export default function TopicList({
           )}
         </div>
       )}
-      {grouping === "topic" && (
-        <>
       {topics.length > 0 && (
         <div className="flex flex-col gap-1">
           {renderSectionHeader(TOPICS_SECTION_ID, t("folders.topics_section"), topics.length, topicsCollapsed)}
@@ -481,77 +524,8 @@ export default function TopicList({
         hex: neutralHex,
         Icon: null,
         actions: headerActions,
+        body: dateBuckets && <div className="mt-1 flex flex-col gap-1">{dateBuckets}</div>,
       })}
-        </>
-      )}
-
-      {(grouping === "date" || grouping === "created") && (
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between pl-2 pr-px pt-3 pb-1 text-[10px] font-semibold text-base-content/70">
-            <span className="truncate">
-              {t(grouping === "created" ? "folders.by_created" : "folders.by_date")}
-            </span>
-            {headerActions}
-          </div>
-          {(() => {
-            const isCreated = grouping === "created";
-            const parentId = isCreated ? CREATED_TOPIC_ID : DATE_TOPIC_ID;
-            const groups = isCreated ? creationDateGroups : dateGroups;
-            const ParentIcon = isCreated ? SortAscending : Calendar;
-            return groups.map((group) => {
-              const bucketId = dateBucketCollapseId(parentId, group.key);
-              const bucketCollapsed = collapsedTopicIds.includes(bucketId);
-              const bucketCount = group.conversations.length;
-              return (
-                <div key={group.key}>
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    aria-expanded={!bucketCollapsed}
-                    onClick={() => toggleTopicCollapse(bucketId)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        toggleTopicCollapse(bucketId);
-                      }
-                    }}
-                    className="group -mx-2 flex items-center gap-2 px-[15px] py-2 text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
-                  >
-                    <ParentIcon
-                      size={14}
-                      className="flex-shrink-0 pointer-events-none text-base-content/50"
-                    />
-                    <span className="flex-1 truncate select-none pointer-events-none font-semibold uppercase tracking-wide text-[10px] text-base-content/70">
-                      {t(`folders.dateBuckets.${group.key}`)}
-                    </span>
-                    <span className="text-[11px] select-none pointer-events-none font-semibold text-base-content/70">
-                      {bucketCount > 999 ? "999+" : bucketCount}
-                    </span>
-                    <ChevronDown
-                      size={16}
-                      className={`flex-shrink-0 pointer-events-none text-base-content transition-transform duration-200 ${
-                        bucketCollapsed ? "-rotate-90" : "rotate-0"
-                      }`}
-                    />
-                  </div>
-                  {!bucketCollapsed && (
-                    <div className="flex flex-col gap-1">
-                      {group.conversations.map((conv) =>
-                        renderConversationRow(conv, {
-                          showMetadata: false,
-                          ...(isCreated
-                            ? { showCreated: true }
-                            : { showModified: true }),
-                        }),
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            });
-          })()}
-        </div>
-      )}
 
       {menuTopicId &&
         (() => {
@@ -560,23 +534,18 @@ export default function TopicList({
             topics.find((item) => item.id === menuTopicId);
           if (!topic) return null;
           return (
-            <div
+            <ul
               ref={menuRef}
               role="menu"
-              className="fixed w-40 rounded-lg shadow-2xl ring-1 ring-black/10 dark:ring-white/10 border border-base-300"
+              className="menu menu-sm fixed w-44 rounded-box border border-base-300 bg-base-100 shadow-lg"
               style={{
                 left: `${menuPosition.x}px`,
                 top: `${menuPosition.y}px`,
                 zIndex: 999999,
-                backgroundColor: "rgb(255, 255, 255)",
               }}
             >
-              <div
-                className="absolute inset-0 bg-base-100 rounded-lg"
-                style={{ zIndex: -1 }}
-              />
-              <div className="p-1 bg-base-100 rounded-lg relative">
-                <button
+                <li>
+<button
                   type="button"
                   role="menuitem"
                   data-guide="pin-topic-menu-item"
@@ -591,18 +560,19 @@ export default function TopicList({
                     });
                     closeTopicMenu();
                   }}
-                  className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-base-content transition-colors hover:bg-base-300"
                 >
                   {topic.pinned ? (
-                    <PinFilled size={14} />
+                    <PinFilled size={16} />
                   ) : (
-                    <Pin size={14} />
+                    <Pin size={16} />
                   )}
                   {topic.pinned
                     ? t("folders.unpin_topic_action")
                     : t("folders.pin_topic_action")}
                 </button>
-                <button
+</li>
+                <li>
+<button
                   type="button"
                   role="menuitem"
                   onClick={(e) => {
@@ -615,12 +585,13 @@ export default function TopicList({
                     });
                     closeTopicMenu();
                   }}
-                  className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-base-content transition-colors hover:bg-base-300"
                 >
-                  <Edit size={14} />
+                  <Edit size={16} />
                   {t("folders.edit_title")}
                 </button>
-                <button
+</li>
+                <li>
+<button
                   type="button"
                   role="menuitem"
                   onClick={(e) => {
@@ -628,13 +599,13 @@ export default function TopicList({
                     onDeleteTopic({ id: topic.id, name: topic.name });
                     closeTopicMenu();
                   }}
-                  className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-error transition-colors hover:bg-error/10"
+                  className="text-error"
                 >
-                  <TrashCan size={14} />
+                  <TrashCan size={16} />
                   {t("common.delete")}
                 </button>
-              </div>
-            </div>
+</li>
+            </ul>
           );
         })()}
     </div>

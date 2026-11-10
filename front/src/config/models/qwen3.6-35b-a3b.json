@@ -1,4 +1,5 @@
 {
     "reasoning_effort": 1,
-    "reasoning_options": ["none", "on"]
+    "reasoning_options": ["none", "on"],
+    "purposes": ["writing", "fast"]
 }

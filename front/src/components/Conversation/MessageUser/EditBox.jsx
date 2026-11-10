@@ -1,6 +1,8 @@
 import { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-import { X, Send } from "lucide-react";
+import { SendFilled } from "@carbon/icons-react";
+import { PromptIconButton } from "../../Others/IconButtons";
 
 import { useSendMessage } from "../../../hooks/useSendMessage";
 
@@ -15,6 +17,7 @@ export default function EditBox({
   message_index,
   setEditMode,
 }) {
+  const { t } = useTranslation();
   const message = localState.messages[message_index];
   const sendMessage = useSendMessage();
 
@@ -84,48 +87,33 @@ export default function EditBox({
         }}
       />
       <div className="flex gap-1.5 justify-between w-full">
-        {/* Clear edit box button */}
-        <button
-          className="cursor-pointer"
-          onClick={() => {
-            editBox.current.value = "";
-          }}
-        >
-          {" "}
-          <X
-            className="h-[22px] w-[22px] cursor-pointer text-accent"
-            alt="clear"
-          />
-        </button>
-        <div className="w-full flex flex-row justify-end gap-4 px-1">
+        <div className="w-full flex flex-row items-center justify-end gap-2 px-1">
           {/* Cancel edit button */}
           <button
+            type="button"
             onClick={() => setEditMode(false)}
-            className="text-sm text-base-content/70 px-1 py-1 rounded-full cursor-pointer"
+            className="btn btn-ghost"
           >
-            Cancel
+            {t("common.cancel")}
           </button>
           {/* Save edited message button */}
           <button
+            type="button"
             onClick={() => handleSave()}
-            className="text-md text-primary border dark:text-accent rounded-full px-3 py-1 cursor-pointer"
+            className="btn btn-accent"
           >
-            Save
+            {t("common.save")}
           </button>
           {/* Submit edited message button */}
-          <button
-            className="cursor-pointer"
+          <PromptIconButton
+            aria-label={t("common.send")}
             onClick={() => {
               setEditMode(false);
               handleSend();
             }}
-            // disabled={loading || loadingResend}
           >
-            <Send
-              className="cursor-pointer h-[22px] w-[22px] text-accent"
-              alt="send"
-            />
-          </button>
+            <SendFilled size={18} />
+          </PromptIconButton>
         </div>
       </div>
     </div>

@@ -52,8 +52,10 @@ describe("TopicList", () => {
   it("does not open the chat overview when a sort action is clicked", () => {
     const props = makeProps({ sortActions: <button type="button">sort</button> });
     render(<TopicList {...props} />);
+    redux.dispatch.mockClear();
     fireEvent.click(screen.getByRole("button", { name: "sort" }));
     expect(props.onOpenTopic).not.toHaveBeenCalled();
+    expect(redux.dispatch).not.toHaveBeenCalled();
   });
 
   it("keeps the sort actions reachable when grouped by date", () => {
@@ -70,6 +72,43 @@ describe("TopicList", () => {
     const row = screen.getByText("folders.title").parentElement;
     expect(row).toHaveClass("-mx-2");
     expect(row).not.toHaveClass("rounded-lg");
+  });
+
+  it("folds the Chats section when its row is clicked", () => {
+    const props = makeProps();
+    render(<TopicList {...props} />);
+    redux.dispatch.mockClear();
+    const row = screen.getByText("folders.title").parentElement;
+    expect(row).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(row);
+    expect(redux.dispatch).toHaveBeenCalledWith(toggleTopic(UNSORTED_TOPIC_ID));
+    expect(props.onOpenTopic).not.toHaveBeenCalled();
+  });
+
+  it("keeps topics above and groups only the Chats section by date", () => {
+    const loose = { id: "c1", title: "Loose chat" };
+    render(
+      <TopicList
+        {...makeProps({
+          grouping: "date",
+          topics: [{ id: "t1", name: "UX Writing" }],
+          unsortedConversations: [loose],
+          dateGroups: [{ key: "today", conversations: [loose] }],
+        })}
+      />,
+    );
+    const topic = screen.getByText("UX Writing");
+    const bucket = screen.getByText("folders.dateBuckets.today");
+    const chats = screen.getByText("folders.title");
+    expect(topic.compareDocumentPosition(chats) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(chats.compareDocumentPosition(bucket) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByText("Loose chat")).toBeInTheDocument();
+
+    const bucketRow = bucket.closest('[role="button"]');
+    expect(bucketRow).toHaveAttribute("aria-expanded", "true");
+    expect(bucketRow.firstElementChild.tagName.toLowerCase()).toBe("svg");
+    expect(bucket).toHaveClass("font-medium");
+    expect(bucket).not.toHaveClass("uppercase");
   });
 
   it("hides the pinned section when nothing is pinned", () => {
@@ -98,6 +137,13 @@ describe("TopicList", () => {
       expect(header).toHaveTextContent("1");
       expect(header).toHaveClass("-mx-2");
       expect(screen.getByText("Pinned chat")).toBeInTheDocument();
+    });
+
+    it("lists pinned chats without a line or forced timestamp", () => {
+      const renderConversationRow = vi.fn((conv) => <div key={conv.id}>{conv.title}</div>);
+      render(<TopicList {...makeProps({ ...pinned, renderConversationRow })} />);
+      expect(renderConversationRow).toHaveBeenCalledWith(pinned.pinnedConversations[0]);
+      expect(screen.getByText("Pinned chat").parentElement).not.toHaveClass("border-l");
     });
 
     it("toggles when the header is clicked", () => {
@@ -148,6 +194,14 @@ describe("TopicList", () => {
       render(<TopicList {...makeProps(withTopic)} />);
       const row = screen.getByText("UX Writing").parentElement;
       expect(row.nextElementSibling).toBeNull();
+    });
+
+    it("indents topic rows under the section headings", () => {
+      render(<TopicList {...makeProps(withTopic)} />);
+      const topicRow = screen.getByText("UX Writing").parentElement;
+      expect(topicRow).toHaveClass("ml-[18px]", "rounded-lg");
+      expect(topicRow).not.toHaveClass("-mx-2");
+      expect(screen.getByText("folders.title").parentElement).toHaveClass("-mx-2");
     });
 
     it("selects a topic by clicking the row without toggling it", () => {

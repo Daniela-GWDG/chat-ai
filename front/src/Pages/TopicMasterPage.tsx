@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Chat, ChevronLeft, ChevronRight, Folder, Time } from "@carbon/icons-react";
+import { ChevronLeft, ChevronRight, Folder, Time } from "@carbon/icons-react";
 
 import { useConversationList, useFolderList } from "../db";
 import type { ConversationRow, FolderRow } from "../db/dbTypes";
@@ -22,6 +22,7 @@ import SidebarWrapper from "../components/Sidebar/SidebarWrapper";
 import TopicComposer from "../components/TopicMaster/TopicComposer";
 import { UNSORTED_TOPIC_ID } from "../components/Sidebar/TopicList";
 import { selectTopicConversations } from "../utils/topicConversations";
+import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../components/Others/OverlayScrollbar";
 import { topicColor, topicHex } from "../components/Sidebar/topicColors";
 import { selectDarkMode } from "../Redux/reducers/interfaceSettingsSlice";
 import { isTopicIconId, topicIcon } from "../components/Sidebar/topicIcons";
@@ -38,6 +39,7 @@ export default function TopicMasterPage() {
   const { t, i18n } = useTranslation();
   const userSettings = useSelector(selectUserSettings);
   const showSummaries = useSelector(selectConversationSummaries);
+  const listScrollRef = useRef<HTMLDivElement | null>(null);
   const isDark = useSelector(selectDarkMode);
   const modelsData = useUpdateModelsData();
   const userData = useUpdateUserData();
@@ -178,7 +180,8 @@ export default function TopicMasterPage() {
                 </div>
               </header>
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+              <OverlayScrollbar targetRef={listScrollRef} />
+              <div ref={listScrollRef} className={`min-h-0 flex-1 overflow-y-auto px-4 py-4 ${OVERLAY_SCROLL_CLASS}`}>
                 <div className="mx-auto flex w-full max-w-3xl flex-col gap-2">
                   {topicConversations.length === 0 ? (
                     <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
@@ -203,11 +206,8 @@ export default function TopicMasterPage() {
                           key={conversation.id}
                           type="button"
                           onClick={() => navigate(`/chat/${conversation.id}`)}
-                          className="group flex w-full items-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-left transition-colors hover:border-accent/40 hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                          className="group flex h-[84px] w-full items-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-4 text-left transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                         >
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-base-200 text-base-content/60">
-                            <Chat size={16} />
-                          </span>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-sm font-medium text-base-content">
                               {conversation.title || t("conversation.untitled")}
@@ -224,7 +224,7 @@ export default function TopicMasterPage() {
                           </span>
                           <ChevronRight
                             size={16}
-                            className="shrink-0 text-base-content/40 transition-transform group-hover:translate-x-0.5"
+                            className="shrink-0 text-base-content transition-transform group-hover:translate-x-0.5"
                           />
                         </button>
                       );

@@ -36,50 +36,41 @@ export default function ConfirmActionModal({
   };
 
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} titleKey="alert.title">
-      {/* Message */}
-      <div className="pt-0 pb-2">
-        <p className="text-base-content text-justify text-sm">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      titleKey="alert.title"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
+      contentClassName="p-0"
+    >
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5">
+        <p className="text-sm text-base-content">
           <Trans i18nKey={messageKey} />
         </p>
-      </div>
 
-      {/* Checkbox */}
-      <div className="flex items-center gap-3">
-        <input
-          type="checkbox"
-          id={`dontShowAgain-${warningKey}`}
-          checked={dontShowAgain}
-          onChange={(event) => setDontShowAgain(event.target.checked)}
-          className="checkbox checkbox-accent checkbox-sm"
-        />
-        <label
-          htmlFor={`dontShowAgain-${warningKey}`}
-          className="text-sm text-base-content cursor-pointer select-none"
-        >
+        <label className="flex cursor-pointer select-none items-center gap-2 text-sm text-base-content">
+          <input
+            type="checkbox"
+            checked={dontShowAgain}
+            onChange={(event) => setDontShowAgain(event.target.checked)}
+            className="checkbox checkbox-sm"
+          />
           <Trans i18nKey="common.dont_show_again" />
         </label>
-      </div>
 
-      {/* Action buttons */}
-      <div className="flex flex-col md:flex-row gap-2 justify-between w-full text-sm mt-4">
-        {/* Cancel button */}
-        <button
-          className="btn md:w-fit w-full min-w-[130px] select-none"
-          onClick={onClose}
-        >
-          <Trans i18nKey="common.cancel" />
-        </button>
-
-        {/* Confirm button */}
-        <button
-          className={`btn md:w-fit w-full min-w-[130px] select-none ${
-            danger ? "btn-error" : "btn-accent"
-          }`}
-          onClick={handleConfirm}
-        >
-          <Trans i18nKey={confirmKey} />
-        </button>
+        <div className="flex justify-end gap-2">
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
+            <Trans i18nKey="common.cancel" />
+          </button>
+          <button
+            type="button"
+            className={`btn ${danger ? "btn-error" : "btn-accent"}`}
+            onClick={handleConfirm}
+          >
+            <Trans i18nKey={confirmKey} />
+          </button>
+        </div>
       </div>
     </BaseModal>
   );

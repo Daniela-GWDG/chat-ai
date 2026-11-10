@@ -44,7 +44,7 @@ export default function TopicEditorModal({
   const [colorId, setColorId] = useState<string>(
     initialColor || (folderId ? topicColor({ id: folderId }).id : TOPIC_COLORS[0].id),
   );
-  const [busy, setBusy] = useState(false);
+  const submitting = useRef(false);
   const [error, setError] = useState("");
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -74,7 +74,8 @@ export default function TopicEditorModal({
       inputRef.current?.focus();
       return;
     }
-    setBusy(true);
+    if (submitting.current) return;
+    submitting.current = true;
     try {
       if (isRename && folderId) {
         await renameFolder(folderId, trimmed);
@@ -87,7 +88,7 @@ export default function TopicEditorModal({
     } catch {
       setError(t("folders.error_generic"));
     } finally {
-      setBusy(false);
+      submitting.current = false;
     }
   };
 
@@ -123,7 +124,6 @@ export default function TopicEditorModal({
             onKeyDown={(e) => {
               if (e.key === "Enter") submit();
             }}
-            disabled={busy}
             autoComplete="off"
             spellCheck={false}
             placeholder={t("folders.name_placeholder")}
@@ -141,7 +141,6 @@ export default function TopicEditorModal({
                     key={suggestion.key}
                     type="button"
                     onClick={() => applySuggestion(suggestion)}
-                    disabled={busy}
                     className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 cursor-pointer
    border border-base-300
    text-xs font-medium text-base-content
@@ -231,7 +230,6 @@ export default function TopicEditorModal({
           <button
             type="button"
             onClick={onClose}
-            disabled={busy}
             className="btn btn-ghost"
           >
             {t("common.cancel")}
@@ -239,10 +237,10 @@ export default function TopicEditorModal({
           <button
             type="button"
             onClick={submit}
-            disabled={busy || name.trim().length === 0}
+            disabled={name.trim().length === 0}
             className="btn btn-accent"
           >
-            {isRename ? t("common.save") : busy ? t("folders.creating") : t("common.create")}
+            {isRename ? t("common.save") : t("common.create")}
           </button>
         </div>
       </div>

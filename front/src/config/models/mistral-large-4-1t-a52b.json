@@ -1,4 +1,5 @@
 {
     "reasoning_effort": 2,
-    "reasoning_options": ["low", "medium", "high"]
+    "reasoning_options": ["low", "medium", "high"],
+    "purposes": ["long_documents", "writing", "translation"]
 }

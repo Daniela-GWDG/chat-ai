@@ -13,6 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import remarkGfm from "remark-gfm";
+import AttachedImage from "./AttachedImage";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -40,6 +41,9 @@ import { stripMetaActionMarkers } from "../../../utils/metaActions";
 
 // Markdown images load automatically, so keep them on the same origin when
 // external references are disabled. Plain links are not fetched until clicked.
+// Anything else is a path from the model's workspace, which the browser cannot load.
+const LOADABLE_IMAGE_URL = /^(https?:|data:|blob:)/i;
+
 const MarkdownImage = ({ src, alt, ...props }) => {
   const loadExternal = useSelector(selectHtmlLoadExternal);
   // react-markdown passes its AST node as a prop; never forward it to the DOM.
@@ -47,6 +51,7 @@ const MarkdownImage = ({ src, alt, ...props }) => {
   if (!loadExternal && isExternalUrl(src)) {
     return <span className="text-base-content/70">{alt || ""}</span>;
   }
+  if (src && !LOADABLE_IMAGE_URL.test(src)) return <AttachedImage src={src} alt={alt} />;
   return <img src={src} alt={alt} {...props} />;
 };
 

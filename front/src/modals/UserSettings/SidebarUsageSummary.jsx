@@ -1,10 +1,15 @@
+import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import UsageDetailsCard from "./UsageDetailsCard";
+import { useDropReturnedFocus } from "../../hooks/useDropReturnedFocus";
 
 const SCOPES = [
-  { key: "external", labelKey: "user_settings.usage.scopes.external" },
   { key: "internal", labelKey: "user_settings.usage.scopes.internal" },
+  { key: "external", labelKey: "user_settings.usage.scopes.external" },
 ];
+
+const NEAR_EXHAUSTED_PERCENT = 80;
+const EXHAUSTED_PERCENT = 100;
 
 function hasValue(value) {
   return value !== null && value !== undefined;
@@ -217,28 +222,78 @@ function buildScope(scopeKey, scopeLabel, scopeData, t) {
   };
 }
 
-export default function SidebarUsageSummary({ data }) {
-  const { t } = useTranslation();
+function getUsageOverview(data, t) {
   const sections = [];
-  const collapsedMetrics = [];
+  const compact = [];
 
   SCOPES.forEach(({ key, labelKey }) => {
     const scope = buildScope(key, t(labelKey), data?.[key], t);
     if (!scope) return;
-
     sections.push(...scope.sections);
-    collapsedMetrics.push(scope.compact);
+    compact.push(scope.compact);
   });
 
+  return { sections, compact };
+}
+
+function progressColorClass(percent) {
+  if (percent >= EXHAUSTED_PERCENT) return "progress-error";
+  if (percent >= NEAR_EXHAUSTED_PERCENT) return "progress-warning";
+  return "";
+}
+
+/** At-a-glance budget in the sidebar; the details live in the profile settings. */
+export default function SidebarUsageSummary({ data, onOpenDetails }) {
+  const { t } = useTranslation();
+  const { markOpened, focusProps } = useDropReturnedFocus();
+  const { compact } = getUsageOverview(data, t);
+  if (!compact.length) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={(event) => {
+        markOpened(event);
+        onOpenDetails();
+      }}
+      {...focusProps}
+      title={t("user_settings.usage.show_details")}
+      data-guide="usage-summary"
+      className="grid w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-lg px-2 py-2 text-left text-xs text-base-content transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+    >
+      {compact.map((metric) => (
+        <Fragment key={metric.key}>
+          <span>{metric.label}</span>
+          {metric.percent === null ? (
+            <span />
+          ) : (
+            <progress
+              className={`progress w-full ${progressColorClass(metric.percent)}`}
+              value={Math.min(metric.percent, 100)}
+              max={100}
+            />
+          )}
+          <span className="text-right">{metric.value}</span>
+        </Fragment>
+      ))}
+    </button>
+  );
+}
+
+/** Full breakdown of every limit, shown in the profile settings. */
+export function UsageDetailsPanel({ data }) {
+  const { t } = useTranslation();
+  const { sections, compact } = getUsageOverview(data, t);
   if (!sections.length) return null;
 
   return (
     <UsageDetailsCard
       label={t("user_settings.usage.title")}
       sections={sections}
-      collapsedMetrics={collapsedMetrics}
+      collapsedMetrics={compact}
       collapsedColumns
       expandedTable
+      alwaysOpen
     />
   );
 }

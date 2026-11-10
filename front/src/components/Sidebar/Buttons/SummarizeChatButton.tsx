@@ -24,18 +24,19 @@ export default function SummarizeChatButton({
 
   if (variant === "menu") {
     return (
-        <button
+        <li>
+<button
             onClick={(e) => {
                 e.stopPropagation();
                 closeMenu();
                 handleSummarizeChat();
             }}
             data-guide="summarize-chat"
-            className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-base-content transition-colors hover:bg-base-200"
         >
-            <BrainstormFilled size={14} />
+            <BrainstormFilled size={16} />
             {t("common.summarize")}
         </button>
+</li>
     )
   }
   if (variant === "rail") {

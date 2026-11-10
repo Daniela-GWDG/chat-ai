@@ -3,7 +3,7 @@ import { Bot } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
 import { useModal } from "../../../modals/ModalContext";
-import { NavIconButton } from "../../Others/IconButtons";
+import { NavIconButton, PromptIconButton } from "../../Others/IconButtons";
 
 
 export default function ImportPersonaButton({
@@ -57,7 +57,7 @@ export default function ImportPersonaButton({
     return (
       <>
         <ShortcutTooltip label={t("sidebar.import_persona")}>
-          <NavIconButton
+          <PromptIconButton
           onClick={() => {
             openModal("importPersona", {
               topicId: topicId,
@@ -67,8 +67,8 @@ export default function ImportPersonaButton({
           aria-label={t("sidebar.import_persona")}
           style={{ WebkitTapHighlightColor: "transparent" }}
         >
-          <Bot size={20} className="text-accent" />
-        </NavIconButton>
+          <Bot size={18} className="text-accent" />
+        </PromptIconButton>
       </ShortcutTooltip>
       </>
     );

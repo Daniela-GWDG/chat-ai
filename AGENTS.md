@@ -190,7 +190,8 @@ switch these parts of the UI off, so new code in those areas must still behave w
 ### 4.6 Model capabilities are data, not code
 
 `front/src/config/models/<model-id>.json` is auto-globbed by `getModelDefaults.jsx` via
-`import.meta.glob`, keyed on the filename. To give a model reasoning-effort support or other
+`import.meta.glob`, keyed on the filename. The optional `purposes` array feeds the model selector's
+purpose filter (`Header/modelFilters.js`). To give a model reasoning-effort support or other
 per-model defaults, add or edit the JSON named exactly after the model id — no code change and no
 registry to update.
 
@@ -334,16 +335,15 @@ both i18n files, and the export/import path.
 
 ### 4.15 Sidebar conversation grouping is a persisted interface setting
 
-`interface_settings.conversation_grouping` is `"topic"` (default), `"date"`, or `"created"`. The
-sort menu in `SidebarContent` dispatches `setConversationGrouping`, and `TopicList` receives the
-value as `grouping` to render either topic rows or a date-bucket tree. `date` uses
-`groupConversationsByDate` (modified time); `created` uses `groupConversationsByCreationDate`. Both
-date-like modes show a non-collapsible parent label; their date buckets sit at the top level and are
-collapsible. Collapse state reuses `collapsed_topics` with `__by_date__` / `__by_created__`
-prefixes. Created-mode rows also show the creation date beside the title. The date/created labels
-only appear in their own mode; the topic-creation/unsorted rows only appear in topic mode.
-It is in `interfaceSettingsSlice`'s `initialState` and `getDefaultState()`; an old persisted state
-without the key falls back to `"topic"` in the selector, so no migration is needed.
+`interface_settings.conversation_grouping` is `"topic"` (default; the menu entry "Restore default" sets it), `"date"`, or
+`"created"`. The sort menu in `SidebarContent` dispatches `setConversationGrouping`, and `TopicList` receives
+the value as `grouping`. It only reorganises the Chats section: pinned entries and topics always stay above
+it. `date` uses `groupConversationsByDate` (modified time) and `created` uses
+`groupConversationsByCreationDate`, both over the chats without a topic, rendered as collapsible buckets
+inside the Chats section and expanded by default. Collapse state reuses `collapsed_topics` with `__by_date__` / `__by_created__`
+prefixes; section rows use `__pinned__`, `__topics__`, `__unsorted__`. Created-mode rows also show the
+creation date beside the title. It is in `interfaceSettingsSlice`'s `initialState` and `getDefaultState()`;
+an old persisted state without the key falls back to `"topic"` in the selector, so no migration is needed.
 
 ### 4.16 Meta chat works from conversation summaries, not messages
 

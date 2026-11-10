@@ -122,8 +122,9 @@ export default function UsageDetailsCard({
   collapsedMetrics: collapsedOverride,
   collapsedColumns = false,
   expandedTable = false,
+  alwaysOpen = false,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(alwaysOpen);
 
   const metrics = sections.flatMap((section) => section.metrics);
   const groups = [];
@@ -197,23 +198,27 @@ export default function UsageDetailsCard({
 
   return (
     <div className="w-full min-w-0 rounded-xl bg-base-200 px-2 py-2">
-      <button
-        type="button"
-        onClick={() => setIsOpen((open) => !open)}
-        aria-expanded={canExpand ? isOpen : undefined}
-        className="flex w-full items-center gap-2 text-left"
-      >
-        {canExpand && (
-          <ChevronDown
-            size={16}
-            className={`-ml-[5px] shrink-0 text-base-content transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
-            aria-hidden="true"
-          />
-        )}
-        <span className="min-w-0 truncate text-xs font-medium text-base-content">
-          {label}
-        </span>
-      </button>
+      {alwaysOpen ? (
+        <p className="truncate text-xs font-medium text-base-content">{label}</p>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setIsOpen((open) => !open)}
+          aria-expanded={canExpand ? isOpen : undefined}
+          className="flex w-full items-center gap-2 text-left"
+        >
+          {canExpand && (
+            <ChevronDown
+              size={16}
+              className={`-ml-[5px] shrink-0 text-base-content transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
+              aria-hidden="true"
+            />
+          )}
+          <span className="min-w-0 truncate text-xs font-medium text-base-content">
+            {label}
+          </span>
+        </button>
+      )}
 
       {isOpen ? (
         expandedTable ? (

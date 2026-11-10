@@ -3,6 +3,7 @@ import SidebarRail from "./SidebarRail";
 import { selectShowSidebar, toggleSidebar, closeSidebar } from "../../Redux/reducers/interfaceSettingsSlice";
 
 import { useWindowSize } from "../../hooks/useWindowSize";
+import { useRevealTopic } from "../../hooks/useRevealTopic";
 
 import SidebarPanel from "./SidebarPanel";
 import SidebarContent from "./SidebarContent";
@@ -25,6 +26,7 @@ export default function SidebarWrapper({
   modelsData 
 }) {
   const dispatch = useDispatch();
+  const revealTopic = useRevealTopic();
   const navigate = useNavigate();
   const showSidebar = useSelector(selectShowSidebar);
   const userSettings = useSelector(selectUserSettings);
@@ -55,9 +57,10 @@ export default function SidebarWrapper({
   const handleNewConversation = useCallback(async (folderId: string | null = null) => {
     const newConversation = getDefaultConversation(userSettings, folderId ?? null);
     const newId = await createConversation(newConversation);
+    revealTopic(folderId);
     navigate(`/chat/${newId}`);
     focusPromptInput();
-  }, [userSettings, navigate, focusPromptInput]);
+  }, [userSettings, navigate, focusPromptInput, revealTopic]);
 
   useEffect(() => {
     let shortcutLocked = false;

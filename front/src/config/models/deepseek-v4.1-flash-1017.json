@@ -1,4 +1,5 @@
 {
     "reasoning_effort": 2,
-    "reasoning_options": ["none", "low", "high", "xhigh", "max"]
+    "reasoning_options": ["none", "low", "high", "xhigh", "max"],
+    "purposes": ["fast", "coding"]
 }

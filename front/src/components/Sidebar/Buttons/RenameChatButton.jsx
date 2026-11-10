@@ -29,18 +29,19 @@ export default function RenameChatButton({
 
   if (variant === "menu") {
     return (
-        <button
+        <li>
+<button
           onClick={(e) => {
             e.stopPropagation();
             const conv = conversations?.find((c) => c.id === convId);
             handleRenameChat(convId, conv?.title || "Untitled Chat");
             closeMenu();
           }}
-          className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-base-content transition-colors hover:bg-base-200"
         >
-          <Edit size={14} />
+          <Edit size={16} />
           {t("common.rename")}
         </button>
+</li>
     )
   }
 

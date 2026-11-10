@@ -4,7 +4,7 @@ import { useImportConversation } from "../../../hooks/useImportConversation";
 import { Upload } from "@carbon/icons-react";
 import { useToast } from "../../../hooks/useToast";
 import ShortcutTooltip from "../ShortcutTooltip";
-import { NavIconButton } from "../../Others/IconButtons";
+import { NavIconButton, PromptIconButton } from "../../Others/IconButtons";
 
 
 export default function ImportChatButton({
@@ -180,7 +180,7 @@ export default function ImportChatButton({
           onChange={handleFilesChangeJSON}
           className="hidden"
         />
-        <NavIconButton
+        <PromptIconButton
           onClick={handleClickJSON}
           disabled={loading}
           data-guide="import-chat"
@@ -188,8 +188,8 @@ export default function ImportChatButton({
             WebkitTapHighlightColor: "transparent"
           }}
         >
-          <Upload size={20} className="text-accent" />
-        </NavIconButton>
+          <Upload size={18} className="text-accent" />
+        </PromptIconButton>
         </ShortcutTooltip>
       </>
     );

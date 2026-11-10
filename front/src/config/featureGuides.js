@@ -91,6 +91,23 @@ export const featureGuides = {
       },
     ],
   },
+  filter_models: {
+    titleKey: "feature_guide.filter_models.title",
+    prompt:
+      "Filter the model list in the model selector by deployment, input type, or purpose. One filter applies at a time.",
+    keywords: ["filter models", "model filter", "image model", "coding model"],
+    steps: [
+      {
+        target: [".model-selector", ".model-selector-header"],
+        textKey: "feature_guide.filter_models.step1",
+        completeOnTargetClick: true,
+      },
+      {
+        target: '[data-guide="model-filter"]',
+        textKey: "feature_guide.filter_models.step2",
+      },
+    ],
+  },
   select_model: {
     titleKey: "feature_guide.select_model.title",
     prompt:
@@ -1026,6 +1043,7 @@ export const FEATURE_CATEGORIES = {
     "upload_file",
     "process_attachment",
     "select_model",
+    "filter_models",
     "conversation_settings",
     "voice_input",
     "send_key",
@@ -1106,6 +1124,7 @@ const germanGuideKeywords = {
   attach_media: ["medien anhäng", "medien hochlad", "bild anhäng", "bild hochlad", "foto", "video anhäng"],
   upload_file: ["datei anhäng", "datei hochlad", "hochladen", "hochlad", "hochgelad", "datei", "anhang", "anhäng", "anhang hinzufüg"],
   process_attachment: ["anhang verarbeit", "datei verarbeit", "pdf konvertier", "docx konvertier", "dokument konvertier"],
+  filter_models: ["modell filter", "modelle filtern", "bildmodell", "modell zum programmieren"],
   select_model: ["modell wechsel", "modell auswähl", "modell änder", "welches modell", "modell"],
   conversation_settings: ["unterhaltungseinstellung", "konversationseinstellung", "temperatur", "top p", "systemprompt", "system prompt", "reasoning effort", "denkaufwand"],
   voice_input: ["mikrofon", "sprachnachricht", "sprachaufnahme", "spracheingabe", "aufnehm", "aufnimm", "diktier"],

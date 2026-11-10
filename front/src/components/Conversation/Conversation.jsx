@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../Others/OverlayScrollbar";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router";
@@ -398,7 +399,7 @@ export default function Conversation({
         {/* Scrollable messages container */}
         <div className="relative flex-1 min-h-0">
           <div ref={containerRef}
-            className="h-full overflow-y-auto"
+            className={`h-full overflow-y-auto ${OVERLAY_SCROLL_CLASS}`}
             style={{
                 scrollPaddingBottom: "20px",
                 WebkitOverflowScrolling: "touch",
@@ -449,6 +450,7 @@ export default function Conversation({
             ))}
           </div>
           </div>
+          <OverlayScrollbar targetRef={containerRef} />
 
           {/* Floating previous-message / scroll-to-top buttons */}
           {showTopScrollButtons && (

@@ -1,4 +1,5 @@
 {
     "reasoning_effort": 3,
-    "reasoning_options": ["none", "low", "medium", "xhigh"]
+    "reasoning_options": ["none", "low", "medium", "xhigh"],
+    "purposes": ["writing"]
 }

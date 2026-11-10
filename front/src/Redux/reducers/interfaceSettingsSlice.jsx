@@ -77,15 +77,10 @@ const interfaceSettingsSlice = createSlice({
         state.collapsed_topics.push(action.payload);
       }
     },
-    collapseTopics: (state, action) => {
-      const ids = Array.isArray(action.payload)
-        ? action.payload
-        : [action.payload];
-      for (const id of ids) {
-        if (id && !state.collapsed_topics.includes(id)) {
-          state.collapsed_topics.push(id);
-        }
-      }
+    expandTopics: (state, action) => {
+      state.collapsed_topics = state.collapsed_topics.filter(
+        (topic) => !action.payload.includes(topic),
+      );
     },
     setConversationSort: (state, action) => {
       state.conversation_sort = action.payload;
@@ -154,7 +149,7 @@ export const {
   toggleTheme, setDarkMode, setLightMode,
   closeSettings, toggleSettings, toggleSidebar, closeSidebar, openSidebar,
   closeAnnouncement, closeHallucination, agreeWebSearch, closeTour,
-  setShowUsageInSidebar, setWarning, toggleTopic, collapseTopics,
+  setShowUsageInSidebar, setWarning, toggleTopic, expandTopics,
   setConversationSort, setConversationGrouping, markTutorialCompleted, markUseCaseCompleted,
   suppressTutorial,
 } = interfaceSettingsSlice.actions;

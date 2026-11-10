@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { keepViewportPosition } from "../../../utils/keepViewportPosition";
+import { useTranslation } from "react-i18next";
 import MarkdownRenderer from "./MarkdownRenderer";
+import { MessageFilesContext } from "./AttachedImage";
 import FeatureGuideCard from "../../Others/FeatureGuideCard";
 import UseCaseGuideCard from "../../Others/UseCaseGuideCard";
 import Typing from "./Typing";
@@ -29,13 +31,17 @@ const MAX_HEIGHT = 200;
 const MIN_HEIGHT = 56;
 
 export default React.memo(({ localState, setLocalState, message_index, modelsData }) => {
+  const { t } = useTranslation();
   //Refs
   const assistantMessage = useRef(null);
   const editBox = useRef(null);
-  const feedbackBox = useRef(null);
   const textareaRefs = useRef([]);
   const message = localState.messages[message_index];
   const loading = message?.loading || false;
+  const attachedFileIds = useMemo(
+    () => (Array.isArray(message?.content) ? message.content.map((item) => item?.fileId).filter(Boolean) : []),
+    [message?.content],
+  );
   const guideFeatureId = loading
     ? null
     : getFeatureGuideMarker(message?.content?.[0]?.text);
@@ -105,8 +111,6 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
     sendMessage({ localState: newState });
   };
 
-  const [feedbackMode, setFeedbackMode] = useState(false);  
-  const [feedbackText, setFeedbackText] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [editedText, setEditedText] = useState("");
   let submitFeedbackCallback;
@@ -125,7 +129,6 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
         !assistantMessage.current.contains(event.target)
       )
         setEditMode(false); // Exit edit mode
-        setFeedbackMode(false);
     }
     document.addEventListener("dblclick", handleClickOutside);
     return () => {
@@ -136,10 +139,6 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
   useEffect(() => {
     setEditedText(message?.content[0]?.text || "");
   }, [editMode]);
-
-  useEffect(() => {
-    setFeedbackText(message?.feedback?.comment || "");
-  }, [feedbackMode]);
 
   useEffect(() => {
     // Use requestAnimationFrame for smoother height adjustments
@@ -164,13 +163,6 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
       return { ...prev, messages: newMessages, flush: true };
     });
     setEditMode(false);
-  };
-
-  // Function to handle saving edited message
-  const handleSaveFB = () => {    
-    const msg = localState.messages[message_index];
-    setFeedbackMode(false);    
-    sendFeedbackFunc(msg.feedback?.rating, feedbackText, msg?.feedback?.result);
   };
 
   // Function to handle resending a previous message
@@ -279,69 +271,27 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
               />
               <div className="flex gap-4 justify-end w-full gap-2 pt-1 pb-2 px-2">
                 <button
+                  type="button"
                   onClick={() => setEditMode(false)}
-                  className="text-sm text-base-content/70 px-2 py-1 rounded-full cursor-pointer"
+                  className="btn btn-ghost"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleSave()}
-                  className="text-md text-primary border dark:text-accent rounded-full px-3 py-1 cursor-pointer"
+                  className="btn btn-accent"
                 >
-                  Save
+                  {t("common.save")}
                 </button>
               </div>
             </div>
           )}
 
-          {feedbackMode && (
-            <div className="flex flex-col justify-between gap-1">
-
-              <div>WARNING: Your feedback will be sent to the server.</div>
-              
-              <textarea
-                ref={feedbackBox}
-                value={feedbackText}
-                onChange={(e) => setFeedbackText(e.target.value)}
-                onKeyDown={(event) => {
-                  if (
-                    event.key === "Enter" &&
-                    !event.shiftKey &&
-                    feedbackBox.current.value?.trim() !== ""
-                  ) {
-                    event.preventDefault();
-                    handleSaveFB();
-                  } else if (event.key === "Escape") {
-                    event.preventDefault();
-                    setFeedbackMode(false);
-                  }
-                }}
-                className="p-2 outline-none rounded-sm w-full text-base text-base-content bg-base-100 resize-y overflow-y-auto"
-                placeholder="Provide feedback..."
-                style={{
-                  minHeight: `${MIN_HEIGHT}px`,
-                  maxHeight: `${MAX_HEIGHT}px`,
-                }}
-              />
-              <div className="flex gap-4 justify-end w-full gap-2 pt-1 pb-2 px-2">
-                <button
-                  onClick={() => setFeedbackMode(false)}
-                  className="text-sm text-base-content/70 px-2 py-1 rounded-full cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleSaveFB()}
-                  className="text-md text-primary border dark:text-accent rounded-full px-3 py-1 cursor-pointer"
-                >
-                  Save & Send FB
-                </button>
-              </div>
-            </div>
-          )}          
           {/* Display message content */}
-          {!editMode && !feedbackMode && (
+          {!editMode && (
             <div className="flex flex-col gap-4">
+              <MessageFilesContext.Provider value={attachedFileIds}>
               {isAgentTurn ? (
                 <AgentSteps agentMessages={message.meta.agent} isLoading={loading} renderMode={renderMode} />
               ) : (
@@ -349,6 +299,7 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                   {message.content[0]?.text}
                 </MarkdownRenderer>
               )}
+              </MessageFilesContext.Provider>
               {guideFeatureId && (
                 <FeatureGuideCard featureId={guideFeatureId} />
               )}
@@ -433,7 +384,6 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                     localState={localState}
                     setLocalState={setLocalState}
                     message_index={message_index}
-                    setFeedbackMode={setFeedbackMode} 
                     sendFeedbackFunc={sendFeedbackFunc}
                   />
                 )}

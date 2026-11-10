@@ -7,6 +7,7 @@ import { createConversation } from "../../db";
 import { getDefaultConversation } from "../../utils/conversationUtils";
 import { selectUserSettings } from "../../Redux/reducers/userSettingsReducer";
 import { useToast } from "../../hooks/useToast";
+import { useRevealTopic } from "../../hooks/useRevealTopic";
 import Prompt from "../Prompt/Prompt";
 
 /**
@@ -32,6 +33,7 @@ export default function TopicComposer({
 }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const revealTopic = useRevealTopic();
   const { notifyError } = useToast();
   const userSettings = useSelector(selectUserSettings);
   const sendingRef = useRef(false);
@@ -62,6 +64,7 @@ export default function TopicComposer({
 
       try {
         await createConversation(conversation);
+        revealTopic(folderId);
         navigate(`/chat/${conversation.id}`, {
           state: { pendingPrompt: text, pendingAttachments: attachments },
         });
@@ -71,7 +74,7 @@ export default function TopicComposer({
         notifyError(t("topic_view.create_error"));
       }
     },
-    [folderId, navigate, notifyError, t, userSettings],
+    [folderId, navigate, notifyError, revealTopic, t, userSettings],
   );
 
   return (
