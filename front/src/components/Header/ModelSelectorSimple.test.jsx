@@ -25,13 +25,13 @@ describe("ModelSelectorSimple list", () => {
 
   it("keeps the list height fixed while filtering", () => {
     const { container } = renderList();
-    expect(container.querySelector("#model-listbox")).toHaveClass("h-[28rem]");
+    expect(container.querySelector("#model-listbox")).toHaveClass("h-[32rem]");
     fireEvent.change(screen.getByPlaceholderText("Search models…"), { target: { value: "zzz" } });
     expect(screen.queryByText("Alpha")).not.toBeInTheDocument();
     expect(screen.getByText("model_selector.no_results")).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText("folders.clear_search"));
     expect(screen.getByText("Alpha")).toBeInTheDocument();
-    expect(container.querySelector("#model-listbox")).toHaveClass("h-[28rem]");
+    expect(container.querySelector("#model-listbox")).toHaveClass("h-[32rem]");
   });
 
   it("opens only one filter section at a time", async () => {
@@ -96,5 +96,44 @@ describe("ModelSelectorSimple list", () => {
     fireEvent.click(screen.getByText("Beta"));
     expect(onChange).toHaveBeenCalledWith(models[1]);
     expect(onSelected).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets filter and search once a model is picked and the dropdown closes", async () => {
+    const data = [
+      { id: "a", name: "Alpha", input: ["text", "image"], output: [] },
+      { id: "b", name: "Beta", input: ["text"], output: [] },
+    ];
+    const { container } = render(
+      <ModelSelectorSimple modelsData={data} selectedModel={data[1]} onChange={vi.fn()} />,
+    );
+    const trigger = container.querySelector("button.input");
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("button", { name: "model_selector.scope_filter" }));
+    fireEvent.click(await screen.findByRole("button", { name: "model_selector.section_input" }));
+    fireEvent.click(screen.getByRole("button", { name: /model_selector.input_image/ }));
+    fireEvent.change(screen.getByPlaceholderText("Search models…"), { target: { value: "Al" } });
+    fireEvent.click(await screen.findByText("Alpha"));
+
+    fireEvent.click(trigger);
+    expect(screen.getByPlaceholderText("Search models…")).toHaveValue("");
+    expect(screen.queryByRole("button", { name: "model_selector.filter_clear" })).not.toBeInTheDocument();
+    expect(screen.getAllByText("Beta").length).toBeGreaterThan(0);
+  });
+
+  it("starts unfiltered again when the list is reopened after picking a model", async () => {
+    const data = [
+      { id: "a", name: "Alpha", input: ["text", "image"], output: [] },
+      { id: "b", name: "Beta", input: ["text"], output: [] },
+    ];
+    const first = render(<ModelSelectorSimple listOnly modelsData={data} selectedModel={data[1]} onChange={vi.fn()} />);
+    fireEvent.click(screen.getByRole("button", { name: "model_selector.scope_filter" }));
+    fireEvent.click(await screen.findByRole("button", { name: "model_selector.section_input" }));
+    fireEvent.click(screen.getByRole("button", { name: /model_selector.input_image/ }));
+    fireEvent.click(await screen.findByText("Alpha"));
+    first.unmount();
+
+    render(<ModelSelectorSimple listOnly modelsData={data} selectedModel={data[0]} onChange={vi.fn()} />);
+    expect(screen.queryByRole("button", { name: "model_selector.filter_clear" })).not.toBeInTheDocument();
+    expect(screen.getByText("Beta")).toBeInTheDocument();
   });
 });

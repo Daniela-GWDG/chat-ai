@@ -43,6 +43,18 @@ describe("TopicEditorModal", () => {
     expect(createFolder).toHaveBeenCalledWith("Reisen", expect.any(Object));
   });
 
+  it("hands the new topic id to onCreated, e.g. to move a chat into it", async () => {
+    createFolder.mockResolvedValueOnce("topic-9");
+    const onCreated = vi.fn();
+    const onClose = vi.fn();
+    render(<TopicEditorModal isOpen onClose={onClose} onCreated={onCreated} />);
+    const input = await screen.findByPlaceholderText("folders.name_placeholder");
+    fireEvent.change(input, { target: { value: "Reisen" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onCreated).toHaveBeenCalledWith("topic-9");
+  });
+
   it("offers colours and icons directly and saves the choice", async () => {
     const onClose = vi.fn();
     render(<TopicEditorModal isOpen onClose={onClose} />);

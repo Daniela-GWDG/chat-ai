@@ -94,7 +94,7 @@ export default function UseCaseCatalog({ open: controlledOpen, onOpenChange }) {
             >
               <input
                 type="checkbox"
-                className="checkbox checkbox-xs"
+                className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-xs"
                 checked={hideCompleted}
                 onChange={(event) => setHideCompleted(event.target.checked)}
                 aria-label={t("use_cases.catalog.hide_completed")}

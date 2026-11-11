@@ -12,6 +12,26 @@ import Logo from "../../../assets/logos/chat_ai_full.png?inline"
 import { processContentItems } from "../../../utils/sendMessage";
 import { hasMcpServerValue, withoutHeaders } from "../../../agent/mcp";
 
+// One checkbox row, styled like the other dialogs (daisyUI checkbox, sm text).
+function CheckboxRow({ id, checked, onChange, disabled = false, labelKey }) {
+  return (
+    <label
+      htmlFor={id}
+      className={`flex select-none items-center gap-2 text-sm text-base-content ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+    >
+      <input
+        type="checkbox"
+        id={id}
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+        className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm"
+      />
+      <Trans i18nKey={labelKey} />
+    </label>
+  );
+}
+
 export default function ExportChatModal({
   isOpen,
   onClose,
@@ -522,133 +542,89 @@ export default function ExportChatModal({
       isOpen={isOpen}
       onClose={onClose}
       titleKey="export_conversation.title"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
       maxWidth="max-w-md"
+      contentClassName="p-0"
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5 text-sm text-base-content">
         {/* Export format options */}
-        {exportOptions.map((option) => (
-          <div
-            key={option.id}
-            className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all duration-200
-              ${
-                exportFormat === option.id
-                  ? "border-accent bg-base-200"
-                  : "border-base-300"
-              }`}
-            onClick={() => handleFormatChange(option.id)}
-          >
-            <img src={option.icon} alt={option.id} className="h-8 w-8" />
+        <div role="radiogroup" aria-label="Format" className="flex flex-col">
+          {exportOptions.map((option) => (
             <label
-              className={`text-sm ${
-                exportFormat === option.id
-                  ? "text-accent"
-                  : "text-base-content"
-              }`}
+              key={option.id}
+              className="flex cursor-pointer items-center gap-3 py-1.5"
             >
-              <Trans i18nKey={option.label} />
+              <input
+                type="radio"
+                name="export-format"
+                className="radio text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent radio-sm"
+                checked={exportFormat === option.id}
+                onChange={() => handleFormatChange(option.id)}
+              />
+              <img src={option.icon} alt="" aria-hidden="true" className="h-5 w-5" />
+              <span className="text-sm">
+                <Trans i18nKey={option.label} />
+              </span>
             </label>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Arcana Export Option */}
-        {arcana?.id && isArcanaSupported && exportSettings ? (
-          <>
-            {exportArcana && (
-              <p className="rounded-lg border border-error/30 bg-error/10 p-2 text-xs text-error">
-                <Trans i18nKey="alert.arcana_export" />
-              </p>
-            )}
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="exportArcana"
-                checked={exportArcana}
-                onChange={toggleExportArcana}
-                className={`checkbox checkbox-accent checkbox-sm ${
-                  !arcana.id ? "cursor-not-allowed" : ""
-                }`}
-                disabled={!arcana?.id || !isArcanaSupported}
-              />
-              <label
-                htmlFor="exportArcana"
-                className="text-xs text-base-content cursor-pointer select-none"
-              >
-                <Trans i18nKey="export_conversation.export_arcana" />
-              </label>
-            </div>
-          </>
-        ) : null}
+        <div role="separator" className="border-t border-base-300" />
 
-        {/* MCP servers Export Option */}
-        {hasMcpServers && exportSettings ? (
-          <>
-            {exportMcpServers && (
-              <p className="rounded-lg border border-error/30 bg-error/10 p-2 text-xs text-error">
-                <Trans i18nKey="alert.mcp_export" />
-              </p>
-            )}
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="exportMcpServers"
-                checked={exportMcpServers}
-                onChange={toggleExportMcpServers}
-                className="checkbox checkbox-accent checkbox-sm"
-              />
-              <label
-                htmlFor="exportMcpServers"
-                className="text-xs text-base-content cursor-pointer select-none"
-              >
-                <Trans i18nKey="export_conversation.export_mcp_servers" />
-              </label>
-            </div>
-          </>
-        ) : null}
-
-        {/* Export Settings Checkbox */}
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
+        <div className="flex flex-col gap-3">
+          <CheckboxRow
             id="exportSettings"
             checked={exportSettings}
             onChange={toggleExportSettings}
-            className="checkbox checkbox-accent checkbox-sm"
+            labelKey="export_conversation.export_settings"
           />
-          <label
-            htmlFor="exportSettings"
-            className="text-xs text-base-content cursor-pointer select-none"
-          >
-            <Trans i18nKey="export_conversation.export_settings" />
-          </label>
-        </div>
-
-        {/* Export files checkbox */}
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
+          <CheckboxRow
             id="exportFiles"
             checked={exportFiles}
             onChange={toggleExportFiles}
-            className={`checkbox checkbox-accent checkbox-sm ${
-              !containsFiles ? "cursor-not-allowed" : ""
-            }`}
             disabled={!containsFiles}
+            labelKey="export_conversation.export_files"
           />
-          <label
-            htmlFor="exportFiles"
-            className="text-xs text-base-content cursor-pointer select-none"
-          >
-            <Trans i18nKey="export_conversation.export_files" />
-          </label>
+
+          {/* Arcana Export Option */}
+          {arcana?.id && isArcanaSupported && exportSettings ? (
+            <CheckboxRow
+              id="exportArcana"
+              checked={exportArcana}
+              onChange={toggleExportArcana}
+              disabled={!arcana?.id || !isArcanaSupported}
+              labelKey="export_conversation.export_arcana"
+            />
+          ) : null}
+          {arcana?.id && isArcanaSupported && exportSettings && exportArcana ? (
+            <div role="alert" className="alert alert-error alert-soft text-xs">
+              <Trans i18nKey="alert.arcana_export" />
+            </div>
+          ) : null}
+
+          {/* MCP servers Export Option */}
+          {hasMcpServers && exportSettings ? (
+            <CheckboxRow
+              id="exportMcpServers"
+              checked={exportMcpServers}
+              onChange={toggleExportMcpServers}
+              labelKey="export_conversation.export_mcp_servers"
+            />
+          ) : null}
+          {hasMcpServers && exportSettings && exportMcpServers ? (
+            <div role="alert" className="alert alert-error alert-soft text-xs">
+              <Trans i18nKey="alert.mcp_export" />
+            </div>
+          ) : null}
         </div>
 
-        {/* Export Button */}
-        <div className="flex justify-end w-full">
-          <button
-            onClick={handleExport}
-            type="button"
-            className="btn btn-accent md:w-fit w-full min-w-[150px] select-none text-sm"
-          >
+        {/* Buttons */}
+        <div className="flex justify-end gap-2">
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
+            <Trans i18nKey="common.cancel" />
+          </button>
+          <button type="button" className="btn btn-accent" onClick={handleExport}>
             <Trans i18nKey="export_conversation.export" />
           </button>
         </div>

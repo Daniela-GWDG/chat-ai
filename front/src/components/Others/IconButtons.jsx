@@ -21,7 +21,12 @@ export const ROW_ACTION_BUTTON = "-my-1.5 [&:hover]:bg-base-300";
 export const SIDEBAR_GHOST_BUTTON =
   "btn btn-ghost -ml-1 hover:bg-base-200 hover:border-transparent";
 
-export const NavIconButton = createIconButton("h-10 w-10 text-accent hover:bg-accent/10");
+const NAV_ICON_VARIANT = "h-10 w-10 text-accent hover:bg-accent/10";
+
+export const NavIconButton = createIconButton(NAV_ICON_VARIANT);
+
+/** NavIconButton's classes, for buttons rendered by another component (e.g. a Headless UI trigger). */
+export const NAV_ICON_BUTTON_CLASS = `${BASE} ${NAV_ICON_VARIANT}`;
 
 /** A dialog's close button: Nav size, colored by the dialog title. */
 export const CloseIconButton = createIconButton("h-10 w-10 hover:bg-base-200");

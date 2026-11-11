@@ -54,7 +54,7 @@ export default function ShareSettingsModal({
                     onChange={() => {
                       setShareArcana(!shareArcana);
                     }}
-                    className={`checkbox checkbox-accent checkbox-sm ${
+                    className={`checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm ${
                       !showArcanaOption ? "cursor-not-allowed" : ""
                     }`}
                     disabled={!showArcanaOption}
@@ -77,7 +77,7 @@ export default function ShareSettingsModal({
                     onChange={() => {
                       setShareMcpServers(!shareMcpServers);
                     }}
-                    className={`checkbox checkbox-accent checkbox-sm ${
+                    className={`checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm ${
                       !showMcpServersOption ? "cursor-not-allowed" : ""
                     }`}
                     disabled={!showMcpServersOption}

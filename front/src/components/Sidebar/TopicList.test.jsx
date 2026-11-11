@@ -179,6 +179,19 @@ describe("TopicList", () => {
       expect(redux.dispatch).toHaveBeenCalledWith(toggleTopic(TOPICS_SECTION_ID));
     });
 
+    it("shows no chat count on a topic row", () => {
+      render(
+        <TopicList
+          {...makeProps({
+            ...withTopic,
+            conversationsByTopic: new Map([["t1", [{ id: "a", title: "A" }, { id: "b", title: "B" }]]]),
+          })}
+        />,
+      );
+      const row = screen.getByText("UX Writing").parentElement;
+      expect(row).not.toHaveTextContent("2");
+    });
+
     it("hides the header when there are no topics", () => {
       render(<TopicList {...makeProps()} />);
       expect(screen.queryByText("folders.topics_section")).not.toBeInTheDocument();

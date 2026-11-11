@@ -32,7 +32,8 @@
   --color-info-content: #ffffff;
   --color-success: #16a34a;
   --color-success-content: #ffffff;
-  --color-warning: #ca8a04;
+  /* Amber: warm next to Berry; 3.2:1 on white for warning icons. */
+  --color-warning: #d97706;
   --color-warning-content: #ffffff;
   --color-error: #db0520;
   --color-error-content: #ffffff;
@@ -65,7 +66,7 @@
   --color-info-content: #0b1220;
   --color-success: #4ade80;
   --color-success-content: #052e16;
-  --color-warning: #facc15;
+  --color-warning: #fbbf24;
   --color-warning-content: #2b2100;
   --color-error: #f87171;
   --color-error-content: #2b0606;
@@ -78,7 +79,17 @@
   --color-error-soft: var(--error-soft);
 }
 
+/* Wordmark font of the Chat AI service family (OFL, see assets/fonts/Baloo2-NOTICE.txt). */
+@font-face {
+  font-family: "Baloo 2";
+  src: url("./assets/fonts/Baloo2-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 800;
+  font-display: swap;
+}
+
 @theme {
+  /* `font-brand`: service wordmarks only, never body text. */
+  --font-brand: "Baloo 2", "IBM Plex Sans Variable", sans-serif;
   --font-sans: "IBM Plex Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   /* The UI uses only Regular and Medium: other weight utilities map onto them. */
   --font-weight-thin: 400;

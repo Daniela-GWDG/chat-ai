@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next";
 
 import DemandIndicator from "./DemandIndicator";
 import ModelFilterMenu, { ActiveModelFilter } from "./ModelFilterMenu";
-import { ALL_MODELS, matchesModelFilter, useModelFilter, modelGroupKey, openGroupFor } from "./modelFilters";
+import { ALL_MODELS, matchesModelFilter, useModelFilter, modelGroupKey, openGroupFor, NESTED_MENU_LIST } from "./modelFilters";
 import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../Others/OverlayScrollbar";
 
 import type { ExtendedModelInfo } from "../../types/models";
@@ -51,6 +51,17 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
   const [sortBy, setSortBy] = useState("name-asc"); // name-asc, name-desc, date-asc, date-desc, params-asc, params-desc
   const [openGroups, setOpenGroups] = useState(() => openGroupFor(selectedModel)); // only the selection's folder starts open
   const listRef = useRef(null);
+
+  // Closing the dropdown (e.g. after picking a model) resets filter, search
+  // and folders, so the next open starts from the initial state.
+  useEffect(() => {
+    if (listOnly || dropdownOpen) return;
+    setModelFilter(ALL_MODELS);
+    setSearchQuery("");
+    setOpenGroups(openGroupFor(selectedModel));
+    // Only react to the dropdown closing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dropdownOpen, listOnly]);
 
   // Show the selected model whenever the list opens.
   useEffect(() => {
@@ -229,7 +240,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
                   <FontAwesomeIcon icon={faHashtag} className="mr-1" />
                   Param {model.numParameters && model.numParameters !== "" ? model.numParameters : "-"}
                 </span>*/}
-                <div className={`flex items-center gap-1 ${isSelected(model) ? "" : "text-accent"}`}>
+                <div className={`flex items-center gap-1 ${isSelected(model) ? "" : "text-base-content/70"}`}>
                   {model.input.includes("image") && <Tooltip text={"Image Input"}><Image size={16} /></Tooltip>}
                   {model.input.includes("video") && <Tooltip text={"Video Input"}><Video size={16} /></Tooltip>}
                   {model.input.includes("audio") && <Tooltip text={"Audio Input"}><Microphone size={16} /></Tooltip>}
@@ -268,7 +279,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
                 <DotMark size={14} className="mr-1 inline-block align-text-bottom" />
                 Context {model.contextLength && model.contextLength !== "" ? model.contextLength : "-"}
               </span>
-              <div className={`flex items-center gap-1 ${isSelected(model) ? "" : "text-accent"}`}>
+              <div className={`flex items-center gap-1 ${isSelected(model) ? "" : "text-base-content/70"}`}>
                 {model.input.includes("image") && <Tooltip text={"Image Input"}><Image size={16} /></Tooltip>}
                 {model.input.includes("video") && <Tooltip text={"Video Input"}><Video size={16} /></Tooltip>}
                 {model.input.includes("audio") && <Tooltip text={"Audio Input"}><Microphone size={16} /></Tooltip>}
@@ -352,7 +363,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
         <li key={group.key}>
           <GroupHeader group={group} />
           {openGroups[group.key] && (
-            <ul>
+            <ul className={NESTED_MENU_LIST}>
               {group.models.map((m, idx) => (
                 <Row key={m.id} idx={idx} model={m} onClick={() => selectModel(m)} />
               ))}
@@ -400,7 +411,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="ml-2 flex items-center gap-1 text-accent">
+            <div className="ml-2 flex items-center gap-1 text-base-content/70">
               {selectedModel?.input.includes("image") && <Tooltip text={"Image Input"}><Image size={16} /></Tooltip>}
               {selectedModel?.input.includes("video") && <Tooltip text={"Video Input"}><Video size={16} /></Tooltip>}
               {selectedModel?.output.includes("thought") && <Tooltip text={"Thinking"}><Idea size={16} /></Tooltip>}
@@ -454,7 +465,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
             )}
           </label>
 
-          <ModelFilterMenu models={modelsData} value={modelFilter} onChange={setModelFilter} compact />
+          <ModelFilterMenu models={modelsData} value={modelFilter} onChange={setModelFilter} />
 
           {/** View tabs (kept; default is List) **/}
           <div className="join" role="tablist" aria-label="View mode">
@@ -539,7 +550,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
         </div>
 
         {/** Results List **/}
-        <div ref={listRef} id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1} className={`h-[28rem] max-h-[60dvh] overflow-auto px-2 ${OVERLAY_SCROLL_CLASS}`}>
+        <div ref={listRef} id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1} className={`h-[32rem] max-h-[65dvh] overflow-auto px-2 ${OVERLAY_SCROLL_CLASS}`}>
           <ActiveModelFilter value={modelFilter} onClear={() => setModelFilter(ALL_MODELS)} />
           {filteredModelsList.length === 0 && <p className="px-2 py-6 text-center text-sm text-base-content/70">{t("model_selector.no_results")}</p>}
           {resultViewMode === "list" && (

@@ -93,7 +93,7 @@ export default function ToolForm({ form, localState, setLocalState, onUpdate }) 
             type="checkbox"
             checked={!!value}
             onChange={(e) => updateValue(name, e.target.checked)}
-            className="checkbox checkbox-primary checkbox-sm"
+            className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm"
           />
         );
       case "select":
@@ -158,7 +158,7 @@ export default function ToolForm({ form, localState, setLocalState, onUpdate }) 
                   value={opt.value}
                   checked={String(value) === String(opt.value)}
                   onChange={() => updateValue(name, opt.value)}
-                  className="radio radio-primary radio-sm"
+                  className="radio text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent radio-sm"
                 />
                 {opt.label ?? opt.value}
               </label>

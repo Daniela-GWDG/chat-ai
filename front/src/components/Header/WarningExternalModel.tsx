@@ -2,44 +2,45 @@ import { Trans } from "react-i18next";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Security, WarningAltFilled } from "@carbon/icons-react";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
+import { activeMcpServers, hasRemoteMcpServerValue, remoteMcpEnabled } from "../../agent/mcp";
 import TooltipBubble from "../Others/TooltipBubble";
 
-function isSafeSettings(localState) {
-  const modelName = localState?.settings?.model?.name;
-  const isExternalModel =
-    typeof modelName === "string" &&
-    modelName.toLowerCase().includes("external");
+/**
+ * What may send data outside GWDG: "model" for an external model, "tools" for a
+ * switched-on tool that does (web search via the gateway, or MCP with at least
+ * one server entered — switching MCP on alone sends nothing), or null.
+ */
+export function dataRisk(localState) {
+  const settings = localState?.settings || {};
+  const modelName = settings?.model?.name;
+  if (typeof modelName === "string" && modelName.toLowerCase().includes("external")) return "model";
 
   // The agent does not use the gateway web search; it calls MCP servers itself (agent/mcp.ts)
-  const toolsEnabled = !!localState?.settings?.enable_tools && !isAgentEnabled();
-  const tools = localState?.settings?.tools || {};
+  const toolsEnabled = !!settings.enable_tools && !isAgentEnabled();
+  const tools = settings.tools || {};
+  const webSearch =
+    toolsEnabled && (settings.enable_web_search || !!tools.web_search || !!tools.fetch_url);
+  const localMcp = activeMcpServers(settings).length > 0;
+  const remoteMcp = remoteMcpEnabled(settings) && hasRemoteMcpServerValue(settings.mcp_servers);
+  return webSearch || localMcp || remoteMcp ? "tools" : null;
+}
 
-  // Web search should only trigger warnings when the toolset is active
-  const webSearchEnabled =
-    toolsEnabled &&
-    (localState?.settings?.enable_web_search ||
-      !!tools.web_search ||
-      !!tools.fetch_url);
+const isSafeSettings = (localState) => dataRisk(localState) === null;
 
-  const mcpEnabled = !!(tools.mcp || tools.mcp_remote);
-
-  return !(isExternalModel || webSearchEnabled || mcpEnabled);
+/** The warning text for a risk; the MPG variant only adds a rule for external models. */
+function warningKey(risk, userData) {
+  if (risk === "tools") return "alert.data_security_warning_tools";
+  return userData?.org === "MPG" ? "alert.data_security_warning_mpg" : "alert.data_security_warning";
 }
 
 export function DataSafetyText({ localState, userData }) {
-  const isSafe = isSafeSettings(localState);
-  if(isSafe) return null;
+  const risk = dataRisk(localState);
+  if (!risk) return null;
   return (
     <div className="bg-warning/10 border border-warning/30 rounded-md text-warning">
       <div className="flex items-center gap-2 p-2 text-sm text-warning select-none">
         <WarningAltFilled size={28} className="shrink-0 text-warning" />
-        <Trans
-        i18nKey={
-            userData?.org === "MPG"
-            ? "alert.data_security_warning_mpg"
-            : "alert.data_security_warning"
-        }
-        />
+        <Trans i18nKey={warningKey(risk, userData)} />
       </div>
     </div>
   );
@@ -100,6 +101,19 @@ export default function WarningExternalModel({
     };
   }, [isPopoverVisible, measure]);
 
+  // The warning opens by itself when data may leave GWDG; a click anywhere
+  // else dismisses it (as a click on the button does).
+  useEffect(() => {
+    if (!(showTextBox && !isSafe)) return undefined;
+    const onPointerDown = (event) => {
+      if (buttonRef.current?.contains(event.target)) return;
+      setShowTextBox(false);
+      setSuppressHoverTooltip(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [showTextBox, isSafe]);
+
   const handleMouseEnter = () => {
     setIsHovering(true);
   };
@@ -121,9 +135,7 @@ export default function WarningExternalModel({
   const ToneIcon = tone.Icon;
   const messageKey = isSafe
     ? "alert.data_security_notice"
-    : userData?.org === "MPG"
-      ? "alert.data_security_warning_mpg"
-      : "alert.data_security_warning";
+    : warningKey(dataRisk(localState), userData);
 
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

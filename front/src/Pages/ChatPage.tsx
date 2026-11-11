@@ -16,6 +16,7 @@ import SidebarWrapper from "../components/Sidebar/SidebarWrapper";
 import Header from "../components/Header/Header";
 import Conversation from "../components/Conversation/Conversation";
 import PersonaChatBanner from "../components/Conversation/PersonaChatBanner";
+import TopicChatTag from "../components/Conversation/TopicChatTag";
 import TourManager from "../components/SettingsPanel/TourManager";
 import { useEffect, useState } from "react";
 import { activeMcpServers, prefetchMcpServers } from "../agent/mcp";
@@ -117,7 +118,12 @@ export default function ChatPage() {
           {localState?.persona && (
             <PersonaChatBanner persona={localState.persona} />
           )}
-          <div className="min-h-0 flex-1">
+          <div className="relative min-h-0 flex-1">
+            {/* Which topic this chat belongs to; floats so nothing below moves */}
+            <TopicChatTag
+              folderId={localState?.folderId}
+              className="absolute left-3 top-2 z-10"
+            />
             <Conversation
               localState={localState}
               setLocalState={setLocalState}

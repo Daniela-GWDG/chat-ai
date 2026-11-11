@@ -17,7 +17,7 @@ import type { BaseModelInfo } from "../../types/models";
 import Tooltip from "../Others/Tooltip";
 import DemandIndicator from "./DemandIndicator";
 import ModelFilterMenu, { ActiveModelFilter } from "./ModelFilterMenu";
-import { ALL_MODELS, isExternalModel, matchesModelFilter, useModelFilter, modelGroupKey, openGroupFor } from "./modelFilters";
+import { ALL_MODELS, isExternalModel, matchesModelFilter, useModelFilter, modelGroupKey, openGroupFor, NESTED_MENU_LIST } from "./modelFilters";
 import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../Others/OverlayScrollbar";
 
 export default function ModelSelectorSimple({ selectedModel, modelsData, onChange, inHeader = false, listOnly = false, onSelected }: { selectedModel: BaseModelInfo | null, modelsData: BaseModelInfo[], inHeader: boolean, onChange: (model: BaseModelInfo) => void, listOnly?: boolean, onSelected?: () => void }) {
@@ -33,6 +33,17 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
   const [modelFilter, setModelFilter] = useModelFilter();
   const [openGroups, setOpenGroups] = useState(() => openGroupFor(selectedModel)); // only the selection's folder starts open
   const listRef = useRef(null);
+
+  // Closing the dropdown (e.g. after picking a model) resets filter, search
+  // and folders, so the next open starts from the initial state.
+  useEffect(() => {
+    if (listOnly || dropdownOpen) return;
+    setModelFilter(ALL_MODELS);
+    setSearchQuery("");
+    setOpenGroups(openGroupFor(selectedModel));
+    // Only react to the dropdown closing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dropdownOpen, listOnly]);
 
   // Show the selected model whenever the list opens.
   useEffect(() => {
@@ -119,7 +130,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
               )}
               <span className="font-medium truncate">{model.name}</span>
             </div>
-            <div className={`ml-2 flex shrink-0 items-center gap-1 ${selected ? "" : "text-accent"}`}>
+            <div className={`ml-2 flex shrink-0 items-center gap-1 ${selected ? "" : "text-base-content/70"}`}>
               {model.input?.includes("image") && <Tooltip text={"Image Input"}><Image size={16} /></Tooltip>}
               {model.input?.includes("video") && <Tooltip text={"Video Input"}><Video size={16} /></Tooltip>}
               {model.input?.includes("audio") && <Tooltip text={"Audio Input"}><Microphone size={16} /></Tooltip>}
@@ -150,7 +161,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="ml-2 flex items-center gap-1 text-accent">
+            <div className="ml-2 flex items-center gap-1 text-base-content/70">
               {selectedModel?.input?.includes("image") && <Tooltip text={"Image Input"} placement="bottom"><Image size={16} /></Tooltip>}
               {selectedModel?.input?.includes("video") && <Tooltip text={"Video Input"} placement="bottom"><Video size={16} /></Tooltip>}
               {selectedModel?.input?.includes("audio") && <Tooltip text={"Audio Input"} placement="bottom"><Microphone size={16} /></Tooltip>}
@@ -214,7 +225,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
         <div
           ref={listRef}
           id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1}
-          className={`px-2 h-[28rem] max-h-[60dvh] shrink-0 overflow-auto ${OVERLAY_SCROLL_CLASS}`}
+          className={`px-2 h-[32rem] max-h-[65dvh] shrink-0 overflow-auto ${OVERLAY_SCROLL_CLASS}`}
         >
           <ActiveModelFilter value={modelFilter} onClear={() => setModelFilter(ALL_MODELS)} />
           {filteredModelsList.length === 0 && <p className="px-2 py-6 text-center text-sm text-base-content/70">{t("model_selector.no_results")}</p>}
@@ -243,7 +254,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
                       </span>
                     </button>
                     {open && (
-                      <ul>
+                      <ul className={NESTED_MENU_LIST}>
                         {group.models.map((m, idx) => (
                           <ListElement
                             key={m.id}

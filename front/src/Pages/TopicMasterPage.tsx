@@ -21,7 +21,7 @@ import Header from "../components/Header/Header";
 import SidebarWrapper from "../components/Sidebar/SidebarWrapper";
 import TopicComposer from "../components/TopicMaster/TopicComposer";
 import { UNSORTED_TOPIC_ID } from "../components/Sidebar/TopicList";
-import { selectTopicConversations } from "../utils/topicConversations";
+import { partitionPinned, selectTopicConversations } from "../utils/topicConversations";
 import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../components/Others/OverlayScrollbar";
 import { topicColor, topicHex } from "../components/Sidebar/topicColors";
 import { selectDarkMode } from "../Redux/reducers/interfaceSettingsSlice";
@@ -94,6 +94,49 @@ export default function TopicMasterPage() {
   const emoji = topic?.icon && !isTopicIconId(topic.icon) ? topic.icon : null;
   const TopicIcon = topic ? topicIcon(topic) : Folder;
   const colorHex = topic ? topicHex(topicColor(topic), isDark) : undefined;
+
+  // Pinned chats are listed apart, above the topic's other chats.
+  const { pinned: pinnedConversations, others: otherConversations } =
+    partitionPinned(topicConversations);
+
+  const renderConversation = (conversation: ConversationRow) => {
+    const summary = showSummaries
+      ? (conversation.summary ?? "").trim()
+      : "";
+    const modified = formatRelativeTime(
+      conversation.lastModified ?? conversation.createdAt,
+      i18n.language,
+    );
+    return (
+      <button
+        key={conversation.id}
+        type="button"
+        onClick={() => navigate(`/chat/${conversation.id}`)}
+        className="group flex h-[84px] w-full items-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-4 text-left transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-1.5 text-sm font-medium text-base-content">
+            <span className="truncate">
+              {conversation.title || t("conversation.untitled")}
+            </span>
+          </span>
+          {summary && (
+            <span className="mt-0.5 block truncate text-xs text-base-content/70">
+              {summary}
+            </span>
+          )}
+          <span className="mt-1 flex items-center gap-1 text-[11px] text-base-content/70">
+            <Time size={12} />
+            {t("folders.modified", { date: modified })}
+          </span>
+        </span>
+        <ChevronRight
+          size={16}
+          className="shrink-0 text-base-content transition-transform group-hover:translate-x-0.5"
+        />
+      </button>
+    );
+  };
 
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr]">
@@ -193,42 +236,29 @@ export default function TopicMasterPage() {
                       </p>
                     </div>
                   ) : (
-                    topicConversations.map((conversation) => {
-                      const summary = showSummaries
-                        ? (conversation.summary ?? "").trim()
-                        : "";
-                      const modified = formatRelativeTime(
-                        conversation.lastModified ?? conversation.createdAt,
-                        i18n.language,
-                      );
-                      return (
-                        <button
-                          key={conversation.id}
-                          type="button"
-                          onClick={() => navigate(`/chat/${conversation.id}`)}
-                          className="group flex h-[84px] w-full items-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-4 text-left transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                    <>
+                      {pinnedConversations.length > 0 && (
+                        <section className="flex flex-col gap-2" aria-labelledby="topic-pinned-heading">
+                          <h2 id="topic-pinned-heading" className="text-xs font-medium text-base-content/70">
+                            {t("folders.pinned")}
+                          </h2>
+                          {pinnedConversations.map(renderConversation)}
+                        </section>
+                      )}
+                      {otherConversations.length > 0 && (
+                        <section
+                          className={`flex flex-col gap-2 ${pinnedConversations.length > 0 ? "mt-4" : ""}`}
+                          aria-labelledby={pinnedConversations.length > 0 ? "topic-chats-heading" : undefined}
                         >
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-medium text-base-content">
-                              {conversation.title || t("conversation.untitled")}
-                            </span>
-                            {summary && (
-                              <span className="mt-0.5 block truncate text-xs text-base-content/70">
-                                {summary}
-                              </span>
-                            )}
-                            <span className="mt-1 flex items-center gap-1 text-[11px] text-base-content/70">
-                              <Time size={12} />
-                              {t("folders.modified", { date: modified })}
-                            </span>
-                          </span>
-                          <ChevronRight
-                            size={16}
-                            className="shrink-0 text-base-content transition-transform group-hover:translate-x-0.5"
-                          />
-                        </button>
-                      );
-                    })
+                          {pinnedConversations.length > 0 && (
+                            <h2 id="topic-chats-heading" className="text-xs font-medium text-base-content/70">
+                              {t("folders.title")}
+                            </h2>
+                          )}
+                          {otherConversations.map(renderConversation)}
+                        </section>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

@@ -16,6 +16,7 @@ import {
 import type { FolderRow } from "../../db/dbTypes";
 import { topicColor, topicHex, withAlpha } from "./topicColors";
 import { isTopicIconId, topicIcon } from "./topicIcons";
+import FlyoutArrow, { FLYOUT_ARROW_OFFSET } from "../Others/FlyoutArrow";
 
 import { useModal } from "../../modals/ModalContext";
 import { ROW_ACTION_BUTTON, SortIconButton } from "../Others/IconButtons";
@@ -130,7 +131,7 @@ export default function TopicList({
       const rect = event.currentTarget.getBoundingClientRect();
       setMenuTopicId((previous) => {
         if (previous === topicId) return null;
-        setMenuPosition({ x: rect.right + 5, y: rect.top - 5 });
+        setMenuPosition({ x: rect.right + 10, y: rect.top + rect.height / 2 - FLYOUT_ARROW_OFFSET });
         return topicId;
       });
     },
@@ -382,9 +383,13 @@ export default function TopicList({
 
           {actions}
 
-          <span className="min-w-5 text-right text-[11px] select-none pointer-events-none font-normal text-base-content">
-            {count > 999 ? "999+" : count}
-          </span>
+          {/* Topics show no count: pinned chats sit in their own section, so a
+              topic count would never match what the topic page lists. */}
+          {!topic && (
+            <span className="min-w-5 text-right text-[11px] select-none pointer-events-none font-normal text-base-content">
+              {count > 999 ? "999+" : count}
+            </span>
+          )}
         </div>
 
         {!isCollapsed && count > 0 && (
@@ -544,6 +549,7 @@ export default function TopicList({
                 zIndex: 999999,
               }}
             >
+                <FlyoutArrow side="left" className="top-4" />
                 <li>
 <button
                   type="button"

@@ -93,7 +93,7 @@ export default function ImportSettingsDisclaimerModal({
                   type="checkbox"
                   checked={opt.checked}
                   onChange={(e) => opt.onChange(e.target.checked)}
-                  className="mt-1 checkbox checkbox-accent checkbox-sm"
+                  className="mt-1 checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm"
                 />
                 <div className="flex flex-col gap-1">
                   <div className="text-sm font-medium text-base-content">

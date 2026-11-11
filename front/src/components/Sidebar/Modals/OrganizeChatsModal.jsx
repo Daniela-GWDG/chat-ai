@@ -665,7 +665,7 @@ export default function OrganizeChatsModal({
                               onChange={() => toggleTopicRename(rename.folderId)}
                               aria-label={t("sorter.include_topic_rename")}
                               title={t("sorter.include_topic_rename")}
-                              className="checkbox checkbox-accent checkbox-xs"
+                              className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-xs"
                             />
                           </span>
                         ) : (
@@ -782,7 +782,7 @@ export default function OrganizeChatsModal({
                                   type="checkbox"
                                   checked={selectedMoveIds.has(conversation.id)}
                                   onChange={() => toggleMove(conversation.id)}
-                                  className="checkbox checkbox-accent checkbox-xs"
+                                  className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-xs"
                                 />
                               ) : (
                                 <span
@@ -813,7 +813,7 @@ export default function OrganizeChatsModal({
                                         "sorter.include_title_change",
                                       )}
                                       title={t("sorter.include_title_change")}
-                                      className="checkbox checkbox-accent checkbox-xs"
+                                      className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-xs"
                                     />
                                   </span>
                                 ) : (
@@ -894,7 +894,7 @@ export default function OrganizeChatsModal({
                             deletion.conversationId,
                           )}
                           onChange={() => toggleDelete(deletion.conversationId)}
-                          className="checkbox checkbox-error checkbox-xs"
+                          className="checkbox [--radius-selector:0.25rem] checkbox-error border-base-content/50 hover:border-base-content/80 checked:border-error checkbox-xs"
                         />
                         <TrashCan
                           size={14}

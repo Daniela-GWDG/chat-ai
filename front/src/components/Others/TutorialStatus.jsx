@@ -97,7 +97,7 @@ export default function TutorialStatus({ compact = false, onExpand }) {
             <label className="mt-2 flex items-center gap-2 text-base-content/70">
               <input
                 type="checkbox"
-                className="checkbox checkbox-xs"
+                className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-xs"
                 checked={dontShowAgain}
                 onChange={(event) =>
                   setDontShowAgain(event.target.checked)

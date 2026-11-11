@@ -29,17 +29,17 @@ export default function WelcomeModal({ isOpen, onClose, onRunTour }) {
       <p className="text-base-content text-sm">
         <Trans i18nKey="tour.description" />
       </p>
-      <div className="flex flex-col md:flex-row gap-2 justify-center">
-        {/* Begin Tour Button */}
+      <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-between">
+        {/* Skip Tour Button (left) */}
+        <button className="btn" onClick={handleSkipTour}>
+          <Trans i18nKey="tour.skip_tour" />
+        </button>
+        {/* Begin Tour Button (primary, right) */}
         <button
           className="btn btn-accent"
           onClick={() => { onRunTour(); onClose(); }}
         >
           <Trans i18nKey="tour.start_tour" />
-        </button>
-        {/* Skip Tour Button */}
-        <button className="btn" onClick={handleSkipTour}>
-          <Trans i18nKey="tour.skip_tour" />
         </button>
       </div>
     </BaseModal>

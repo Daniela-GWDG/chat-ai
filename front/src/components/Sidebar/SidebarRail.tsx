@@ -87,7 +87,7 @@ export default function SidebarRail({
         <div id="placeholder" className="flex-1 w-full" onClick={() => onOpen?.()} />
 
         {/* Bottom - Current chat actions and user card */}
-        <div className="flex flex-col gap-1 items-center">
+        <div className="flex w-full flex-col gap-1 items-center">
 
           {/* Rename current chat */}
           <RenameChatButton
@@ -123,7 +123,7 @@ export default function SidebarRail({
               }}
               aria-label={t("user_settings.title")}
               data-guide="user-settings"
-              className="flex items-center px-1 pt-1 pb-4 rounded-lg cursor-pointer hover:bg-base-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+              className="flex w-full items-center justify-center py-2 cursor-pointer hover:bg-base-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50"
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
             <UserContainer

@@ -32,9 +32,8 @@ const sourceText = walk(srcDir)
 const staticGuideValues = new Set(
   [...sourceText.matchAll(/data-guide="([^"]+)"/g)].map((match) => match[1]),
 );
-const hasDynamicTools = sourceText.includes(
-  "data-guide={`tool-${guideKey}`}",
-);
+// Tool toggles in the tools panel (ToolsPanel.jsx) are named after their key.
+const hasDynamicTools = sourceText.includes("data-guide={`tool-${tool.key}`}");
 const hasDynamicSettingsTabs = sourceText.includes(
   "data-guide={`settings-tab-${tab.id}`}",
 );

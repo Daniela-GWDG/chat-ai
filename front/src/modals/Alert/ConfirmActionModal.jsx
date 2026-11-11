@@ -54,7 +54,7 @@ export default function ConfirmActionModal({
             type="checkbox"
             checked={dontShowAgain}
             onChange={(event) => setDontShowAgain(event.target.checked)}
-            className="checkbox checkbox-sm"
+            className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm"
           />
           <Trans i18nKey="common.dont_show_again" />
         </label>

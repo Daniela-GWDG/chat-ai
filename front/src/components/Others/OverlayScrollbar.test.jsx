@@ -52,4 +52,11 @@ describe("OverlayScrollbar", () => {
     const { container } = render(<Harness scrollHeight={300} />);
     expect(container.firstChild.lastChild.style.display).toBe("none");
   });
+
+  it("keeps the track clear of the edges with an inset", () => {
+    const top = getThumbGeometry({ scrollTop: 0, scrollHeight: 1000, clientHeight: 500 }, 12);
+    const bottom = getThumbGeometry({ scrollTop: 500, scrollHeight: 1000, clientHeight: 500 }, 12);
+    expect(top.top).toBe(12);
+    expect(bottom.top + bottom.height).toBe(500 - 12);
+  });
 });

@@ -2,6 +2,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { CheckmarkFilled, ErrorFilled } from "@carbon/icons-react";
 import BaseModal from "../BaseModal";
 import { createConversation } from "../../db";
 import { buildConversationForAPI } from "../../utils/sendMessage";
@@ -137,9 +138,9 @@ export default function SummarizeChatModal({
     } catch (error) {
       // FAILURE: don't touch localState — original conversation preserved
       console.error("Summarization failed:", error);
+      // Stay open so the error can be read; the user closes the dialog.
       setErrorMessage(error?.message || "An unknown error occurred");
       setStatus("error");
-      onClose();
     }
   };
 
@@ -148,66 +149,61 @@ export default function SummarizeChatModal({
       isOpen={isOpen}
       onClose={isLoading ? () => {} : onClose}
       titleKey="common.summarize"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
       maxWidth="max-w-md"
+      contentClassName="p-0"
       isForced={isLoading}
     >
-      {/* Loading state */}
-      {status === "loading" && (
-        <div className="flex flex-col items-center gap-4 py-6">
-          <div className="animate-spin rounded-full h-10 w-10 border-[3px] border-base-300 border-t-accent" />
-          <p className="text-base-content text-sm font-medium">
-            <Trans i18nKey="common.summarizing" />
-          </p>
-          <p className="text-base-content/70 text-xs text-center">
-            <Trans i18nKey="alert.summarize_in_progress" />
-          </p>
-        </div>
-      )}
-
-      {/* Success state */}
-      {status === "success" && (
-        <div className="flex flex-col items-center gap-4 py-6">
-          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-success/10">
-            <svg className="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <p className="text-base-content text-sm font-medium">
-            <Trans i18nKey="common.summarize_success" />
-          </p>
-        </div>
-      )}
-
-      {/* Error state */}
-      {status === "error" && (
-        <>
-          <div className="flex flex-col items-center gap-4 py-6">
-            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-error/10">
-              <svg className="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <p className="text-base-content text-sm font-medium">
-              <Trans i18nKey="common.summarize_error" />
-            </p>
-            {errorMessage && (
-              <p className="text-base-content/70 text-xs text-center max-w-full break-words">
-                {errorMessage}
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5 text-sm text-base-content">
+        {/* Loading state */}
+        {status === "loading" && (
+          <div className="flex items-start gap-3" role="status">
+            <span className="loading loading-spinner loading-md shrink-0 text-accent" aria-hidden="true" />
+            <div className="flex flex-col gap-1">
+              <p className="font-medium">
+                <Trans i18nKey="common.summarizing" />
               </p>
-            )}
+              <p className="text-base-content/70">
+                <Trans i18nKey="alert.summarize_in_progress" />
+              </p>
+            </div>
           </div>
+        )}
 
-          <div className="flex justify-center w-full text-sm">
-            <button
-              type="button"
-              className="btn"
-              onClick={onClose}
-            >
-              <Trans i18nKey="common.close" />
-            </button>
+        {/* Success state */}
+        {status === "success" && (
+          <div className="flex items-center gap-3" role="status">
+            <CheckmarkFilled size={24} className="shrink-0 text-success" aria-hidden="true" />
+            <p className="font-medium">
+              <Trans i18nKey="common.summarize_success" />
+            </p>
           </div>
-        </>
-      )}
+        )}
+
+        {/* Error state */}
+        {status === "error" && (
+          <>
+            <div className="flex items-start gap-3" role="alert">
+              <ErrorFilled size={24} className="shrink-0 text-error" aria-hidden="true" />
+              <div className="flex min-w-0 flex-col gap-1">
+                <p className="font-medium">
+                  <Trans i18nKey="common.summarize_error" />
+                </p>
+                {errorMessage && (
+                  <p className="break-words text-base-content/70">{errorMessage}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button type="button" className="btn btn-accent" onClick={onClose}>
+                <Trans i18nKey="common.close" />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </BaseModal>
   );
 }

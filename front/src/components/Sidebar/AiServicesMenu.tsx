@@ -1,42 +1,23 @@
-import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
-import ChatAiLogo from '../Header/ChatAiLogo'
-import LogoSmall from '../../assets/logos/chat_ai_mark.png'
-import ImageAiLogo from '../../assets/logos/image-ai.svg'
-import VoiceAiLogo from '../../assets/logos/voice-ai.svg'
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { useTranslation } from "react-i18next";
+import ChatAiLogo from "../Header/ChatAiLogo";
+import ServiceLogo from "../Header/ServiceLogo";
+import FlyoutArrow from "../Others/FlyoutArrow";
 
-const items = [
-  {
-    name: '',
-    description: 'Generate images with AI',
-    href: 'https://image-ai.academiccloud.de/',
-    icon: (
-      <img className="h-10 w-auto object-contain mx-auto" src={ImageAiLogo} alt="Image AI Logo" />
-    ),
-  },
-  {
-    name: '',
-    description: 'Speech-to-Text conversion',
-    href: 'https://voice-ai.academiccloud.de/',
-    icon: (
-      <img className="h-8 w-auto object-contain mx-auto" src={VoiceAiLogo} alt="Voice AI Logo" />
-    ),
-  },
-  {
-    name: 'RAG-Manager',
-    description: 'Vector database management',
-    href: 'https://chat-ai.academiccloud.de/arcanas/',
-    icon: (
-      <img className="h-9 w-auto object-contain mx-auto" src={LogoSmall} alt="RAG Manager Logo" />
-    ),
-  },
-]
+const SERVICES = [
+  { name: "Image AI", descriptionKey: "ai_services.image", href: "https://image-ai.academiccloud.de/" },
+  { name: "Voice AI", descriptionKey: "ai_services.voice", href: "https://voice-ai.academiccloud.de/" },
+  { name: "RAG-Manager", descriptionKey: "ai_services.rag", href: "https://chat-ai.academiccloud.de/arcanas/" },
+];
 
+/** The Chat AI logo opens a flyout with the other services of the family. */
 export default function AiServicesMenu() {
+  const { t } = useTranslation();
   return (
-    <Popover className="relative ">
+    <Popover className="relative">
       <PopoverButton
-        aria-label="Open AI services menu"
+        aria-label={t("ai_services.open")}
         className="focus:outline-none my-1 p-2 inline-flex items-center rounded-lg cursor-pointer"
       >
         <ChatAiLogo className="h-7 w-auto" />
@@ -52,43 +33,27 @@ export default function AiServicesMenu() {
         leaveTo="opacity-0 translate-y-1"
       >
         <PopoverPanel
-          anchor="bottom"
-          className="relative !overflow-visible ml-1 z-50 mt-2 rounded-2xl border border-base-300 bg-base-100 shadow-xl dark:shadow-dark p-3 "
+          as="ul"
+          anchor={{ to: "bottom start", gap: 2, padding: 8 }}
+          className="menu z-50 w-64 !overflow-visible rounded-box border border-base-300 bg-base-100 shadow-lg"
         >
-          <div
-            className="absolute -top-2 left-10 md:right-6.5 w-4 h-4 z-10 
- bg-base-100 
- border-l border-t border-base-300 
-                          transform rotate-45"
-          ></div>
-          <nav className="flex flex-col space-y-2">
-            {items.map((item) => (
+          {/* Points at the middle of the logo mark */}
+          <FlyoutArrow side="top" className="left-4" />
+          {SERVICES.map((service) => (
+            <li key={service.href}>
               <a
-                target='_blank'
-                key={item.description}
-                href={item.href}
-                className="group flex flex-col items-center p-2 rounded-xl
- hover:bg-base-200 focus:bg-base-200
-                           transition-all duration-150 outline-none border border-transparent hover:border-base-300"
+                href={service.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex flex-col items-start gap-1 py-2"
               >
-                <div className="flex
-                 items-center justify-center rounded-lg">
-                  {(item.name && item.name !== "") && (
-                    <div className="text-lg font-semibold text-base-content/70 mb-1">
-                      {item.name}
-                    </div>
-                  )}
-                  {item.icon}
-                </div>
-
-                <div className="text-center text-xs text-base-content/70">
-                  {item.description}
-                </div>
+                <ServiceLogo name={service.name} />
+                <span className="text-xs text-base-content/70">{t(service.descriptionKey)}</span>
               </a>
-            ))}
-          </nav>
+            </li>
+          ))}
         </PopoverPanel>
       </Transition>
     </Popover>
-  )
+  );
 }

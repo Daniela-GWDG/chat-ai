@@ -8,6 +8,7 @@ import {
   getConversation,
   getConversationMeta,
   loadFile,
+  setConversationPinned,
   saveFileReady,
   listRecentConversations,
   searchConversations,
@@ -180,6 +181,18 @@ describe("conversation persistence", () => {
     expect(sameId).toBe(folderId);
     await assignConversationToFolder("chat-1", folderId);
     expect((await getConversationMeta("chat-1")).folderId).toBe(folderId);
+  });
+
+  it("keeps a chat in its topic when it is pinned and unpinned", async () => {
+    await createConversation({ id: "chat-p", title: "Chat", settings, messages: [] });
+    const folderId = await createFolder("Work");
+    await assignConversationToFolder("chat-p", folderId);
+
+    await setConversationPinned("chat-p", true);
+    await setConversationPinned("chat-p", false);
+    const row = await db.conversations.get("chat-p");
+    expect(row.pinned).toBe(false);
+    expect(row.folderId).toBe(folderId);
   });
 
   it("stores and loads file bytes", async () => {

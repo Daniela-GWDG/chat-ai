@@ -12,30 +12,31 @@ export default function ToolLimit({ localState, setLocalState }) {
     setLocalState((prev) => ({ ...prev, settings: { ...prev.settings, max_tool_calls }, flush: true }));
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-sm select-none">
+    // min-h-8 = the number field's height, so switching the limit off does not shift the layout.
+    <div className="flex min-h-8 flex-wrap items-center gap-3 text-sm select-none">
       <label className="flex items-center gap-2 cursor-pointer">
         <input
           type="checkbox"
           checked={limited}
           onChange={() => set(limited ? 0 : DEFAULT_TOOL_LIMIT)}
-          className="h-4 w-4 accent-primary"
+          className="checkbox checkbox-sm [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent"
         />
         {t("settings.label_tool_limit")}
       </label>
-      {limited && (
-        <input
-          type="number"
-          min={1}
-          value={value}
-          onChange={(e) => {
-            const n = Math.floor(Number(e.target.value));
-            if (n >= 1) set(n);
-          }}
-          aria-label={t("settings.label_tool_limit")}
-          title={t("settings.tool_limit_hint")}
-          className="w-20 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-bg_dark px-2 py-1"
-        />
-      )}
+      {/* Always shown (disabled without the limit), so nothing shifts when it is switched. */}
+      <input
+        type="number"
+        min={1}
+        value={limited ? value : DEFAULT_TOOL_LIMIT}
+        disabled={!limited}
+        onChange={(e) => {
+          const n = Math.floor(Number(e.target.value));
+          if (n >= 1) set(n);
+        }}
+        aria-label={t("settings.label_tool_limit")}
+        title={t("settings.tool_limit_hint")}
+        className="input input-sm w-20"
+      />
     </div>
   );
 }

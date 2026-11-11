@@ -31,6 +31,8 @@ import {
   useConversationList,
   useFolderList,
 } from "../../db";
+import FlyoutArrow, { FLYOUT_ARROW_OFFSET } from "../Others/FlyoutArrow";
+import { conversationTooltip } from "./conversationTooltip";
 import { useModal } from "../../modals/ModalContext";
 
 import {
@@ -40,7 +42,9 @@ import {
   selectShowUsageInSidebar,
   setConversationGrouping,
   toggleSidebar,
+  expandTopics,
 } from "../../Redux/reducers/interfaceSettingsSlice";
+import { splitPinnedConversations } from "./pinnedConversations";
 import { selectConversationSummaries } from "../../Redux/reducers/userSettingsReducer";
 
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -53,6 +57,7 @@ import {
   groupConversationsByDate,
 } from "../../utils/conversationDates";
 import TopicList, {
+  PINNED_TOPIC_ID,
   UNSORTED_TOPIC_ID,
 } from "./TopicList";
 import SidebarUserCard from "./SidebarUserCard";
@@ -111,17 +116,23 @@ export default function SidebarContent({
     [conversations, conversationSort, t],
   );
   
-  const pinnedConversations = useMemo(
-    () => orderedConversations.filter((conv) => conv.pinned),
-    [orderedConversations],
-  );
-  const groupableConversations = useMemo(
-    () => orderedConversations.filter((conv) => !conv.pinned),
-    [orderedConversations],
-  );
   const pinnedTopics = useMemo(
     () => folders.filter((folder) => folder.pinned),
     [folders],
+  );
+  // A pinned topic already pins all its chats: they show inside the topic, and
+  // a chat's own pin is kept but hidden until the topic is unpinned again.
+  const pinnedTopicIds = useMemo(
+    () => new Set(pinnedTopics.map((folder) => folder.id)),
+    [pinnedTopics],
+  );
+  const {
+    pinned: pinnedConversations,
+    groupable: groupableConversations,
+    inPinnedTopic,
+  } = useMemo(
+    () => splitPinnedConversations(orderedConversations, pinnedTopicIds),
+    [orderedConversations, pinnedTopicIds],
   );
   const unpinnedFolders = useMemo(
     () => folders.filter((folder) => !folder.pinned),
@@ -154,6 +165,7 @@ export default function SidebarContent({
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const menuRef = useRef(null);
   const menuButtonRefs = useRef({}); // Add refs for menu buttons
+  const sortButtonRef = useRef(null); // the sort menu arrow points at this button
 
   const conversationsByTopic = useMemo(() => {
     const grouped = new Map<string, any[]>();
@@ -221,7 +233,13 @@ export default function SidebarContent({
       }
 
       try {
-        await assignConversationToFolder(draggingConversationId, nextFolderId);
+        // The open chat goes through its local state, so its next save does not
+        // collide with a direct write (see MoveChatModal).
+        if (localState?.id === draggingConversationId) {
+          setLocalState((prev) => ({ ...prev, folderId: nextFolderId, flush: true }));
+        } else {
+          await assignConversationToFolder(draggingConversationId, nextFolderId);
+        }
       } catch (error) {
         console.error("Failed to move conversation via drag & drop", error);
         notifyError(t("folders.error_generic"));
@@ -230,7 +248,7 @@ export default function SidebarContent({
         setDragOverTopicId(null);
       }
     },
-    [orderedConversations, draggingConversationId, notifyError, t],
+    [orderedConversations, draggingConversationId, notifyError, t, localState?.id, setLocalState],
   );
 
   function onClose() {
@@ -276,7 +294,10 @@ export default function SidebarContent({
   }) => {
     if (!topic) return;
     try {
-      await setFolderPinned(topic.id, !topic.pinned);
+      const pinned = !topic.pinned;
+      await setFolderPinned(topic.id, pinned);
+      // Open it once so its chats are visible; a later collapse is kept.
+      if (pinned) dispatch(expandTopics([PINNED_TOPIC_ID, topic.id]));
     } catch (error) {
       console.error("Failed to update topic pinned state", error);
       notifyError(t("folders.error_generic"));
@@ -352,9 +373,10 @@ export default function SidebarContent({
 
     // Get button position first (while e.currentTarget is still valid)
     const rect = e.currentTarget.getBoundingClientRect();
+    // Open beside the button; the flyout arrow points at its centre.
     const newPosition = {
-      x: rect.right + 5,
-      y: rect.top - 5,
+      x: rect.right + 10,
+      y: rect.top + rect.height / 2 - FLYOUT_ARROW_OFFSET,
     };
 
     // Use functional setState to ensure we're working with the latest state
@@ -429,6 +451,10 @@ export default function SidebarContent({
     const isDragging = draggingConversationId === id;
     const summary = summariesEnabled ? (conv.summary ?? "").trim() : "";
     const showSummary = summary.length > 0;
+    const rowTitle =
+      conv.title || t("conversation.untitled", { defaultValue: "Untitled Chat" });
+    // Every row gets the tooltip: the summary when there is one, else the title.
+    const tooltipLabel = conversationTooltip(summary, rowTitle);
     const showCreated = options.showCreated === true;
     const showDateModified = options.showModified === true;
     const showDates =
@@ -442,10 +468,9 @@ export default function SidebarContent({
     return (
       <ShortcutTooltip
         key={id}
-        label={summary}
+        label={tooltipLabel}
         position="right"
         enterDelay={350}
-        disabled={!showSummary}
         containerClassName="block w-full"
       >
         <div
@@ -469,14 +494,12 @@ export default function SidebarContent({
           <div className="flex items-center h-full w-full">
             <div
               className="flex-1 overflow-hidden min-w-0"
-              title={showSummary ? undefined : conv.title || "Untitled Chat"}
               onDoubleClick={(e) => handleTitleDoubleClick(e, conv)}
               style={{ cursor: isDesktop ? "text" : "pointer" }}
             >
               <div className="flex items-center gap-2">
                 <div className="truncate text-xs leading-relaxed cursor-pointer flex-1">
-                  {conv.title ||
-                    t("conversation.untitled", { defaultValue: "Untitled Chat" })}
+                  {rowTitle}
                 </div>
                 {showCreated && conv.createdAt ? (
                   <span className="shrink-0 text-[10px] leading-tight text-base-content/70">
@@ -524,6 +547,7 @@ export default function SidebarContent({
       <Popover className="relative">
         <PopoverButton
           as={SortIconButton}
+          ref={sortButtonRef}
           aria-label={t("folders.sort_label")}
           title={t("folders.sort_label")}
           data-guide="sort-chats"
@@ -532,14 +556,15 @@ export default function SidebarContent({
         </PopoverButton>
         <PopoverPanel
           as="ul"
-          anchor={{ to: "bottom end", gap: 4, padding: 8 }}
+          anchor={{ to: "bottom end", gap: 10, padding: 8 }}
           role="menu"
           aria-label={t("folders.sort_label")}
           data-guide="sort-menu"
-          className="menu menu-sm z-50 w-60 rounded-box border border-base-300 bg-base-100 shadow-lg"
+          className="menu menu-sm z-50 w-60 !overflow-visible rounded-box border border-base-300 bg-base-100 shadow-lg"
         >
           {({ close }) => (
             <>
+              <FlyoutArrow side="top" targetRef={sortButtonRef} />
               <li>
                 <button
                   type="button"
@@ -751,8 +776,24 @@ export default function SidebarContent({
             zIndex: 999999,
           }}
         >
+            <FlyoutArrow side="left" className="top-4" />
             {/* Pin/unpin chat menu item */}
-            {activeConversation && (
+            {activeConversation && inPinnedTopic(activeConversation) ? (
+              // The whole topic is pinned, so the chat cannot be pinned on its own.
+              // The reason shows as a tooltip on the row, not as extra text.
+              <li className="menu-disabled" title={t("folders.topic_already_pinned")}>
+                <button
+                  type="button"
+                  data-guide="pin-chat-menu-item"
+                  disabled
+                  aria-disabled="true"
+                  aria-description={t("folders.topic_already_pinned")}
+                >
+                  <Pin size={16} />
+                  {t("folders.pin_action")}
+                </button>
+              </li>
+            ) : activeConversation ? (
               <li>
 <button
                 data-guide="pin-chat-menu-item"
@@ -772,7 +813,7 @@ export default function SidebarContent({
                   : t("folders.pin_action")}
               </button>
 </li>
-            )}
+            ) : null}
             {/* Rename chat menu item */}
             <RenameChatButton
               localState={localState}
@@ -808,15 +849,14 @@ export default function SidebarContent({
               convId={activeMenu}
             />
 
-            {/* Summarize chat menu item - only if active chat */}
-            {localState.id == activeMenu && (
-              <SummarizeChatButton
-                variant={"menu"}
-                localState={localState}
-                setLocalState={setLocalState}
-                closeMenu={closeMenu}
-              />
-            )}
+            {/* Summarize chat menu item */}
+            <SummarizeChatButton
+              variant={"menu"}
+              localState={localState}
+              setLocalState={setLocalState}
+              closeMenu={closeMenu}
+              convId={activeMenu}
+            />
             
             {/* Delete chat menu item */}
             <DeleteChatButton

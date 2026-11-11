@@ -23,10 +23,22 @@ function retry(check, attempts = 30, delay = 80) {
   tick();
 }
 
+// The tools popover has collapsible sections; a tour opens a closed one again.
+function expandToolSections() {
+  retry(() => {
+    if (!find('[data-guide^="tools-section-"]')) return false;
+    document
+      .querySelectorAll('[data-guide^="tools-section-"][aria-expanded="false"]')
+      .forEach((toggle) => toggle.click());
+    return true;
+  });
+}
+
 export function openTools() {
-  if (!find('[data-guide="tools-enable"]')) {
+  if (!find('[data-guide="tools-flyout"]')) {
     click('[data-guide="tools"]');
   }
+  expandToolSections();
 }
 
 export function ensureToolsEnabled() {
@@ -42,9 +54,16 @@ export function ensureToolsEnabled() {
   });
 }
 
-export function ensureTool(toolKey) {
+// `details` also opens the tool's second level (e.g. the Arcana id or MCP input).
+export function ensureTool(toolKey, { details = false } = {}) {
   openTools();
   retry(() => {
+    // Already on the detail level (it has the same toggle): nothing left to open.
+    if (details && find('[data-guide="tool-details"]')) {
+      const toggle = find(`[data-guide="tool-${toolKey}"]`);
+      if (toggle && !toggle.checked) toggle.click();
+      return true;
+    }
     const toggle = find('[data-guide="tools-enable"]');
     if (!toggle) return false;
     const input = toggle.querySelector('input[type="checkbox"]');
@@ -55,17 +74,23 @@ export function ensureTool(toolKey) {
     }
     const tool = find(`[data-guide="tool-${toolKey}"]`);
     if (!tool) return false;
-    if (!tool.className.includes("border-success")) {
+    if (!tool.checked) {
       tool.click();
+      return false;
+    }
+    if (details && !find('[data-guide="tool-details"]')) {
+      click(`[data-guide="tool-row-${toolKey}"] button`);
+      return false;
     }
     return true;
   });
 }
 
 export function openLocalTools() {
-  if (!find('[data-guide="tool-image_analysis"]')) {
-    click('[data-guide="local-tools"]');
+  if (!find('[data-guide="tools-flyout"]')) {
+    click('[data-guide="tools"]');
   }
+  expandToolSections();
 }
 
 export function openUserSettings() {
@@ -150,7 +175,7 @@ export function toolsAreEnabled() {
 
 export function isToolActive(toolKey) {
   const tool = find(`[data-guide="tool-${toolKey}"]`);
-  return !!tool && tool.className.includes("border-success");
+  return !!tool?.checked;
 }
 
 export function arcanaIdEntered() {

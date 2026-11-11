@@ -10,7 +10,6 @@ import WarningExternalModel from "../Header/WarningExternalModel";
 import ModelButton from "./ModelButton";
 import ToolsButton from "./ToolsButton";
 import AttachButton from "./AttachButton";
-import MountFolderButton from "./MountFolderButton";
 import AttachMediaButton from "./AttachMediaButton";
 import PromptTextArea from "./PromptTextArea";
 import SpeechModeButton from "./SpeechModeButton";
@@ -195,12 +194,7 @@ export default function Prompt({
           <div className="flex gap-2 items-center justify-center">
             {!metaChatSend && (
               <>
-                {/* Local folder and write access for the agent */}
-                <MountFolderButton
-                  localState={localState}
-                  setLocalState={setLocalState}
-                />
-                {/* Tools Button */}
+                {/* Tools: GWDG tools and browser & local tools in one popover */}
                 <ToolsButton
                   localState={localState}
                   setLocalState={setLocalState}

@@ -95,7 +95,7 @@ export function ModalProvider({ children }) {
         <ImportPersonaModal isOpen onClose={closeModal} {...modalProps} />
       )}
       {modalType === "createFolder" && (
-        <TopicEditorModal isOpen onClose={closeModal} />
+        <TopicEditorModal isOpen onClose={closeModal} {...modalProps} />
       )}
       {modalType === "renameFolder" && (
         <TopicEditorModal

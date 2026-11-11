@@ -52,6 +52,12 @@ export default {
     thumbsdown: "The response is not so good.",
   },
   // Sidebar
+  ai_services: {
+    open: "Menü der KI-Dienste öffnen",
+    image: "Bilder mit KI erzeugen",
+    voice: "Sprache in Text umwandeln",
+    rag: "Vektordatenbanken (Arcanas) verwalten",
+  },
   sidebar: {
     new_conversation: "Neuer Chat",
     import_persona: "Mit Persona chatten",
@@ -98,6 +104,7 @@ export default {
     pinned: "Angeheftet",
     pin_action: "Chat anheften",
     unpin_action: "Nicht mehr anheften",
+    topic_already_pinned: "Thema ist bereits angeheftet",
     pin_topic_action: "Thema anheften",
     unpin_topic_action: "Thema nicht mehr anheften",
     delete_description:
@@ -114,13 +121,16 @@ export default {
     choose_color: "Farbe wählen",
     choose_icon: "Symbol wählen",
     error_generic: "Aktion konnte nicht ausgeführt werden. Bitte erneut versuchen.",
-    move_title: "Zu Thema verschieben",
-    move_description: 'Thema für "{{title}}" auswählen',
+    move_title: "Chat verschieben",
+    move_description: "Wohin soll „{{title}}“ verschoben werden?",
+    move_target_chats_hint: "ohne Thema",
+    move_new_topic: "Neues Thema",
     move_action: "Verschieben",
     new_folder_prompt: "Neues Thema anlegen",
     create_inline: "Erstellen",
   },
   topic_view: {
+    open_topic: "Thema „{{name}}“ öffnen",
     chat_count_one: "{{count}} Chat",
     chat_count_other: "{{count}} Chats",
     empty_title: "Noch keine Chats in diesem Thema",
@@ -357,7 +367,7 @@ export default {
     },
     arcana: {
       title: "Arcana für RAG verwenden",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3: "Wähle Arcana.",
       step4:
@@ -365,47 +375,47 @@ export default {
     },
     web_search: {
       title: "Websuche verwenden",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3: "Wähle Websuche und akzeptiere den Hinweis.",
     },
     image_generation: {
       title: "Bilder erzeugen",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3:
         "Wähle Bilderzeugung und beschreibe das gewünschte Bild.",
     },
     image_modification: {
       title: "Bilder bearbeiten",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3:
         "Wähle Bildbearbeitung und hänge das Bild an oder beschreibe es.",
     },
     image_analysis: {
       title: "Bilder analysieren",
-      step1: "Öffne Browser & lokale Werkzeuge im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2:
         "Wähle Bilder analysieren, damit der Assistent Bilddateien mit dem Gemma-Visionsmodell von SAIA analysieren kann.",
     },
     audio_generation: {
       title: "Audio erzeugen",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3:
         "Wähle Audioerzeugung und beschreibe das gewünschte Audio.",
     },
     mcp_server: {
       title: "Einen MCP-Server verbinden",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3: "Wähle MCP-Server.",
       step4: "Gib die MCP-Server-Konfiguration in das Feld unten ein.",
     },
     tools_overview: {
       title: "GWDG Tools verwenden",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools.",
       step3:
         "Wähle ein Tool. Tools erscheinen nur bei Modellen, die sie unterstützen.",
@@ -623,7 +633,7 @@ export default {
     web_research: {
       title: "Aktuelle Informationen recherchieren",
       description: "Aktiviere die Websuche und stelle eine Frage, die aktuelle Quellen benötigt.",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools und wähle die Websuche.",
       step3: "Frag nach einer aktuellen Entwicklung und erwähne, dass du aktuelle Quellen brauchst.",
       step4: "Folge den zitierten Quellen und stelle Rückfragen.",
@@ -631,7 +641,7 @@ export default {
     rag_documents: {
       title: "Fragen aus eigenen Dokumenten beantworten",
       description: "Verwende Arcana (RAG), um aus einer eigenen Dokumentensammlung zu antworten.",
-      step1: "Öffne GWDG Tools im Eingabefeld.",
+      step1: "Öffne Werkzeuge im Eingabefeld.",
       step2: "Aktiviere die Tools und wähle Arcana.",
       step3: "Gib deine Arcana-ID ein.",
       step4: "Frag: „Was sagt unsere interne Richtlinie dazu?“",
@@ -799,6 +809,32 @@ export default {
     reset_default: "Standard zurücksetzen",
     default: "Standard",
     tools_title: "GWDG-Werkzeuge",
+    tools_menu: "Werkzeuge",
+    tools_all: "Alle Werkzeuge",
+    tools_all_on: "Alle an",
+    tools_all_off: "Alle aus",
+    tools_back: "Zurück",
+    tools_master: "Aktiv",
+    tools_open_details: "Details zu {{name}}",
+    tools_need_master: "Schalte die GWDG-Werkzeuge oben zuerst ein.",
+    tools_external_model: "Mit externen Modellen stehen die GWDG-Werkzeuge nicht zur Verfügung.",
+    tools_turn_on_for_options: "Schalte das Werkzeug ein, um es einzurichten.",
+    tools_data_transfer_note: "Dieses Werkzeug kann Daten an Dienste außerhalb der GWDG senden.",
+    tool_desc_web_search: "Sucht im Web nach aktuellen Informationen",
+    tool_desc_image_generation: "Erzeugt Bilder aus einer Beschreibung",
+    tool_desc_image_modification: "Bearbeitet angehängte Bilder nach deiner Anweisung",
+    tool_desc_audio_generation: "Erzeugt Sprache oder Audio aus Text",
+    tool_desc_arcana: "Antwortet mit Wissen aus deinen Arcana-Dokumenten",
+    tool_desc_mcp_remote: "Bindet MCP-Server über das GWDG-Gateway an",
+    tool_desc_share_local_folder: "Gibt dem Agenten Zugriff auf einen Ordner auf deinem Rechner",
+    tool_desc_mcp_local: "Bindet MCP-Server direkt aus deinem Browser an",
+    tool_desc_create_docx: "Erstellt Word-Dokumente zum Herunterladen",
+    tool_desc_image_analysis: "Liest und beschreibt Bilder mit einem Vision-Modell",
+    tool_desc_codemode: "Führt Code im Browser aus, um Aufgaben zu lösen",
+    tool_folder_choose: "Ordner auswählen",
+    arcana_no_id: "Noch keine Arcana-ID?",
+    arcana_create_id_link: "Erstelle deine Dokumentensammlung im RAG-Manager",
+    tool_folder_write_hint: "Erlaubt dem Agenten, Dateien im geteilten Ordner anzulegen und zu ändern.",
     tools_enable_all: "Alle aktivieren",
     tools_disable_all: "Alle deaktivieren",
     chat_settings: "Chat-Einstellungen",
@@ -809,6 +845,8 @@ export default {
     label_audio_generation: "Audiogenerierung",
     label_arcana: "Arcana",
     label_mcp_server: "MCP-Server",
+    label_mcp_remote: "MCP-Server (GWDG)",
+    label_mcp_local: "MCP-Server (lokal)",
     label_write_access: "Schreiben erlauben",
     label_codemode: "Codemode",
     label_create_docx: "Word-Dokument",
@@ -1229,7 +1267,7 @@ export default {
   },
   // Export Conversation Modal
   export_conversation: {
-    title: "Exportoptionen",
+    title: "Chat exportieren",
     json: "JSON-Datei",
     pdf: "PDF-Datei",
     text: "TXT-Datei",
@@ -1378,6 +1416,8 @@ export default {
       "Du verwendest ein externes Modell oder externe Tools. Deine Nachrichten können außerhalb der GWDG verarbeitet werden. Benutzerdefinierte Einstellungen und GWDG-Tools sind möglicherweise nicht verfügbar. Bitte unterlasse die Eingabe vertraulicher oder personenbezogener Daten.",
     data_security_warning_mpg:
       "Du verwendest ein externes Modell oder externe Tools. Deine Nachrichten können außerhalb der GWDG verarbeitet werden. Benutzerdefinierte Einstellungen und GWDG-Tools sind möglicherweise nicht verfügbar. Bitte unterlasse die Eingabe vertraulicher oder personenbezogener Daten. Externe Modelle sind nur nutzbar für wissenschaftliche Beschäftigte für wissenschaftliche Arbeiten, sofern keine personenbezogenen Daten eingegeben werden.",
+    data_security_warning_tools:
+      "Ein eingeschaltetes Werkzeug (z. B. Websuche oder MCP-Server) kann Daten außerhalb der GWDG verarbeiten. Bitte gib keine vertraulichen oder personenbezogenen Daten ein.",
     data_security_notice: "Deine Daten werden sicher innerhalb unserer Server verarbeitet. Es werden keine Informationen außerhalb der GWDG übertragen.",
     arcana_usage:
       "Halte Temperatur auf 0 und top_p auf 0.05 für optimale Arcana-Ergebnisse",

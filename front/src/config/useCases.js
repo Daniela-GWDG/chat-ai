@@ -109,7 +109,7 @@ export const useCases = {
         textKey: "use_cases.rag_documents.step3",
         check: arcanaIdEntered,
         target: '[data-guide="arcana-id"]',
-        prepare: () => ensureTool("arcana"),
+        prepare: () => ensureTool("arcana", { details: true }),
       },
       {
         textKey: "use_cases.rag_documents.step4",

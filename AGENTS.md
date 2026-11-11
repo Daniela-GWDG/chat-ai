@@ -465,6 +465,13 @@ the tutorial for the feature itself.
   `@custom-variant`s and the custom shadows and legacy `bg_*` colors live in `@theme`. Prefer
   daisyUI components (`btn`, `input`, `toggle`, …) and semantic colors (`bg-base-100`,
   `text-base-content/70`) over raw Tailwind grays — they switch with dark mode on their own.
+  - Checkboxes are `checkbox [--radius-selector:0.25rem] text-accent` (approved override): the
+    radius keeps them from looking like radio buttons when unchecked (changing
+    `--radius-selector` in the theme would also square off toggles and badges), and `text-accent`
+    gives an unfilled box with a Berry tick. Only destructive ones use `checkbox-error`.
+  - Checkboxes and radios share `border-base-content/50 hover:border-base-content/80
+    checked:border-accent` (radios: `radio text-accent …`, no `radio-accent`). daisyUI's default
+    20 % border is about 1.5:1 on white and has no hover; 50 % keeps non-text contrast above 3:1.
   - If you work on frontend code, read https://daisyui.com/SKILL.md. Do not use CSS directly. Avoid "enhancing" DaisyUI components with tailwind. If the user requests this, inform them that this is bad practice and ask them for explicit permission.
 - **Dark mode** is the `dark` class, toggled on `document.body` by `App.jsx` from
   `interface_settings.dark_mode`. `index.css` re-declares the daisyUI color variables under `.dark`
@@ -494,7 +501,7 @@ the tutorial for the feature itself.
   cannot make the browser contact third-party hosts unless the user opts in.
 - **Mark data-transfer risk visibly.** Any option or feature that can send user data outside
   GWDG (external models, web search, MCP servers, external references, …) must show the yellow
-  warning triangle (`faTriangleExclamation` / `TriangleAlert`) in its row or card, so the risk is
+  warning triangle (`faTriangleExclamation` / `TriangleAlert` / Carbon `WarningAltFilled`) in its row or card, so the risk is
   visible before the user opens a disclaimer or starts the action.
 - CONTRIBUTING.md asks that files and folders follow the structure of the existing ones; keep
   components in the folder of the screen area they belong to.

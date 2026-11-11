@@ -6,21 +6,21 @@ export const OVERLAY_SCROLL_CLASS = "[scrollbar-width:none] [&::-webkit-scrollba
 const MIN_THUMB_HEIGHT = 24;
 const EDGE_GAP = 2;
 
-export function getThumbGeometry({ scrollTop, scrollHeight, clientHeight }) {
+/** `inset` keeps the track that many px away from the top and bottom edge. */
+export function getThumbGeometry({ scrollTop, scrollHeight, clientHeight }, inset = 0) {
   if (scrollHeight <= clientHeight) return null;
-  const height = Math.max(
-    (clientHeight / scrollHeight) * clientHeight,
-    MIN_THUMB_HEIGHT,
-  );
+  const track = Math.max(clientHeight - 2 * inset, MIN_THUMB_HEIGHT);
+  const height = Math.max((clientHeight / scrollHeight) * track, MIN_THUMB_HEIGHT);
   const maxScroll = scrollHeight - clientHeight;
-  return { height, top: (Math.min(scrollTop, maxScroll) / maxScroll) * (clientHeight - height) };
+  return { height, top: inset + (Math.min(scrollTop, maxScroll) / maxScroll) * (track - height) };
 }
 
 /**
  * Scrollbar drawn above the content of `targetRef`. Render it next to the
- * scrolling element inside a positioned parent.
+ * scrolling element inside a positioned parent. `inset` (px) keeps it clear of
+ * rounded corners, e.g. inside a flyout.
  */
-export default function OverlayScrollbar({ targetRef }) {
+export default function OverlayScrollbar({ targetRef, inset = 0 }) {
   const thumbRef = useRef(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function OverlayScrollbar({ targetRef }) {
     let frame = null;
     const update = () => {
       frame = null;
-      const geometry = getThumbGeometry(target);
+      const geometry = getThumbGeometry(target, inset);
       thumb.style.display = geometry ? "block" : "none";
       if (!geometry) return;
       const parentWidth = thumb.offsetParent?.clientWidth ?? 0;
@@ -57,18 +57,19 @@ export default function OverlayScrollbar({ targetRef }) {
       resizeObserver?.disconnect();
       mutationObserver.disconnect();
     };
-  }, [targetRef]);
+  }, [targetRef, inset]);
 
   const startDrag = (event) => {
     const target = targetRef.current;
-    const geometry = target && getThumbGeometry(target);
+    const geometry = target && getThumbGeometry(target, inset);
     if (!geometry) return;
     event.preventDefault();
     const handle = event.currentTarget;
     const startY = event.clientY;
     const startScroll = target.scrollTop;
     const scrollPerPixel =
-      (target.scrollHeight - target.clientHeight) / (target.clientHeight - geometry.height);
+      (target.scrollHeight - target.clientHeight) /
+      (target.clientHeight - 2 * inset - geometry.height);
 
     const onMove = (moveEvent) => {
       target.scrollTop = startScroll + (moveEvent.clientY - startY) * scrollPerPixel;

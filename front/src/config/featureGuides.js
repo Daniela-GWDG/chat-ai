@@ -208,7 +208,7 @@ export const featureGuides = {
       },
       {
         target: '[data-guide="arcana-id"]',
-        prepare: () => ensureTool("arcana"),
+        prepare: () => ensureTool("arcana", { details: true }),
         textKey: "feature_guide.arcana.step4",
         check: arcanaIdEntered,
       },
@@ -292,11 +292,11 @@ export const featureGuides = {
   image_analysis: {
     titleKey: "feature_guide.image_analysis.title",
     prompt:
-      "Analyze images with SAIA's Gemma vision model. Open Browser & local tools from the prompt box, then select Analyze images.",
+      "Analyze images with SAIA's Gemma vision model. Open Tools from the prompt box, then select Analyze images under Browser & local tools.",
     keywords: ["analyze image", "analyse image", "read image", "image text", "vision"],
     steps: [
       {
-        target: '[data-guide="local-tools"]',
+        target: '[data-guide="tools"]',
         textKey: "feature_guide.image_analysis.step1",
         completeOnTargetClick: true,
       },
@@ -358,7 +358,7 @@ export const featureGuides = {
       },
       {
         target: '[data-guide="mcp-input"]',
-        prepare: () => ensureTool("mcp_remote"),
+        prepare: () => ensureTool("mcp_remote", { details: true }),
         textKey: "feature_guide.mcp_server.step4",
         check: mcpConfigured,
       },

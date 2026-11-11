@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import getModelDefaults from "../../config/getModelDefaults";
 
 export const ALL_MODELS = "all";
@@ -56,13 +56,15 @@ export function matchesModelFilter(model, filterId) {
   return !!getModelDefaults(model.id)?.purposes?.includes(value);
 }
 
-// Remembered for the session; a page reload starts at "all" again.
-let lastModelFilter = ALL_MODELS;
+/**
+ * Nested daisyUI menu list: its guide line sits under the centre of the group
+ * chevron and uses the sidebar's neutral line colour. Overrides daisyUI's
+ * default line position and colour (requested explicitly).
+ */
+export const NESTED_MENU_LIST =
+  "ms-[19.5px] ps-[4.5px] before:opacity-100 before:bg-[#64748B]/35 dark:before:bg-[#94A3B8]/50";
 
+/** Every open of the model list starts unfiltered; picking a model clears the filter. */
 export function useModelFilter() {
-  const [filter, setFilter] = useState(lastModelFilter);
-  useEffect(() => {
-    lastModelFilter = filter;
-  }, [filter]);
-  return [filter, setFilter];
+  return useState(ALL_MODELS);
 }

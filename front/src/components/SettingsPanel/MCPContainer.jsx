@@ -5,7 +5,7 @@
 // tools.mcp for the agent, which only picks up the URL entries (agent/mcp.ts).
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CircleHelp, FlaskConical, Loader2, Plus, Trash2 } from "lucide-react";
+import { Add, Chemistry, Help, TrashCan } from "@carbon/icons-react";
 import { useModal } from "../../modals/ModalContext";
 import { isRemoteMcpServer, mcpServers, testMcpServer } from "../../agent/mcp";
 import { useToast } from "../../hooks/useToast";
@@ -126,9 +126,9 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
         className="shrink-0 p-1.5 rounded-lg text-base-content/60 hover:text-accent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-base-content/60"
       >
         {status === "testing" ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <span className="loading loading-spinner loading-xs" aria-hidden="true" />
         ) : (
-          <FlaskConical className={`h-4 w-4 ${iconColor}`} />
+          <Chemistry size={16} className={iconColor} />
         )}
       </button>
     );
@@ -137,7 +137,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
   const header = (
     <div className="flex items-center gap-2 select-none">
       <p className="text-sm">{t("settings.label_mcp_server")}</p>
-      <CircleHelp
+      <Help
         className="h-4 w-4 cursor-pointer text-accent"
         alt="help"
         onClick={() => openModal("helpMCP")}
@@ -158,7 +158,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
               onChange={() => changeRemote(index, { enabled: server.enabled === false })}
               title={t("settings.mcp_toggle")}
               aria-label={t("settings.mcp_toggle")}
-              className="checkbox checkbox-sm shrink-0"
+              className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm shrink-0"
             />
             {server.name && (
               <span
@@ -198,7 +198,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
               aria-label={t("settings.mcp_remove")}
               className="shrink-0 p-1.5 rounded-lg text-base-content/60 hover:text-error cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-base-content/60"
             >
-              <Trash2 className="h-4 w-4" />
+              <TrashCan size={16} />
             </button>
           </div>
         ))}
@@ -210,7 +210,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
           }
           className="flex items-center gap-1.5 text-sm text-primary cursor-pointer select-none"
         >
-          <Plus className="h-4 w-4" />
+          <Add size={16} />
           {t("settings.mcp_add")}
         </button>
       </div>
@@ -229,7 +229,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
             onChange={() => changeLocal(index, { enabled: server.enabled === false })}
             title={t("settings.mcp_toggle")}
             aria-label={t("settings.mcp_toggle")}
-            className="checkbox checkbox-sm shrink-0"
+            className="checkbox [--radius-selector:0.25rem] text-accent border-base-content/50 hover:border-base-content/80 checked:border-accent checkbox-sm shrink-0"
           />
           {server.name && (
             <span
@@ -269,7 +269,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
             aria-label={t("settings.mcp_remove")}
             className="shrink-0 p-1.5 rounded-lg text-base-content/60 hover:text-error cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-base-content/60"
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashCan size={16} />
           </button>
         </div>
       ))}
@@ -279,7 +279,7 @@ const MCPContainer = ({ localState, setLocalState, remote = false }) => {
         onClick={() => setLocalServers([...servers, { url: "", enabled: true }])}
         className="flex items-center gap-1.5 text-sm text-primary cursor-pointer select-none"
       >
-        <Plus className="h-4 w-4" />
+        <Add size={16} />
         {t("settings.mcp_add")}
       </button>
     </div>

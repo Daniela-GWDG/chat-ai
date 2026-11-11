@@ -1,6 +1,6 @@
 // components/settings/ArcanaContainer.jsx
 import { Trans, useTranslation } from "react-i18next";
-import { CircleHelp } from "lucide-react";
+import { Help } from "@carbon/icons-react";
 import { useModal } from "../../modals/ModalContext";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
 
@@ -28,7 +28,7 @@ const ArcanaContainer = ({ localState, setLocalState }) => {
 
   const currentModel = settings.model;
 
-  // The agent has no enable_tools switch; ToolsContainer decides when to show this box there
+  // The agent has no enable_tools switch; the tools panel shows this box on the Arcana detail level
   const agentMode = isAgentEnabled();
   const toolsOn = agentMode || !!settings?.enable_tools;
 
@@ -37,7 +37,7 @@ const ArcanaContainer = ({ localState, setLocalState }) => {
       <div className="flex gap-4 w-full items-center">
         <div className="flex-shrink-0 flex items-center gap-2 select-none">
           <p className="text-sm">{t("settings.label_arcana")}</p>
-          <CircleHelp
+          <Help
             className="h-[16px] w-[16px] cursor-pointer text-accent"
             alt="help"
             onClick={() => openModal("helpArcana")}

@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ChevronDown, Close, Filter } from "@carbon/icons-react";
-import { ALL_MODELS, FILTER_SECTIONS, filterLabelKey, matchesModelFilter } from "./modelFilters";
+import { ALL_MODELS, FILTER_SECTIONS, NESTED_MENU_LIST, filterLabelKey, matchesModelFilter } from "./modelFilters";
+import { NAV_ICON_BUTTON_CLASS } from "../Others/IconButtons";
+import FlyoutArrow from "../Others/FlyoutArrow";
 
 function FilterOption({ label, count, selected, onSelect }) {
   const disabled = count === 0;
@@ -29,7 +31,7 @@ const sectionOf = (filterId) =>
     ?.titleKey ?? null;
 
 /** One filter at a time: picking an entry replaces the previous one. */
-export default function ModelFilterMenu({ models, value, onChange, compact = false }) {
+export default function ModelFilterMenu({ models, value, onChange }) {
   const { t } = useTranslation();
   const list = models ?? [];
   // Only one section is open, which keeps the list short.
@@ -45,19 +47,15 @@ export default function ModelFilterMenu({ models, value, onChange, compact = fal
   return (
     <Popover className="relative inline-block shrink-0 text-left">
       <PopoverButton
-        className="btn"
+        className={NAV_ICON_BUTTON_CLASS}
         data-guide="model-filter"
         aria-label={t("model_selector.scope_filter")}
         title={t("model_selector.scope_filter")}
       >
-        <Filter size={16} />
-        {!compact && <span className="hidden sm:inline">{t("model_selector.filter")}</span>}
+        <Filter size={20} />
       </PopoverButton>
 
-      <PopoverPanel
-        as="ul"
-        className="menu absolute right-0 z-50 mt-2 w-72 rounded-box border border-base-300 bg-base-100 shadow-lg focus:outline-none"
-      >
+      <PopoverPanel className="absolute right-0 z-50 mt-3 w-72 focus:outline-none">
         {({ close }) => {
           const choose = (filterId) => {
             onChange(filterId);
@@ -65,6 +63,9 @@ export default function ModelFilterMenu({ models, value, onChange, compact = fal
           };
           return (
             <>
+              {/* Small arrow pointing at the filter button, like the tour flyouts */}
+              <FlyoutArrow side="top" className="right-[15px]" />
+              <ul className="menu w-full rounded-box border border-base-300 bg-base-100 shadow-lg">
               <FilterOption
                 label={t("model_selector.scope_all")}
                 count={list.length}
@@ -90,7 +91,7 @@ export default function ModelFilterMenu({ models, value, onChange, compact = fal
                       </span>
                     </button>
                     {isOpen && (
-                      <ul>
+                      <ul className={NESTED_MENU_LIST}>
                         {section.options.map((option) => (
                           <FilterOption
                             key={option.id}
@@ -105,6 +106,7 @@ export default function ModelFilterMenu({ models, value, onChange, compact = fal
                   </li>
                 );
               })}
+              </ul>
             </>
           );
         }}

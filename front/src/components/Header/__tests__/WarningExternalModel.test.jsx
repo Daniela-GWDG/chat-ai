@@ -20,14 +20,29 @@ describe("data safety warning", () => {
     expect(screen.getByText(/external model or external tools/i)).toBeInTheDocument();
   });
 
-  it("warns when MCP is enabled", () => {
+  it("warns with the tools text when MCP has a server entered", () => {
     render(
       <DataSafetyText
-        localState={localState({ model: { name: "Internal" }, tools: { mcp: true } })}
+        localState={localState({
+          model: { name: "Internal" },
+          tools: { mcp: true },
+          mcp_servers: [{ url: "http://localhost:3000/mcp", enabled: true }],
+        })}
         userData={{}}
       />,
     );
-    expect(screen.getByText(/external model or external tools/i)).toBeInTheDocument();
+    expect(screen.getByText(/A tool you switched on/i)).toBeInTheDocument();
+    expect(screen.queryByText(/external model/i)).not.toBeInTheDocument();
+  });
+
+  it("does not warn when MCP is on but no server is entered", () => {
+    const { container } = render(
+      <DataSafetyText
+        localState={localState({ model: { name: "Internal" }, tools: { mcp: true }, mcp_servers: [] })}
+        userData={{}}
+      />,
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("stays silent for safe local settings", () => {
@@ -53,6 +68,18 @@ describe("data safety warning", () => {
     );
     expect(screen.getByText(/external model or external tools/i)).toBeInTheDocument();
     expect(screen.getAllByRole("button").length).toBeGreaterThan(0);
+  });
+
+  it("dismisses the open warning on a click anywhere else", () => {
+    render(
+      <WarningExternalModel
+        localState={localState({ model: { name: "External" }, tools: {} })}
+        userData={{}}
+      />,
+    );
+    expect(screen.getByText(/external model or external tools/i)).toBeInTheDocument();
+    fireEvent.pointerDown(document.body);
+    expect(screen.queryByText(/external model or external tools/i)).not.toBeInTheDocument();
   });
 
   it("shows the warning as a tooltip that the button dismisses", () => {
