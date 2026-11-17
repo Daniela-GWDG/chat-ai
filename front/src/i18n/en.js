@@ -526,6 +526,10 @@ export default {
       step1:
         "Drag the right edge of the sidebar to change its width. Double-click the edge to restore the default width.",
     },
+    color_mode: {
+      title: "Switch colour mode",
+      step1: "Click the colour palette next to the theme toggle in the footer to switch between Berry and Blue. Every control takes on that colour.",
+    },
     dark_mode: {
       title: "Switch theme",
       step1: "Use the theme toggle in the footer to switch between light and dark mode.",
@@ -860,6 +864,10 @@ export default {
     mount_folder: "Share local folder",
     folder_mounted: "Folder available to the assistant at {{path}}",
     tool_failed: "failed",
+    tool_calls_one: "{{count}} tool call",
+    tool_calls_other: "{{count}} tool calls",
+    tool_calls_failed_one: "{{count}} failed",
+    tool_calls_failed_other: "{{count}} failed",
     codemode_running: "Running code…",
     codemode_output: "Code output",
     speech_mode_title: "Voice mode",
@@ -892,6 +900,11 @@ export default {
       attach_media: "Attach Media",
       attachments: "Attachments",
       clear_attachments: "Clear all",
+      attachment_pages: "Attachment pages",
+      attachments_count_one: "{{count}} attachment",
+      attachments_count_other: "{{count}} attachments",
+      previous_page: "Previous page",
+      next_page: "Next page",
     },
     attachment: {
       image_unsupported: "Switch model to process image",
@@ -904,6 +917,19 @@ export default {
       process_browser: "Process (browser)",
       process_server: "Process (server)",
       must_process: "File must be processed",
+      process_short: "Process",
+      unprocessed_short: "Unprocessed file",
+      process_all: "Process all",
+      must_process_count_one: "{{count}} file must be processed before sending.",
+      must_process_count_other: "{{count}} files must be processed before sending.",
+      processing_count_one: "Processing {{count}} file …",
+      processing_count_other: "Processing {{count}} files …",
+      process_done_one: "File processed",
+      process_done_other: "{{count}} files processed",
+      process_failed_one: "{{count}} file could not be processed",
+      process_failed_other: "{{count}} files could not be processed",
+      process_browser_short: "Browser",
+      process_server_short: "Server",
     },
     reasoning: "Reasoning Process",
     copy_reasoning: "Copy reasoning process",
@@ -946,6 +972,11 @@ export default {
     switch_to_light: "Switch to light mode",
     switch_to_dark: "Switch to dark mode",
     switch_language: "Change language",
+    color_mode: "Colour mode",
+    color_berry: "Berry",
+    color_blue: "Blue",
+    switch_to_blue: "Switch to blue",
+    switch_to_berry: "Switch to Berry",
   },
   // User Settings Modal
   user_settings: {
@@ -954,8 +985,13 @@ export default {
       navigation_label: "Profile settings sections",
       profile: {
         label: "Profile",
-        title: "Profile and usage",
-        description: "Review your account details and usage information.",
+        title: "Profile",
+        description: "Your account details and sign-out.",
+      },
+      usage: {
+        label: "Usage",
+        title: "Usage",
+        description: "Your budget and limits for internal and external models.",
       },
       chat: {
         label: "Chat",
@@ -1417,8 +1453,12 @@ export default {
     session_expired: "Your session has expired. Please refresh the webpage.",
     unsent_files:
       "You have attached files that will be lost. Are you sure you want to leave?",
-    unprocessed_files:
-      "You have an unprocessed file. Please process or remove it first.",
+    unprocessed_files_one:
+      "One file has not been processed yet. Process it from the note above the attachments, or send the message without it.",
+    unprocessed_files_other:
+      "{{count}} files have not been processed yet. Process them from the note above the attachments, or send the message without them.",
+    send_without_files_one: "Send without this file",
+    send_without_files_other: "Send without these files",
     migrate_data:
       "It looks like you're using an older version of Chat AI. To continue, your previous conversations and data need to be upgraded. Please back up your data first if needed, then press 'Upgrade' to start the process.",
     // Hallucination warning
@@ -1483,6 +1523,7 @@ export default {
     pdf_mobile_title: "PDF preview is not available on mobile devices",
     pdf_mobile_hint: "Please use a desktop browser to preview PDF files",
     pdf_original_title: "Original PDF Preview",
+    pdf_unprocessed_hint: "This PDF has not been processed yet. Process it from the note above the attachments before you send the message.",
     pdf_original_hint: "This PDF hasn't been processed yet. Click \"Process\" to extract text content.",
     pdf_missing_title: "PDF content not available",
     pdf_missing_hint: "The original PDF file data is not available for preview",
@@ -1490,6 +1531,7 @@ export default {
     save: "Save to device",
     save_failed: "Failed to download file",
     download_aria: "Download file",
+    remove_aria: "Remove file",
     close_aria: "Close",
   },
   typst: {

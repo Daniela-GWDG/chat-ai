@@ -12,8 +12,13 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("../../../../db", () => ({
   useFiles: () => ({ loadFileMeta: mocks.loadFileMeta }),
-  useFileBase64: (id) => (id ? "data:image/png;base64,AAA" : null),
+  loadFileMeta: (id) => mocks.loadFileMeta(id),
+  loadFile: async () => new Blob(["x"], { type: "image/png" }),
+  useFileMeta: (id) => mocks.metas[id] ?? null,
 }));
+vi.mock("../../../../hooks/useToast", () => ({ useToast: () => ({ notifyError: vi.fn() }) }));
+globalThis.URL.createObjectURL = () => "blob:image";
+globalThis.URL.revokeObjectURL = () => {};
 vi.mock("../../../../modals/ModalContext", () => ({
   useModal: () => ({ openModal: mocks.openModal }),
 }));
@@ -30,7 +35,16 @@ describe("AttachedImage", () => {
   it("shows the attachment matching a workspace path", async () => {
     renderImage("/generated/marsupilami-tintin.png", ["f2", "f1"]);
     const image = await screen.findByRole("img", { name: "Marsupilami" });
-    expect(image).toHaveAttribute("src", "data:image/png;base64,AAA");
+    expect(image).toHaveAttribute("src", "blob:image");
+  });
+
+  it("shows a bar with the file name, size and a download button", async () => {
+    mocks.metas.f1.size = 1536;
+    renderImage("/generated/marsupilami-tintin.png", ["f1"]);
+    const preview = await screen.findByRole("group", { name: "marsupilami-tintin.png" });
+    expect(preview).toHaveClass("rounded-box");
+    expect(preview).toHaveTextContent("1.5 KB");
+    expect(screen.getByRole("button", { name: "Download file" })).toBeInTheDocument();
   });
 
   it("opens the preview on click", async () => {

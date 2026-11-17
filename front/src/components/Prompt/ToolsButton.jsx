@@ -48,7 +48,12 @@ export default function ToolsButton({ localState, setLocalState }) {
       const width = Math.min(FLYOUT_WIDTH, window.innerWidth * 0.9);
       const centred = rect.left + rect.width / 2 - width / 2;
       const left = Math.max(VIEWPORT_PADDING, Math.min(centred, window.innerWidth - VIEWPORT_PADDING - width));
-      setPosition({ left, bottom: window.innerHeight - rect.top + PROMPT_FLYOUT_ANCHOR.gap });
+      setPosition({
+        left,
+        bottom: window.innerHeight - rect.top + PROMPT_FLYOUT_ANCHOR.gap,
+        // Like the Headless UI flyouts: never taller than the room above the button.
+        maxHeight: rect.top - PROMPT_FLYOUT_ANCHOR.gap - VIEWPORT_PADDING,
+      });
     };
     place();
     window.addEventListener("resize", place);
@@ -105,7 +110,7 @@ export default function ToolsButton({ localState, setLocalState }) {
           <div
             ref={panelRef}
             className={`fixed ${PROMPT_FLYOUT_CLASS}`}
-            style={{ left: position.left, bottom: position.bottom }}
+            style={{ left: position.left, bottom: position.bottom, maxHeight: position.maxHeight }}
             data-guide="tools-flyout"
           >
             <FlyoutArrow side="bottom" targetRef={buttonRef} />

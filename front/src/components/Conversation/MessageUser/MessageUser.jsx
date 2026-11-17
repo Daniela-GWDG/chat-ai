@@ -58,7 +58,7 @@ export default React.memo(({
             )}
         {/* Attachments Section */}
        {Array.isArray(message.content) && message.content.length > 1 && (
-            <div className="flex flex-wrap gap-2 pr-1 max-h-24 sm:max-h-28 md:max-h-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+            <div className="mt-2 flex flex-wrap gap-2">
             {message.content.slice(1).map((attachment, i) => (
                 <Attachment
                     localState={localState}

@@ -13,6 +13,8 @@ import userSettingsReducer, {
   setCollapseReasoningWhileStreaming,
   selectSidebarWidth,
   setSidebarWidth,
+  selectColorMode,
+  setColorMode,
 } from "../userSettingsReducer";
 import interfaceSettingsReducer, {
   agreeWebSearch,
@@ -101,6 +103,21 @@ describe("user settings reducer", () => {
     expect(width(state)).toBe(320);
     expect(selectSidebarWidth({ user_settings: {} })).toBe(264);
     expect(selectSidebarWidth({ user_settings: { sidebar_width: 240 } })).toBe(264);
+  });
+
+  it("switches the colour mode between berry and blue and imports it from a backup", () => {
+    const mode = (state) => selectColorMode({ user_settings: state });
+    let state = userSettingsReducer(undefined, { type: "init" });
+    expect(mode(state)).toBe("berry");
+    state = userSettingsReducer(state, setColorMode("blue"));
+    expect(mode(state)).toBe("blue");
+    state = userSettingsReducer(state, setColorMode("green"));
+    expect(mode(state)).toBe("blue");
+    state = userSettingsReducer(state, importUserSettings({ color_mode: "berry" }));
+    expect(mode(state)).toBe("berry");
+    state = userSettingsReducer(state, importUserSettings({ color_mode: 42 }));
+    expect(mode(state)).toBe("berry");
+    expect(selectColorMode({ user_settings: {} })).toBe("berry");
   });
 
   it("falls back to safe selector values", () => {

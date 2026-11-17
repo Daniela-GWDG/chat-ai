@@ -1,26 +1,51 @@
 import { Trans, useTranslation } from "react-i18next";
 import { useAttachments } from "../../hooks/useAttachments";
 import MiniAudioButton from "./MiniAudioButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { pdfThumbnail } from "../../utils/pdfThumbnail";
 import { useModal } from "../../modals/ModalContext";
 import {
   useFileMeta,
   useFileBase64,
   loadFile,
-  saveFile,
 } from "../../db";
-import { WarningAltFilled, Close, Download, Video, DocumentBlank } from "@carbon/icons-react";
-import { useSelector } from "react-redux";
-import { processFile } from "../../apis/processFile";
-import { getFileType } from "../../utils/attachments";
 import {
-  canConvertDocumentLocally,
-  convertDocumentLocally,
-} from "../../utils/browserDocumentConversion";
-import { selectDocumentConversionMode } from "../../Redux/reducers/userSettingsReducer";
+  WarningAltFilled,
+  Close,
+  Download,
+  Video,
+  DocumentBlank,
+  DocumentPdf,
+  DocumentWordProcessor,
+  Image as ImageIcon,
+  Music,
+  DataTable,
+  Csv,
+  Document,
+  Code,
+} from "@carbon/icons-react";
+import { getFileType } from "../../utils/attachments";
 import { useToast } from "../../hooks/useToast";
 import { isAgentEnabled } from "../../apis/agentEndpoints";
+import { PromptIconButton } from "../Others/IconButtons";
 import { usePrepareStatus } from "../../agent/prepare";
+
+const TYPE_ICONS = {
+  pdf: DocumentPdf,
+  docx: DocumentWordProcessor,
+  image: ImageIcon,
+  video: Video,
+  audio: Music,
+  excel: DataTable,
+  csv: Csv,
+  markdown: Document,
+  text: Document,
+  code: Code,
+};
+
+// Visible on hover and keyboard focus; always on touch screens, which have no hover.
+const HOVER_ONLY =
+  "opacity-0 group-hover:opacity-100 focus-within:opacity-100 [@media(hover:none)]:opacity-100";
 
 export default function Attachment({
   localState,
@@ -30,19 +55,32 @@ export default function Attachment({
   inHistory = false,
   inAssistant = false,
   suppressUnsupportedWarning = false,
+  // Being converted to Markdown right now (see useProcessAttachments)
+  processing = false,
 }) {
   const { openModal } = useModal();
   const { t } = useTranslation();
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const { removeAttachment, clearAttachments, readFileAsBase64 } =
     useAttachments();
-  const { notifySuccess, notifyError } = useToast();
-  const documentConversionMode = useSelector(selectDocumentConversionMode);
+  const { notifyError } = useToast();
   const file = useFileMeta(attachment.fileId);
   const isImage = file?.type?.startsWith("image/");
   const isAudio = file?.type?.startsWith("audio/");
   const base64 = useFileBase64((isImage || isAudio) ? attachment.fileId : null);
+  const isPdf = file?.type === "application/pdf" || /\.pdf$/i.test(file?.name ?? "");
+  const [pdfPreview, setPdfPreview] = useState(null);
+  useEffect(() => {
+    if (!isPdf) return undefined;
+    let cancelled = false;
+    pdfThumbnail(attachment.fileId, async () => (await loadFile(attachment.fileId))?.arrayBuffer()).then(
+      (url) => !cancelled && setPdfPreview(url),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [isPdf, attachment.fileId]);
+  const thumbnail = isImage ? base64 : pdfPreview;
   const prepareStatus = usePrepareStatus(attachment.fileId);
   if (!file) return ""; // TODO placeholder file
   const fileType = getFileType(file); // Get readable file type, e.g., "image"
@@ -90,40 +128,6 @@ export default function Attachment({
     }
   };
   // Handle Process File
-  const handleProcessFile = async (useBrowser = documentConversionMode !== "server") => {
-    setIsProcessing(true);
-    const rawFile = await loadFile(attachment.fileId);
-    const response =
-      useBrowser && canConvertDocumentLocally(fileType)
-        ? await convertDocumentLocally(rawFile, fileType)
-        : await processFile(rawFile);
-    setIsProcessing(false);
-    if (!response?.content) {
-      notifyError("Error processing file");
-      return;
-    } else {
-      notifySuccess("File processed successfully");
-    }
-    // Save as markdown file and add to attachments
-    const processedFile = new File([response.content], file.name + ".md", {
-      type: "text/markdown",
-    });
-    const processedFileId = saveFile(
-      localState.messages[localState.messages.length - 1].id,
-      processedFile
-    );
-    // Replace current file with processed file
-    // TODO success toast, TODO handle when attachments are added/removed during process
-    setLocalState((prev) => {
-      const messages = [...prev.messages]; // shallow copy
-      messages[messages.length - 1].content[index + 1] = {
-        type: "file",
-        fileId: processedFileId,
-      };
-      return { ...prev, messages };
-    });
-  };
-
   // Convert file size from bytes to human-readable format (e.g., KB, MB, GB)
   function formatFileSize(bytes) {
     if (!bytes) return "NaN";
@@ -151,255 +155,90 @@ export default function Attachment({
   const badge = getFileBadge(file);
   const canProcess = !agentMode && !inHistory && (fileType === "pdf" || fileType === "docx"); // TODO add other supported types
 
-  const getFileDisplayInfo = (file) => {
-    if (canProcess) {
-      return {
-        bgColor:
-          "relative bg-warning/10",
-        borderColor: "border-warning/40",
-        hoverColor:
-          "hover:bg-warning/20",
-        iconBg: "bg-warning",
-        icon: (
-          <WarningAltFilled size={20} className="text-warning-content" />
-        ),
-      };
-    }
-    if (file.type?.startsWith("audio/")) {
-      return {
-        bgColor:
-          "bg-info/10",
-        borderColor: "border-info/30",
-        hoverColor:
-          "hover:bg-info/20",
-        iconBg: "bg-transparent",
-        icon: (
-          <MiniAudioButton src={base64} />
-        ),
-      };
-    } else if (file.type?.startsWith("image/")) {
-      return {
-        bgColor:
-          "bg-success/10",
-        borderColor: "border-success/30",
-        hoverColor:
-          "hover:bg-success/20",
-        iconBg: "bg-success",
-        icon: (
-          <img
-            className="h-full w-full object-cover rounded"
-            src={base64}
-            alt={file.name}
-          />
-        ),
-      };
-    } else if (file.type?.startsWith("video/")) {
-      return {
-        bgColor:
-          "bg-secondary/10",
-        borderColor: "border-secondary/30",
-        hoverColor:
-          "hover:bg-secondary/20",
-        iconBg: "bg-secondary",
-        icon: (
-          <Video size={16} className="text-secondary-content" />
-        ),
-      };
-    } else {
-      // Other files
-      return {
-        bgColor:
-          "bg-gradient-to-br from-base-200 to-base-300",
-        borderColor: "border-base-300/50",
-        hoverColor:
-          "hover:from-base-300 hover:to-base-300/80",
-        iconBg: "bg-base-300",
-        icon: (
-          <DocumentBlank size={16} className="text-base-content" />
-        ),
-      };
-    }
-  };
-
-  const displayInfo = getFileDisplayInfo(file);
+  const TypeIcon = TYPE_ICONS[fileType] ?? DocumentBlank;
+  const showProcess = canProcess && !inHistory;
+  const statusText = prepareStatus
+    ? t(`conversation.attachment.${prepareStatus}`)
+    : !inAssistant && !agentMode && !suppressUnsupportedWarning && !isFileSupported
+      ? t("conversation.attachment.file_unsupported", { filetype: fileType })
+      : null;
 
   return (
     <div
       key={`${file.name}-${index}`}
       data-guide={inHistory ? undefined : "attachment-card"}
-      className={`cursor-pointer flex-shrink-0 w-[200px] h-[80px] ${displayInfo.bgColor} ${displayInfo.hoverColor} ${displayInfo.borderColor} border rounded-lg transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md`}
+      className="group relative flex w-40 shrink-0 cursor-pointer flex-col overflow-hidden rounded-box border border-base-300 bg-base-100 transition-colors hover:border-base-content/30"
       onClick={() => {
         openModal("preview", { previewFile: file, fileId: attachment.fileId });
       }}
     >
-      {canProcess ? (
-        // Container for files that need processing
-        <div className="flex flex-col w-full p-1.5 h-full relative">
-          <div className="flex items-center gap-2 pr-5">
-            <p
-              className="min-w-0 flex-1 font-medium text-xs text-base-content truncate"
-              title={file.name}
-            >
-              {file.name}
-            </p>
-            <span className="shrink-0 text-[10px] text-base-content/70 whitespace-nowrap">
-              {formatFileSize(file.size)}
-            </span>
-          </div>
+      {/* Preview: the image or the PDF's first page, otherwise the file type */}
+      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden bg-base-200">
+        {thumbnail ? (
+          <img src={thumbnail} alt="" className="h-full w-full object-cover object-top" />
+        ) : isAudio ? (
+          <span onClick={(e) => e.stopPropagation()}>
+            <MiniAudioButton src={base64} />
+          </span>
+        ) : (
+          <TypeIcon size={32} aria-hidden="true" className="text-base-content/40" />
+        )}
 
-          <div className="mt-1 flex-1">
-            {isProcessing ? (
-              <div
-                className="flex h-full min-h-5 w-full items-center justify-center gap-1 rounded-sm
-                bg-warning py-0.5 text-xs leading-tight text-warning-content"
-              >
-                <span className="loading loading-spinner loading-xs" />
-              </div>
-            ) : (
-              <div
-                className={`grid gap-1 ${documentConversionMode === "choice" ? "grid-cols-2" : "grid-cols-1"}`}
-              >
-                {documentConversionMode !== "server" && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProcessFile(true);
-                    }}
-                    data-guide="process-file"
-                    className="btn btn-warning btn-xs h-auto min-h-5 py-0.5 text-[10px] leading-tight rounded-sm"
-                  >
-                    {t("conversation.attachment.process_browser")}
-                  </button>
-                )}
-                {documentConversionMode !== "browser" && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProcessFile(false);
-                    }}
-                    data-guide="process-file"
-                    className="btn btn-warning btn-xs h-auto min-h-5 py-0.5 text-[10px] leading-tight rounded-sm"
-                  >
-                    {t("conversation.attachment.process_server")}
-                  </button>
-                )}
-              </div>
-            )}
+        {/* Converting: a spinner over the preview */}
+        {(processing || prepareStatus) && (
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-base-100/70"
+            role="status"
+            aria-label={t(`conversation.attachment.${prepareStatus || "converting"}`)}
+          >
+            <span className="loading loading-spinner loading-md text-accent" />
           </div>
+        )}
 
-          <div className="mt-1 flex items-center justify-between gap-1 leading-tight">
-            <span className="flex min-w-0 items-center gap-1 text-[10px] text-warning">
-              <WarningAltFilled size={10} className="flex-shrink-0" />
-              <span className="truncate">
-                {t("conversation.attachment.must_process")}
-              </span>
-            </span>
-            <span
-              className={`shrink-0 px-1.5 py-0.5 text-[10px] font-medium rounded-full
-                bg-error/20 text-error
-                `}
-            >
-              {badge}
-            </span>
-          </div>
+      </div>
 
-          {!inHistory && (
-            <button
-              className="btn btn-ghost btn-xs btn-circle absolute top-1 right-1 bg-base-100/30 hover:bg-base-100/90"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemove();
-              }}
-              aria-label="Remove file"
-            >
-              <Close size={16} className="opacity-70 hover:opacity-100 transition-opacity" />
-            </button>
-          )}
+      {/* Name bar: always two lines (name, then status or size), so every card has the same height */}
+      <div className="flex shrink-0 flex-col gap-0.5 border-t border-base-300 px-2 py-1.5 text-xs leading-4">
+        <div className="flex min-w-0 items-center gap-1.5 text-base-content">
+          <TypeIcon size={16} aria-hidden="true" className="shrink-0 text-base-content/70" />
+          <span className="min-w-0 flex-1 truncate">{file.name}</span>
         </div>
+        {showProcess || (statusText && !prepareStatus) ? (
+          <span className="flex min-w-0 items-center gap-1 text-warning">
+            <WarningAltFilled size={12} className="shrink-0" />
+            <span className="truncate">
+              {showProcess ? t("conversation.attachment.unprocessed_short") : statusText}
+            </span>
+          </span>
+        ) : (
+          <span className="truncate text-base-content/70">{statusText || formatFileSize(file.size)}</span>
+        )}
+      </div>
+
+      {/* Remove (prompt) or download (history), shown on hover */}
+      {/* Solid white under the button, so its hover tint does not show the preview through */}
+      <span className={`absolute top-1 right-1 rounded-full bg-base-100 shadow-sm ${HOVER_ONLY}`}>
+      {!inHistory ? (
+        <PromptIconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRemove();
+          }}
+          aria-label={t("file_preview.remove_aria")}
+          title={t("file_preview.remove_aria")}
+        >
+          <Close size={18} aria-hidden="true" />
+        </PromptIconButton>
       ) : (
-        // Version for files that are already processed or don't need it
-        <div className="p-2 w-full h-full flex flex-col relative">
-          <div className="flex items-center gap-2 flex-1 ">
-            <div
-              className={`h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full ${displayInfo.iconBg} overflow-hidden`}
-            >
-              {displayInfo.icon}
-            </div>
-            <div className="min-w-0 flex-grow pr-6">
-              <p
-                className="font-medium text-xs text-base-content leading-tight mb-1 truncate"
-                title={file.name}
-              >
-                {file.name}
-              </p>
-              <div className="flex items-center gap-2">
-                {/* File size */}
-                <span className="text-xs text-base-content/70 whitespace-nowrap">
-                  {formatFileSize(file.size)}
-                </span>
-                {/* Badge */}
-                <span
-                  className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
-                    file.type === "audio"
-                      ? "bg-info/20 text-info"
-                      : file.type === "image"
-                      ? "bg-success/20 text-success"
-                      : file.type === "video"
-                      ? "bg-secondary/20 text-secondary"
-                      : "bg-base-300 text-base-content"
-                  }`}
-                >
-                  {badge}
-                </span>
-                {/* Download button - positioned at card corner */}
-                {(inHistory || inAssistant) && (
-                  <button
-                    className="btn btn-ghost btn-xs btn-circle absolute top-1 right-1 bg-base-100/30 hover:bg-base-100/90"
-                    onClick={handleDownload}
-                    aria-label={t("file_preview.download_aria")}
-                    title={t("file_preview.download_aria")}
-                  >
-                    <Download size={16} className="opacity-70 hover:opacity-100 transition-opacity" />
-                  </button>
-                )}
-                {/* Remove button - positioned at card corner */}
-                {!inHistory && (
-                  <button
-                    className="btn btn-ghost btn-xs btn-circle absolute top-1 right-1 bg-base-100/30 hover:bg-base-100/90"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeAttachment({
-                        localState,
-                        setLocalState,
-                        index,
-                      });
-                    }}
-                    aria-label="Remove file"
-                  >
-                    <Close size={16} className="opacity-70 hover:opacity-100 transition-opacity" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-          {/* Agent mode: converting or transcribing in the background */}
-          {prepareStatus && (
-            <span className="text-[11px] text-tertiary flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-tertiary animate-pulse flex-shrink-0" />
-              <Trans i18nKey={`conversation.attachment.${prepareStatus}`} />
-            </span>
-          )}
-          {/* Process Needed Warning*/}
-          {!inAssistant && !agentMode && !suppressUnsupportedWarning && (!isFileSupported || fileType === "pdf") && (
-            <span className="text-[11px] text-warning flex items-center gap-1">
-              <WarningAltFilled size={12} className="flex-shrink-0" />
-              {!isFileSupported
-                ? <Trans i18nKey="conversation.attachment.file_unsupported" values={{ filetype: fileType }} />
-                : <Trans i18nKey="conversation.attachment.unprocessed" />}
-            </span>
-          )}
-        </div>
+        <PromptIconButton
+          onClick={handleDownload}
+          aria-label={t("file_preview.download_aria")}
+          title={t("file_preview.download_aria")}
+        >
+          <Download size={18} aria-hidden="true" />
+        </PromptIconButton>
       )}
+      </span>
     </div>
   );
 }

@@ -818,6 +818,19 @@ export const featureGuides = {
       },
     ],
   },
+  color_mode: {
+    titleKey: "feature_guide.color_mode.title",
+    prompt:
+      "Switch the colour of all controls between Berry and Blue with the colour palette button in the footer, next to the theme toggle.",
+    keywords: ["colour mode", "color mode", "colour", "color", "blue", "berry", "accent"],
+    steps: [
+      {
+        target: '[data-guide="color-mode-selector"]',
+        textKey: "feature_guide.color_mode.step1",
+        completeOnTargetClick: true,
+      },
+    ],
+  },
   dark_mode: {
     titleKey: "feature_guide.dark_mode.title",
     prompt:
@@ -1081,6 +1094,7 @@ export const FEATURE_CATEGORIES = {
     "document_conversion",
     "data_management",
     "dark_mode",
+    "color_mode",
     "resize_sidebar",
   ],
   other: ["feedback", "speech_output"],

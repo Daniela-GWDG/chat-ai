@@ -1,6 +1,7 @@
 import Tooltip from "../Others/Tooltip";
 import { useTranslation } from "react-i18next";
 import { Close } from "@carbon/icons-react";
+import { PromptIconButton } from "../Others/IconButtons";
 
 export default function ClearButton({
     localState,
@@ -32,13 +33,13 @@ export default function ClearButton({
     // Display clear button if prompt is not empty
     return (prompt?.trim() !== "" ? (
         <Tooltip text={t("common.clear")}>
-            <button
-                className="btn btn-circle btn-sm shadow-sm"
+            <PromptIconButton
                 onClick={handleClear}
                 disabled={loading}
+                aria-label={t("common.clear")}
             >
-                <Close className="cursor-pointer text-accent h-6 w-6" />
-            </button>
+                <Close size={18} aria-hidden="true" />
+            </PromptIconButton>
         </Tooltip>
     ) : null)
 }

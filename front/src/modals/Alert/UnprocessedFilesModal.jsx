@@ -1,28 +1,41 @@
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import BaseModal from "../BaseModal";
 
-export default function UnprocessedFilesModal({ isOpen, onClose }) {
+/**
+ * Shown on send while PDF or Word files still have to be converted (without the
+ * agent). The message can still go out without them.
+ */
+export default function UnprocessedFilesModal({ isOpen, onClose, count = 1, onSendWithout }) {
+  const { t } = useTranslation();
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
       titleKey="alert.title"
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
+      maxWidth="max-w-md"
+      contentClassName="p-0"
     >
-      {/* Description text */}
-      <div className="pt-0 pb-2">
-        <p className="text-base-content text-justify text-sm">
-          <Trans i18nKey="alert.unprocessed_files" />
-        </p>
-      </div>
-
-      {/* OK Button */}
-      <div className="flex flex-col md:flex-row gap-2 justify-center w-full">
-        <button
-          className="btn btn-accent md:w-fit w-full min-w-[150px] select-none"
-          onClick={onClose}
-        >
-          <Trans i18nKey="ok" defaultValue="OK" />
-        </button>
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5">
+        <p className="text-sm text-base-content">{t("alert.unprocessed_files", { count })}</p>
+        <div className="flex justify-end gap-2">
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
+            {t("common.cancel")}
+          </button>
+          {onSendWithout && (
+            <button
+              type="button"
+              className="btn btn-accent"
+              onClick={() => {
+                onClose();
+                onSendWithout();
+              }}
+            >
+              {t("alert.send_without_files", { count })}
+            </button>
+          )}
+        </div>
       </div>
     </BaseModal>
   );

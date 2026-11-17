@@ -62,6 +62,15 @@ describe("Meta chat action markers", () => {
     ).toHaveLength(0);
   });
 
+  it("proposes a colour mode and drops unknown colours", () => {
+    expect(
+      getMetaActionProposals('[[SET_SETTING:{"key":"color_mode","value":"blue"}]]')[0],
+    ).toMatchObject({ type: "setting", key: "color_mode", value: "blue" });
+    expect(
+      getMetaActionProposals('[[SET_SETTING:{"key":"color_mode","value":"green"}]]'),
+    ).toHaveLength(0);
+  });
+
   it("ignores unsupported settings and malformed actions", () => {
     const text = [
       '[[SET_SETTING:{"key":"not_a_setting","value":true}]]',

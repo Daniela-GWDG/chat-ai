@@ -1,31 +1,34 @@
 
 import VersionDisplay from "./VersionDisplay";
 import LanguageSelector from "./LanguageSelector";
+import ColorModeSelector from "./ColorModeSelector";
 import { Link } from "react-router";
 import { Trans } from "react-i18next";
 import ThemeToggle from "../Header/ThemeToggle";
 
 export default function CollapsibleFooter({ className }: { className?: string }) {
   return (
-    <footer className={`bg-base-100 border-t border-base-300 text-xs md:text-sm ${className}`}>
-      {/* Equal outer columns keep the certification centred on the page */}
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center">
+    <footer className={`relative bg-base-100 border-t border-base-300 text-xs md:text-sm ${className}`}>
+      {/* Wraps instead of overlapping: toggles left, links right (on a second
+          line when narrow). The certification sits centred only where there is room. */}
+      <div className="flex min-h-12 flex-wrap items-center justify-between gap-x-4 gap-y-1 py-1">
 
         {/* Left section */}
-        <div className="interface-toggles h-12 flex items-center justify-self-start pl-1 gap-2">
+        <div className="interface-toggles flex h-10 shrink-0 items-center gap-2 pl-1">
           <ThemeToggle />
+          <ColorModeSelector />
           <LanguageSelector />
         </div>
 
         {/* Centre section */}
-        <p className="hidden md:block text-center whitespace-nowrap text-[#767676] dark:text-[#929292]">
+        <p className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-center text-[#767676] dark:text-[#929292] xl:block">
           <Trans i18nKey="footer.iso_certified" />
         </p>
 
         {/* Right section */}
-        <div className="h-12 min-w-0 flex items-center justify-self-end justify-end gap-6 pr-3 truncate overflow-hidden">
-          {/* Version Display - Desktop and Tablet */}
-          <div className="hidden md:block text-base-content">
+        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-4 gap-y-1 pr-3 lg:gap-x-6">
+          {/* Version Display - wide screens */}
+          <div className="hidden lg:block whitespace-nowrap text-base-content">
             <VersionDisplay />
           </div>
           {/* Imprint */}
@@ -35,7 +38,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center text-base-content hover:underline">
+            <p className="text-center whitespace-nowrap text-base-content hover:underline">
               <Trans i18nKey="footer.imprint" />
             </p>
           </Link>
@@ -46,7 +49,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
           }
           target="_blank"
           >
-          <p className="text-center text-base-content hover:underline">
+          <p className="text-center whitespace-nowrap text-base-content hover:underline">
               <Trans i18nKey="footer.privacy"></Trans>
           </p>
           </Link>
@@ -57,7 +60,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center whitespace-nowrap truncate text-base-content hover:underline">
+            <p className="text-center whitespace-nowrap text-base-content hover:underline">
               <Trans i18nKey="footer.terms" />
             </p>
           </Link>
@@ -68,7 +71,7 @@ export default function CollapsibleFooter({ className }: { className?: string })
             }
             target="_blank"
           >
-            <p className="text-center h-full text-base-content hover:underline">
+            <p className="text-center whitespace-nowrap text-base-content hover:underline">
               <Trans i18nKey="footer.docs" />
             </p>
           </Link>

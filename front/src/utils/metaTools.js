@@ -61,6 +61,7 @@ function buildSettingsLines(userSettings = {}, interfaceSettings = {}) {
     `- Document conversion: ${documentConversion}`,
     `- Modules: tools ${import.meta.env.VITE_MODULE_TOOLS === "true" ? "enabled" : "disabled"}, feedback ${import.meta.env.VITE_MODULE_FEEDBACK === "true" ? "enabled" : "disabled"}, choices ${import.meta.env.VITE_MODULE_CHOICES === "true" ? "enabled" : "disabled"}, speech ${import.meta.env.VITE_MODULE_SPEECH === "true" ? "enabled" : "disabled"}`,
     `- Sidebar width: ${userSettings.sidebar_width ?? 264} px`,
+    `- Colour mode: ${userSettings.color_mode ?? "berry"}`,
     `- Dark mode: ${yesNo(interfaceSettings.dark_mode)}`,
     `- Show usage in sidebar: ${yesNo(interfaceSettings.show_usage_in_sidebar)}`,
     `- Chat sorting: ${interfaceSettings.conversation_sort ?? "created_desc"}`,

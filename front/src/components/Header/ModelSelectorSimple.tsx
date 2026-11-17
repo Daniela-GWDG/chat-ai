@@ -225,7 +225,8 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
         <div
           ref={listRef}
           id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1}
-          className={`px-2 h-[32rem] max-h-[65dvh] shrink-0 overflow-auto ${OVERLAY_SCROLL_CLASS}`}
+          // In the prompt flyout the list fills what is left, so it never runs past the flyout.
+          className={`px-2 ${listOnly ? "min-h-0 flex-1" : "h-[32rem] max-h-[65dvh] shrink-0"} overflow-auto ${OVERLAY_SCROLL_CLASS}`}
         >
           <ActiveModelFilter value={modelFilter} onClear={() => setModelFilter(ALL_MODELS)} />
           {filteredModelsList.length === 0 && <p className="px-2 py-6 text-center text-sm text-base-content/70">{t("model_selector.no_results")}</p>}

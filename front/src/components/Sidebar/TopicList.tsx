@@ -186,7 +186,7 @@ export default function TopicList({
           toggleTopicCollapse(id);
         }
       }}
-      className="group -mx-2 flex h-10 items-center gap-1.5 px-[15px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+      className="group -mx-2 flex h-8 items-center gap-1.5 px-[15px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
     >
       <span className="-ml-[3px] flex-shrink-0">
         <ChevronDown
@@ -297,7 +297,7 @@ export default function TopicList({
               activateRow();
             }
           }}
-          className={`group flex h-10 items-center gap-1.5 ${topic ? "ml-[18px] rounded-lg pl-2 pr-[7px]" : "-mx-2 px-[15px]"} text-xs transition cursor-pointer border text-base-content ${
+          className={`group flex items-center gap-1.5 ${topic ? "h-9 ml-[18px] rounded-lg pl-2 pr-[7px]" : "h-8 -mx-2 px-[15px]"} text-xs transition cursor-pointer border text-base-content ${
             isActiveTopic
               ? "border-transparent bg-base-200"
               : "border-transparent hover:bg-base-200"
@@ -395,7 +395,7 @@ export default function TopicList({
         {!isCollapsed && count > 0 && (
           body ?? (
             <div
-              className={`${topic ? "ml-[34.5px] pl-[8.5px]" : "ml-[12.5px] pl-[11.5px]"} mt-1 border-l flex flex-col gap-1`}
+              className={`${topic ? "ml-[34.5px] pl-[8.5px]" : "ml-[12.5px] pl-[11.5px]"} mt-0.5 border-l flex flex-col gap-0.5`}
               style={{ borderColor: withAlpha(hex, isDark ? 0.5 : 0.35) }}
             >
               {conversations.map((conv) => renderConversationRow(conv))}
@@ -431,7 +431,7 @@ export default function TopicList({
                   toggleTopicCollapse(bucketId);
                 }
               }}
-              className="group ml-[18px] flex h-10 items-center gap-1.5 rounded-lg pl-2 pr-[7px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
+              className="group ml-[18px] flex h-8 items-center gap-1.5 rounded-lg pl-2 pr-[7px] text-xs transition cursor-pointer border border-transparent text-base-content hover:bg-base-200"
             >
               <ChevronDown
                 size={16}
@@ -447,7 +447,7 @@ export default function TopicList({
               </span>
             </div>
             {!bucketCollapsed && (
-              <div className="mt-1 flex flex-col gap-1 pl-[44px]">
+              <div className="mt-0.5 flex flex-col gap-0.5 pl-[44px]">
                 {group.conversations.map((conv) =>
                   renderConversationRow(conv, {
                     showMetadata: false,
@@ -464,15 +464,15 @@ export default function TopicList({
         })();
 
   return (
-    <div className="flex flex-col gap-1.5 pt-1" data-guide="topic-list">
+    <div className="flex flex-col gap-5 pt-1" data-guide="topic-list">
       {(pinnedTopics.length > 0 || pinnedConversations.length > 0) && (
         <div
           data-guide="pinned-chats"
-          className="flex flex-col gap-1"
+          className="flex flex-col gap-0.5"
         >
           {renderSectionHeader(PINNED_TOPIC_ID, t("folders.pinned"), pinnedCount, pinnedCollapsed)}
           {!pinnedCollapsed && (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               {pinnedTopics.map((topic) => {
                 const color = topicColor(topic);
                 const emoji =
@@ -488,7 +488,7 @@ export default function TopicList({
                 });
               })}
               {pinnedConversations.length > 0 && (
-                <div className="mt-1 flex flex-col gap-1 pl-[25px]">
+                <div className="flex flex-col gap-0.5 pl-[25px]">
                   {pinnedConversations.map((conv) =>
                     renderConversationRow(conv),
                   )}
@@ -499,10 +499,10 @@ export default function TopicList({
         </div>
       )}
       {topics.length > 0 && (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0.5">
           {renderSectionHeader(TOPICS_SECTION_ID, t("folders.topics_section"), topics.length, topicsCollapsed)}
           {!topicsCollapsed && (
-            <>
+            <div className="flex flex-col gap-1.5">
             {topics.map((topic) => {
               const color = topicColor(topic);
               const emoji =
@@ -517,7 +517,7 @@ export default function TopicList({
                 topic,
               });
             })}
-            </>
+            </div>
           )}
         </div>
       )}
@@ -529,7 +529,7 @@ export default function TopicList({
         hex: neutralHex,
         Icon: null,
         actions: headerActions,
-        body: dateBuckets && <div className="mt-1 flex flex-col gap-1">{dateBuckets}</div>,
+        body: dateBuckets && <div className="mt-0.5 flex flex-col gap-0.5">{dateBuckets}</div>,
       })}
 
       {menuTopicId &&

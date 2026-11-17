@@ -8,6 +8,7 @@ import { ToastProvider } from "./components/Others/ToastProvider";
 import TitleTooltips from "./components/Others/TitleTooltips";
 import { ModalProvider } from "./modals/ModalContext";
 import { FeatureGuideProvider } from "./context/FeatureGuideContext";
+import { selectColorMode } from "./Redux/reducers/userSettingsReducer";
 
 function App() {
   const { i18n } = useTranslation();
@@ -25,6 +26,12 @@ function App() {
       document.body.classList.add("lightScrollbar");
     }
   }, [isDarkMode]);
+
+  // Colour mode of the controls (berry or blue), read by index.css
+  const colorMode = useSelector(selectColorMode);
+  useEffect(() => {
+    document.body.dataset.colorMode = colorMode;
+  }, [colorMode]);
 
   // Render the PublicRoute component
   return (

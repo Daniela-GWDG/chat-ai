@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import {
-  Brain,
-  Database,
+  Bookmark,
+  DataBase,
   Download,
-  SlidersHorizontal,
-  Trash2,
-  UserRound,
-} from "lucide-react";
+  Meter,
+  SettingsAdjust,
+  TrashCan,
+  User,
+} from "@carbon/icons-react";
 
 import { useModal } from "../ModalContext";
 import BaseModal from "../BaseModal";
 import DefaultModelSelector from "./DefaultModelSelector";
-import UserInfoContainer from "./UserInfoContainer";
+import UserInfoContainer, { UsageInfoContainer } from "./UserInfoContainer";
 import TimeoutSetter from "./TimeoutSetter";
 import UserMemoryContainer from "./UserMemoryContainer";
 import {
@@ -32,28 +33,35 @@ import ImportChatButton from "../../components/Sidebar/Buttons/ImportChatButton"
 const PROFILE_TABS = [
   {
     id: "profile",
-    icon: UserRound,
+    icon: User,
     labelKey: "user_settings.tabs.profile.label",
     titleKey: "user_settings.tabs.profile.title",
     descriptionKey: "user_settings.tabs.profile.description",
   },
   {
+    id: "usage",
+    icon: Meter,
+    labelKey: "user_settings.tabs.usage.label",
+    titleKey: "user_settings.tabs.usage.title",
+    descriptionKey: "user_settings.tabs.usage.description",
+  },
+  {
     id: "chat",
-    icon: SlidersHorizontal,
+    icon: SettingsAdjust,
     labelKey: "user_settings.tabs.chat.label",
     titleKey: "user_settings.tabs.chat.title",
     descriptionKey: "user_settings.tabs.chat.description",
   },
   {
     id: "memories",
-    icon: Brain,
+    icon: Bookmark,
     labelKey: "user_settings.tabs.memories.label",
     titleKey: "user_settings.tabs.memories.title",
     descriptionKey: "user_settings.tabs.memories.description",
   },
   {
     id: "data",
-    icon: Database,
+    icon: DataBase,
     labelKey: "user_settings.tabs.data.label",
     titleKey: "user_settings.tabs.data.title",
     descriptionKey: "user_settings.tabs.data.description",
@@ -130,6 +138,16 @@ export default function UserSettingsModal({
       );
     }
 
+    if (activeTab === "usage") {
+      return userData ? (
+        <UsageInfoContainer userData={userData} />
+      ) : (
+        <p className="text-sm text-base-content/70">
+          {t("common.loading")}
+        </p>
+      );
+    }
+
     if (activeTab === "chat") {
       return (
         <div className="flex flex-col gap-5">
@@ -195,7 +213,7 @@ export default function UserSettingsModal({
             className="btn w-full"
             data-guide="export-data"
           >
-            <Download className="h-4 w-4" aria-hidden="true" />
+            <Download size={16} aria-hidden="true" />
             {t("user_settings.export_data_button")}
           </button>
           <button
@@ -203,7 +221,7 @@ export default function UserSettingsModal({
             onClick={() => openModal("clearCache")}
             className="btn btn-error btn-outline"
           >
-            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            <TrashCan size={16} aria-hidden="true" />
             {t("user_settings.clear_data_button")}
           </button>
         </div>
@@ -246,7 +264,7 @@ export default function UserSettingsModal({
                     : ""
                 }`}
               >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <Icon size={16} className="shrink-0" aria-hidden="true" />
                 <span>{t(tab.labelKey)}</span>
               </button>
             );

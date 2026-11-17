@@ -457,9 +457,8 @@ export default function SidebarContent({
     const tooltipLabel = conversationTooltip(summary, rowTitle);
     const showCreated = options.showCreated === true;
     const showDateModified = options.showModified === true;
-    const showDates =
-      !showCreated &&
-      (showDateModified || (isActive && options.showMetadata !== false));
+    // The open chat shows its times inside the conversation, not in the row.
+    const showDates = !showCreated && showDateModified;
     const modifiedTimestamp = conv.lastModified ?? conv.createdAt;
     const modified = showDateModified
       ? formatModifiedTime(modifiedTimestamp, i18n.language)
@@ -480,7 +479,7 @@ export default function SidebarContent({
           onMouseLeave={() => setHoveredId(null)}
           onDragStart={(event) => handleConversationDragStart(event, id)}
           onDragEnd={handleConversationDragEnd}
-          className={`sidebar-wrapper relative h-10 px-2 rounded-lg touch-manipulation border border-transparent ${
+          className={`sidebar-wrapper relative ${showDates ? "h-9" : "h-8"} px-2 rounded-lg touch-manipulation border border-transparent ${
             isActive
               ? "bg-base-200 text-base-content"
               : "text-base-content hover:bg-base-200 transition-all duration-100"
@@ -657,7 +656,7 @@ export default function SidebarContent({
         {/* Conversations header */}
         <div className="sticky top-0 z-20 bg-base-100 px-2 pt-3 pb-2">
           <TutorialStatus />
-          <div className="flex flex-col gap-1 pb-3">
+          <div className="flex flex-col gap-1">
           <div className="ml-px flex items-center gap-1" data-guide="sidebar-tools">
             <ShortcutTooltip label={t("meta_chat.open")}>
               <PromptIconButton
@@ -750,7 +749,7 @@ export default function SidebarContent({
                       localState,
                       userData,
                       modelsData,
-                      initialTab: "profile",
+                      initialTab: "usage",
                     })
                   }
                 />

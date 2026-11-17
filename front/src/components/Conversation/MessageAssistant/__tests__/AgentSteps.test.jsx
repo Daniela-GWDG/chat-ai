@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   requestMcpConfirmation,
@@ -123,6 +123,33 @@ describe("AgentSteps", () => {
       />,
     );
 
+    fireEvent.click(screen.getByRole("button", { name: /1 tool call/ }));
     expect(screen.getByText(/always allowed|immer erlaubt/i)).toBeInTheDocument();
+  });
+
+  it("groups consecutive tool calls into one collapsed box", () => {
+    render(
+      <AgentSteps
+        isLoading={false}
+        renderMode="Default"
+        agentMessages={[
+          {
+            role: "assistant",
+            content: [
+              { type: "toolCall", id: "a", name: "generate_image", arguments: { prompt: "cat" } },
+              { type: "toolCall", id: "b", name: "read", arguments: { path: "/generated/cat.png" } },
+            ],
+          },
+          { role: "toolResult", toolCallId: "a", content: [{ type: "text", text: "ok" }], isError: false },
+          { role: "toolResult", toolCallId: "b", content: [{ type: "text", text: "fail" }], isError: true },
+        ]}
+      />,
+    );
+    const group = screen.getByRole("button", { name: /2 tool calls/ });
+    expect(group).toHaveTextContent("generate_image, read");
+    expect(group).toHaveTextContent("1 failed");
+    expect(screen.queryByText("/generated/cat.png")).toBeNull();
+    fireEvent.click(group);
+    expect(screen.getByText("/generated/cat.png")).toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ChevronDown, ChevronRight, Brain } from "lucide-react";
+import { ChevronDown, ChevronRight, Idea } from "@carbon/icons-react";
 import { rendererComponents } from "./MarkdownRenderer";
 import CopyButton from "./CopyButton";
 import { selectCollapseReasoningWhileStreaming } from "../../../Redux/reducers/userSettingsReducer";
@@ -87,20 +87,20 @@ const ThinkingBlock = memo(
     }, [isStreaming]);
 
     return (
-      <div className="my-1 rounded-lg border border-accent">
-        <div className="flex items-center w-full rounded-t-lg text-xs bg-info/10">
+      <div className="my-1 rounded-lg border border-base-content/20 bg-base-200/5">
+        <div className="flex items-center w-full rounded-t-lg text-xs">
           <button
             onClick={() => {
               setUserOverride(true);
               setIsOpen((open) => !open);
               setAutoOpened(false);
             }}
-            className="cursor-pointer flex flex-1 items-center px-2 py-1 rounded-tl-lg hover:bg-info/20"
+            className="cursor-pointer flex flex-1 items-center px-2 py-1 rounded-tl-lg text-base-content"
             aria-expanded={isOpen}
             aria-controls="thinking-content"
           >
             {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-            <Brain size={14} className="ml-1.5 mr-1.5" />
+            <Idea size={16} className="ml-1 mr-1.5 text-base-content/70" />
             <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
               <Trans i18nKey="conversation.reasoning" />
               {isStreaming && !isOpen && (
@@ -136,7 +136,7 @@ const ThinkingBlock = memo(
           <div
             id="thinking-content"
             ref={contentRef}
-            className="px-2.5 py-1.5 text-xs bg-info/5 rounded-b-lg"
+            className="px-2.5 py-1.5 text-xs bg-base-100 border-t border-base-content/20 rounded-b-lg"
             aria-live="polite"
             aria-busy={isStreaming ? "true" : "false"}
           >

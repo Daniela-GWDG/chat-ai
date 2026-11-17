@@ -23,15 +23,16 @@ describe("ModelSelectorSimple list", () => {
     expect(screen.getByText("Beta").closest("button")).not.toHaveClass("menu-active");
   });
 
+  // In the prompt flyout the list fills the flyout's fixed height (and never runs past it).
   it("keeps the list height fixed while filtering", () => {
     const { container } = renderList();
-    expect(container.querySelector("#model-listbox")).toHaveClass("h-[32rem]");
+    expect(container.querySelector("#model-listbox")).toHaveClass("min-h-0", "flex-1");
     fireEvent.change(screen.getByPlaceholderText("Search models…"), { target: { value: "zzz" } });
     expect(screen.queryByText("Alpha")).not.toBeInTheDocument();
     expect(screen.getByText("model_selector.no_results")).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText("folders.clear_search"));
     expect(screen.getByText("Alpha")).toBeInTheDocument();
-    expect(container.querySelector("#model-listbox")).toHaveClass("h-[32rem]");
+    expect(container.querySelector("#model-listbox")).toHaveClass("min-h-0", "flex-1");
   });
 
   it("opens only one filter section at a time", async () => {

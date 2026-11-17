@@ -79,6 +79,22 @@
   --color-error-soft: var(--error-soft);
 }
 
+/* Colour mode "blue" (user_settings.color_mode, set on <body> by App.jsx):
+   every control that uses primary/accent turns #0178a7 instead of Berry.
+   4.95:1 on white, also for white text on it; #4fb3dc keeps 5.9:1 in dark mode. */
+[data-color-mode="blue"] {
+  --color-primary: #0178a7;
+  --color-primary-content: #ffffff;
+  --color-accent: #0178a7;
+  --color-accent-content: #ffffff;
+}
+.dark[data-color-mode="blue"] {
+  --color-primary: #4fb3dc;
+  --color-primary-content: #03222f;
+  --color-accent: #4fb3dc;
+  --color-accent-content: #03222f;
+}
+
 /* Wordmark font of the Chat AI service family (OFL, see assets/fonts/Baloo2-NOTICE.txt). */
 @font-face {
   font-family: "Baloo 2";

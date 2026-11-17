@@ -1,3 +1,4 @@
+import { parseColorMode } from "./colorMode";
 import { parseSidebarWidth } from "./sidebarWidth";
 
 const ACTION_TYPES =
@@ -22,6 +23,7 @@ const SUPPORTED_SETTING_KEYS = new Set([
   "send_with_enter",
   "timeout",
   "sidebar_width",
+  "color_mode",
 ]);
 
 const SUPPORTED_CONVERSATION_SETTING_KEYS = new Set([
@@ -88,6 +90,7 @@ export function getMetaActionProposals(text) {
         key === "sidebar_width" ? parseSidebarWidth(payload.value) : payload.value;
       // Clamped up front so the applied value matches what a revert compares.
       if (key === "sidebar_width" && value === null) continue;
+      if (key === "color_mode" && !parseColorMode(value)) continue;
       proposals.set(`setting:${key}`, {
         type: "setting",
         key,

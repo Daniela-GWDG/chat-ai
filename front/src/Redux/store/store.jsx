@@ -62,6 +62,7 @@ const getDefaultState = () => {
       conversation_summaries: true,
       send_with_enter: null,
       sidebar_width: 264,
+      color_mode: "berry",
     },
   };
 };

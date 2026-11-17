@@ -541,6 +541,11 @@ export default {
       step1:
         "Ziehe den rechten Rand der Seitenleiste, um ihre Breite zu ändern. Ein Doppelklick stellt die Standardbreite wieder her.",
     },
+    color_mode: {
+      title: "Farbmodus wechseln",
+      step1:
+        "Klicke in der Fußzeile auf die Farbpalette neben dem Design-Schalter, um zwischen Berry und Blau zu wechseln. Alle Bedienelemente übernehmen die Farbe.",
+    },
     dark_mode: {
       title: "Design wechseln",
       step1:
@@ -874,6 +879,10 @@ export default {
     mount_folder: "Lokalen Ordner teilen",
     folder_mounted: "Ordner für den Assistenten unter {{path}} verfügbar",
     tool_failed: "fehlgeschlagen",
+    tool_calls_one: "{{count}} Werkzeugaufruf",
+    tool_calls_other: "{{count}} Werkzeugaufrufe",
+    tool_calls_failed_one: "{{count}} fehlgeschlagen",
+    tool_calls_failed_other: "{{count}} fehlgeschlagen",
     codemode_running: "Code wird ausgeführt…",
     codemode_output: "Code-Ausgabe",
     speech_mode_title: "Sprachmodus",
@@ -906,6 +915,11 @@ export default {
       attach_media: "Medien anhängen",
       attachments: "Anhänge",
       clear_attachments: "Alle löschen",
+      attachment_pages: "Seiten der Anhänge",
+      attachments_count_one: "{{count}} Anhang",
+      attachments_count_other: "{{count}} Anhänge",
+      previous_page: "Vorherige Seite",
+      next_page: "Nächste Seite",
     },
     attachment: {
       image_unsupported: "Modell wechseln, um Bilder zu verarbeiten",
@@ -918,6 +932,19 @@ export default {
       process_browser: "Im Browser verarbeiten",
       process_server: "Auf dem Server verarbeiten",
       must_process: "Datei muss verarbeitet werden",
+      process_short: "Verarbeiten",
+      unprocessed_short: "Unverarbeitete Datei",
+      process_all: "Alle verarbeiten",
+      must_process_count_one: "{{count}} Datei muss vor dem Senden verarbeitet werden.",
+      must_process_count_other: "{{count}} Dateien müssen vor dem Senden verarbeitet werden.",
+      processing_count_one: "{{count}} Datei wird verarbeitet …",
+      processing_count_other: "{{count}} Dateien werden verarbeitet …",
+      process_done_one: "Datei verarbeitet",
+      process_done_other: "{{count}} Dateien verarbeitet",
+      process_failed_one: "{{count}} Datei konnte nicht verarbeitet werden",
+      process_failed_other: "{{count}} Dateien konnten nicht verarbeitet werden",
+      process_browser_short: "Browser",
+      process_server_short: "Server",
     },
     reasoning: "Denkprozess",
     copy_reasoning: "Denkprozess kopieren",
@@ -961,6 +988,11 @@ export default {
     switch_to_light: "Zum hellen Design wechseln",
     switch_to_dark: "Zum dunklen Design wechseln",
     switch_language: "Sprache wechseln",
+    color_mode: "Farbmodus",
+    color_berry: "Berry",
+    color_blue: "Blau",
+    switch_to_blue: "Zu Blau wechseln",
+    switch_to_berry: "Zu Berry wechseln",
   },
   // User Settings Modal
   user_settings: {
@@ -969,8 +1001,13 @@ export default {
       navigation_label: "Bereiche der Profileinstellungen",
       profile: {
         label: "Profil",
-        title: "Profil und Nutzung",
-        description: "Überblick über deine Kontodaten und Nutzung.",
+        title: "Profil",
+        description: "Deine Kontodaten und die Abmeldung.",
+      },
+      usage: {
+        label: "Nutzung",
+        title: "Nutzung",
+        description: "Dein Budget und deine Limits für interne und externe Modelle.",
       },
       chat: {
         label: "Chat",
@@ -1438,8 +1475,12 @@ export default {
       "Deine Sitzung ist abgelaufen. Bitte aktualisiere die Webseite.",
     unsent_files:
       "Du hast Dateien angehängt, die verloren gehen werden. Bist du sicher, dass du gehen willst?",
-    unprocessed_files:
-      "Du hast eine unverarbeitete Datei. Bitte verarbeite oder entferne sie zuerst.",
+    unprocessed_files_one:
+      "Eine Datei ist noch nicht verarbeitet. Verarbeite sie über den Hinweis über den Anhängen, oder sende die Nachricht ohne sie.",
+    unprocessed_files_other:
+      "{{count}} Dateien sind noch nicht verarbeitet. Verarbeite sie über den Hinweis über den Anhängen, oder sende die Nachricht ohne sie.",
+    send_without_files_one: "Ohne diese Datei senden",
+    send_without_files_other: "Ohne diese Dateien senden",
     migrate_data:
       "Es sieht so aus, als ob du eine ältere Version von Chat AI verwendest. Um fortzufahren, müssen deine vorherigen Gespräche und Daten aktualisiert werden. Bitte sichere deine Daten zuerst, falls erforderlich, und drücke dann auf 'Aktualisieren', um den Prozess zu starten.",
     // Hallucination warning
@@ -1505,6 +1546,7 @@ export default {
     pdf_mobile_title: "Die PDF-Vorschau ist auf Mobilgeräten nicht verfügbar",
     pdf_mobile_hint: "Bitte nutze einen Desktop-Browser für die PDF-Vorschau",
     pdf_original_title: "Vorschau des Original-PDFs",
+    pdf_unprocessed_hint: "Dieses PDF ist noch nicht verarbeitet. Verarbeite es über den Hinweis über den Anhängen, bevor du die Nachricht sendest.",
     pdf_original_hint: "Dieses PDF wurde noch nicht verarbeitet. Klicke auf \"Verarbeiten\", um den Text zu extrahieren.",
     pdf_missing_title: "PDF-Inhalt nicht verfügbar",
     pdf_missing_hint: "Die Daten des Original-PDFs sind für die Vorschau nicht verfügbar",
@@ -1512,6 +1554,7 @@ export default {
     save: "Auf Gerät speichern",
     save_failed: "Datei konnte nicht heruntergeladen werden",
     download_aria: "Datei herunterladen",
+    remove_aria: "Datei entfernen",
     close_aria: "Schließen",
   },
   typst: {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import OverlayScrollbar, { OVERLAY_SCROLL_CLASS } from "../Others/OverlayScrollbar";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -11,6 +11,7 @@ import Prompt from "../Prompt/Prompt";
 import HallucinationWarning from "./HallucinationWarning";
 import MessageAssistant from "./MessageAssistant/MessageAssistant";
 import MessageUser from "./MessageUser/MessageUser";
+import { formatMessageTimestamp, timestampLabels } from "../../utils/messageTimestamps";
 import Motto from "./Motto";
 import UndoButton from "./UndoButton";
 import Tooltip from "../Others/Tooltip";
@@ -24,7 +25,12 @@ export default function Conversation({
   userData,
 }) {
   const showSettings = useSelector(selectShowSettings);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // The draft at the end is not a sent message yet.
+  const timeLabels = useMemo(
+    () => timestampLabels(localState.messages.slice(0, -1)),
+    [localState.messages],
+  );
   const [searchParams] = useSearchParams();
   const targetMessageId = searchParams.get("message");
 
@@ -364,6 +370,19 @@ export default function Conversation({
     }
   }, [localState?.messages, autoFollow, scrollToBottom]);
 
+  // Sending a question always jumps to it, even when scrolled far up: the
+  // number of sent user messages grows by one within the same conversation.
+  const sentUserCount = useRef({ id: null, count: 0 });
+  useEffect(() => {
+    const msgs = localState?.messages ?? [];
+    const count = msgs.slice(0, -1).filter((m) => m?.role === "user").length;
+    const prev = sentUserCount.current;
+    sentUserCount.current = { id: localState?.id, count };
+    if (prev.id !== localState?.id || count !== prev.count + 1 || prev.count === 0) return;
+    setAutoFollow(true);
+    requestAnimationFrame(() => scrollToBottom("auto"));
+  }, [localState?.messages, localState?.id, scrollToBottom]);
+
   // Down-arrow: explicitly re-enable following and smooth jump
   const handleScrollButtonClick = useCallback(() => {
     setAutoFollow(true);
@@ -422,6 +441,11 @@ export default function Conversation({
                   messageRefs.current[message_index] = node;
                 }}
               >
+                {timeLabels.has(message_index) && (
+                  <p className="pb-1 pt-3 text-center text-sm text-base-content/70" data-testid="message-time">
+                    {formatMessageTimestamp(timeLabels.get(message_index), i18n.language)}
+                  </p>
+                )}
                 {message.role === "user" && (
                   <MessageUser
                     localState={localState}

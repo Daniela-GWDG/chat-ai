@@ -5,6 +5,7 @@ import AbortButton from "./AbortButton";
 import SendButton from "./SendButton";
 import MicButton from "./MicButton";
 import AttachmentsContainer from "./AttachmentsContainer";
+import { needsProcessing } from "../../hooks/useProcessAttachments";
 import SettingsButton from "../Header/SettingsButton";
 import WarningExternalModel from "../Header/WarningExternalModel";
 import ModelButton from "./ModelButton";
@@ -18,7 +19,6 @@ import SpeechModePanel from "./SpeechModePanel";
 import { useSendMessage } from "../../hooks/useSendMessage";
 import { useSpeechSession } from "../../hooks/useSpeechSession";
 import { loadFileMeta } from "../../db";
-import { getFileType } from "../../utils/attachments";
 import { getSpeechModule } from "../../utils/speechAudio";
 import { useModal } from "../../modals/ModalContext";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -58,7 +58,7 @@ export default function Prompt({
   const attachments = lastMessage.content.slice(1);
   
   // Update partial local state while preserving other values
-  const savePrompt = (nextPrompt = prompt, { clearChoices = false } = {}) => {
+  const savePrompt = (nextPrompt = prompt, { clearChoices = false, dropFileIds = [] } = {}) => {
     setIgnoreChanges(true);
     setLocalState((prev) => {
       const messages = [...prev.messages]; // shallow copy
@@ -68,7 +68,9 @@ export default function Prompt({
             type: "text",
             text: nextPrompt
           }, // Keep other content items
-          ...prev.messages[messages.length - 1].content.slice(1)
+          ...prev.messages[messages.length - 1].content
+            .slice(1)
+            .filter((item) => !dropFileIds.includes(item?.fileId))
         ]
       };
       return {
@@ -102,15 +104,21 @@ export default function Prompt({
     debouncedSave();
   };
   
-  const hasUnprocessedFile = async () => {
+  // Documents that still have to be converted; the agent converts them itself on send.
+  const unprocessedFileIds = async () => {
+    const ids = [];
     for (const attachment of attachments) {
       if (attachment?.type !== "file" || !attachment.fileId) continue;
       const meta = await loadFileMeta(attachment.fileId);
-      if (!meta) continue;
-      const fileType = getFileType(meta);
-      if (fileType === "pdf" || fileType === "docx") return true;
+      if (meta && needsProcessing(meta)) ids.push(attachment.fileId);
     }
-    return false;
+    return ids;
+  };
+
+  const send = (promptToSend, dropFileIds = []) => {
+    debouncedSave.cancel();
+    savePrompt(promptToSend, { clearChoices: true, dropFileIds });
+    setShouldSend(true);
   };
 
   // Handle form submission with prompt and files
@@ -118,13 +126,18 @@ export default function Prompt({
       event.preventDefault();
       const promptToSend = typeof nextPrompt === "string" ? nextPrompt : prompt;
       if (promptToSend?.trim() === "" && attachments.length === 0) return;
-      if (await hasUnprocessedFile()) {
-        openModal("unprocessedFiles");
+      const unprocessed = await unprocessedFileIds();
+      if (unprocessed.length > 0) {
+        // Something is left to send without them: the text or other attachments.
+        const canSendWithout =
+          promptToSend?.trim() !== "" || attachments.length > unprocessed.length;
+        openModal("unprocessedFiles", {
+          count: unprocessed.length,
+          onSendWithout: canSendWithout ? () => send(promptToSend, unprocessed) : undefined,
+        });
         return;
       }
-      debouncedSave.cancel();
-      savePrompt(promptToSend, { clearChoices: true });
-      setShouldSend(true);
+      send(promptToSend);
   };
   
   const openSpeechMode = () => {

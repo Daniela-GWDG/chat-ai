@@ -1,4 +1,4 @@
-import { LogOut, Mail } from "lucide-react";
+import { Email, Logout } from "@carbon/icons-react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,10 +13,9 @@ import OrgLimitsDisplay from "./OrgLimitsDisplay";
 import ProfilePreferenceSwitch from "./ProfilePreferenceSwitch";
 import { UsageDetailsPanel } from "./SidebarUsageSummary";
 
+/** Account details and sign-out (settings tab "Profile"). */
 export default function UserInfoContainer({ userData }) {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const showUsageInSidebar = useSelector(selectShowUsageInSidebar);
   const firstName = userData?.firstname ?? "";
   const lastName = userData?.lastname ?? "";
   const fullName = `${firstName} ${lastName}`.trim();
@@ -46,7 +45,7 @@ export default function UserInfoContainer({ userData }) {
             onClick={handleLogout}
             className="btn btn-sm"
           >
-            <LogOut className="h-4 w-4" aria-hidden="true" />
+            <Logout size={16} aria-hidden="true" />
             {t("user_settings.logout")}
           </button>
         </div>
@@ -65,7 +64,7 @@ export default function UserInfoContainer({ userData }) {
           </div>
           <div className="min-w-0">
             <dt className="flex items-center gap-1.5 text-xs font-medium text-base-content/70">
-              <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+              <Email size={14} aria-hidden="true" />
               {t("user_settings.account.email")}
             </dt>
             <dd
@@ -77,19 +76,22 @@ export default function UserInfoContainer({ userData }) {
           </div>
         </dl>
       </section>
+    </div>
+  );
+}
 
+/** Budgets and limits (settings tab "Usage"). */
+export function UsageInfoContainer({ userData }) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const showUsageInSidebar = useSelector(selectShowUsageInSidebar);
+
+  return (
+    <div className="flex flex-col gap-5">
       <UsageDetailsPanel data={userData} />
 
       {userData?.limits && (
         <section className="flex flex-col gap-3 border-t border-base-300 pt-5">
-          <div>
-            <h3 className="text-sm font-medium text-base-content">
-              {t("user_settings.usage.title")}
-            </h3>
-            <p className="mt-1 text-xs text-base-content/70">
-              {t("user_settings.usage.description")}
-            </p>
-          </div>
           <UserLimitsDisplay limits={userData.limits} />
           <OrgLimitsDisplay limits={userData.limits} />
           <div className="border-t border-base-300 pt-1">

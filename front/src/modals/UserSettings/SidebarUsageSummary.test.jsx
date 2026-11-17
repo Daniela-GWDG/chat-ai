@@ -10,8 +10,12 @@ const data = (internal, external) => ({ internal: scope(internal), external: sco
 describe("SidebarUsageSummary", () => {
   it("shows one compact row per scope with internal first", () => {
     const { container } = render(<SidebarUsageSummary data={data(1, 2)} onOpenDetails={vi.fn()} />);
-    const labels = [...container.querySelectorAll("button > span")].map((el) => el.textContent);
-    expect(labels[0]).toBe("user_settings.usage.scopes.internal");
+    const scopes = screen.getAllByTestId("usage-scope");
+    expect(scopes).toHaveLength(2);
+    expect(scopes[0]).toHaveTextContent("user_settings.usage.scopes.internal");
+    // Label above the bar
+    expect(scopes[0].lastElementChild.tagName).toBe("PROGRESS");
+    expect(screen.getByRole("button")).toHaveClass("grid-cols-2", "border", "rounded-box");
     expect(container.querySelectorAll("progress")).toHaveLength(2);
     expect(screen.getByText("1 / 100€")).toBeInTheDocument();
   });

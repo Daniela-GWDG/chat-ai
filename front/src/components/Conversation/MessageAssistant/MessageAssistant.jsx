@@ -3,6 +3,7 @@ import { keepViewportPosition } from "../../../utils/keepViewportPosition";
 import { useTranslation } from "react-i18next";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { MessageFilesContext } from "./AttachedImage";
+import MediaPreview, { inlineImageNames, isPreviewMedia, useFileMetas } from "./MediaPreview";
 import FeatureGuideCard from "../../Others/FeatureGuideCard";
 import UseCaseGuideCard from "../../Others/UseCaseGuideCard";
 import Typing from "./Typing";
@@ -42,6 +43,16 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
     () => (Array.isArray(message?.content) ? message.content.map((item) => item?.fileId).filter(Boolean) : []),
     [message?.content],
   );
+  const attachmentMetas = useFileMetas(attachedFileIds);
+  // Generated images and videos are shown large; one the text already shows inline is not repeated.
+  const inlineNames = useMemo(() => inlineImageNames(message?.content?.[0]?.text), [message?.content]);
+  const attachments = Array.isArray(message?.content)
+    ? message.content.slice(1).filter((a) => a?.type !== "form")
+    : [];
+  const mediaAttachments = attachments.filter((a) => isPreviewMedia(attachmentMetas?.[a.fileId]?.type));
+  const fileAttachments = attachmentMetas
+    ? attachments.filter((a) => !isPreviewMedia(attachmentMetas[a.fileId]?.type))
+    : [];
   const guideFeatureId = loading
     ? null
     : getFeatureGuideMarker(message?.content?.[0]?.text);
@@ -318,16 +329,22 @@ export default React.memo(({ localState, setLocalState, message_index, modelsDat
                   message_index={message_index}
                 />
               )}
-              {/* Attachments Section */}
-              {Array.isArray(message?.content) && message?.content.length > 1 && (
-                <div className="flex flex-wrap gap-2 pr-1 pb-1 max-h-24 sm:max-h-28 md:max-h-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-                  {message.content.slice(1).filter((a) => a?.type !== "form").map((attachment, i) => (
+              {/* Generated images and videos */}
+              {mediaAttachments
+                .filter((a) => !inlineNames.has(attachmentMetas[a.fileId]?.name))
+                .map((attachment) => (
+                  <MediaPreview key={attachment.fileId} fileId={attachment.fileId} />
+                ))}
+              {/* Other attachments */}
+              {fileAttachments.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {fileAttachments.map((attachment) => (
                     <Attachment
-                      key={i}
+                      key={attachment.fileId}
                       localState={localState}
                       setLocalState={setLocalState}
                       attachment={attachment}
-                      index={i}
+                      index={attachments.indexOf(attachment)}
                       inHistory={true}
                       inAssistant={true}
                     />

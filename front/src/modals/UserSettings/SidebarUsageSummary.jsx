@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import UsageDetailsCard from "./UsageDetailsCard";
 import { useDropReturnedFocus } from "../../hooks/useDropReturnedFocus";
@@ -259,22 +258,24 @@ export default function SidebarUsageSummary({ data, onOpenDetails }) {
       {...focusProps}
       title={t("user_settings.usage.show_details")}
       data-guide="usage-summary"
-      className="grid w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-lg px-2 py-2 text-left text-xs text-base-content transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+      className="grid w-full cursor-pointer grid-cols-2 gap-x-3 gap-y-1.5 rounded-box border border-base-300 px-3 py-2 text-left text-xs text-base-content transition-colors hover:bg-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
     >
+      <span className="col-span-2 font-semibold">{t("user_settings.usage.title")}</span>
+      {/* Internal and external side by side, each with its label above the bar */}
       {compact.map((metric) => (
-        <Fragment key={metric.key}>
-          <span>{metric.label}</span>
-          {metric.percent === null ? (
-            <span />
-          ) : (
+        <span key={metric.key} className="flex min-w-0 flex-col gap-1" data-testid="usage-scope">
+          <span className="flex items-baseline justify-between gap-2">
+            <span className="truncate">{metric.label}</span>
+            <span className="shrink-0 text-base-content/70">{metric.value}</span>
+          </span>
+          {metric.percent !== null && (
             <progress
               className={`progress w-full ${progressColorClass(metric.percent)}`}
               value={Math.min(metric.percent, 100)}
               max={100}
             />
           )}
-          <span className="text-right">{metric.value}</span>
-        </Fragment>
+        </span>
       ))}
     </button>
   );

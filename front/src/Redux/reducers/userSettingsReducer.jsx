@@ -1,6 +1,7 @@
 // userMemorySlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { SIDEBAR_DEFAULT_WIDTH, parseSidebarWidth } from "../../utils/sidebarWidth";
+import { DEFAULT_COLOR_MODE, parseColorMode } from "../../utils/colorMode";
 
 const initialState = {
   memories: [],
@@ -19,6 +20,8 @@ const initialState = {
   // null = device default (Enter on desktop, Shift+Enter on mobile).
   send_with_enter: null,
   sidebar_width: SIDEBAR_DEFAULT_WIDTH,
+  // Colour of the controls: "berry" (default) or "blue".
+  color_mode: DEFAULT_COLOR_MODE,
 };
 
 const MEMORY_MODES = [0, 1, 2];
@@ -67,6 +70,8 @@ function importUserSettingsState(state, incoming) {
   }
   const sidebarWidth = parseSidebarWidth(incoming.sidebar_width);
   if (sidebarWidth !== null) state.sidebar_width = sidebarWidth;
+  const colorMode = parseColorMode(incoming.color_mode);
+  if (colorMode) state.color_mode = colorMode;
   if (incoming.model !== undefined) state.model = incoming.model;
 }
 
@@ -180,6 +185,11 @@ const userSettingsSlice = createSlice({
       if (width !== null) state.sidebar_width = width;
     },
 
+    setColorMode: (state, action) => {
+      const mode = parseColorMode(action.payload);
+      if (mode) state.color_mode = mode;
+    },
+
     importUserSettings: (state, action) => {
       importUserSettingsState(state, action.payload);
     },
@@ -211,8 +221,11 @@ export const {
   setHtmlLoadExternal, setHtmlSanitization, setSetTitleOnce, setRenderTypst,
   setRenderLatex, setCollapseReasoningWhileStreaming, setDocumentConversionMode,
   setConversationSummaries,
-  setSendWithEnter, setSidebarWidth, importUserSettings
+  setSendWithEnter, setSidebarWidth, setColorMode, importUserSettings
 } = userSettingsSlice.actions;
+
+export const selectColorMode = (state) =>
+  parseColorMode(state.user_settings.color_mode) ?? DEFAULT_COLOR_MODE;
 
 export const selectSidebarWidth = (state) =>
   parseSidebarWidth(state.user_settings.sidebar_width) ?? SIDEBAR_DEFAULT_WIDTH;

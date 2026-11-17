@@ -20,6 +20,8 @@ export default function BaseModal({
   isOpen,
   onClose,
   titleKey,
+  // Plain text instead of an i18n key, e.g. a file name.
+  title,
   children,
   maxWidth = "max-w-md",
   isForced = false,
@@ -69,9 +71,9 @@ export default function BaseModal({
               >
                 {/* Header */}
                 {!hideHeader && (
-                <div className="flex justify-between items-center p-5 pb-3">
-                  <Dialog.Title className={`${titleClassName} ${titleColorClassName}`}>
-                    <Trans i18nKey={titleKey} />
+                <div className="flex justify-between items-center gap-3 p-5 pb-3">
+                  <Dialog.Title className={`min-w-0 ${titleClassName} ${titleColorClassName}`}>
+                    {title ?? <Trans i18nKey={titleKey} />}
                   </Dialog.Title>
 
                   {/* Close button */}

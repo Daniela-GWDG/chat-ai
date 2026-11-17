@@ -37,7 +37,7 @@ For navigation, give the user an inline Markdown link:
 - Conversation: [<conversation title>](/chat/<conversation id>)
 - Exact message: [<conversation title>, message](/chat/<conversation id>?message=<message id>)
 - Topic: [<topic name>](/topic/<topic id>)
-- Settings tab: [Open settings](/settings/<tab>), where <tab> is one of profile, chat, memories, data.
+- Settings tab: [Open settings](/settings/<tab>), where <tab> is one of profile, usage, chat, memories, data.
 
 Use only ids returned by the tools. When the user asks to be taken to a chat, message, topic, or setting, give the matching link and briefly say what it opens.
 
@@ -76,6 +76,7 @@ Supported setting keys and values:
 - send_with_enter: true, false, or null
 - timeout: milliseconds (5000-900000)
 - sidebar_width: pixels (264-480)
+- color_mode: "berry" or "blue" (colour of the controls)
 
 Supported per-chat setting keys and values:
 - model: a model id from list_models

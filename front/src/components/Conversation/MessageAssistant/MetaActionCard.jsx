@@ -164,6 +164,7 @@ export default function MetaActionCard({
       "user_settings.chat_preferences.document_conversion.label",
     timeout: "user_settings.timeout.title",
     sidebar_width: "user_settings.sidebar_width.label",
+    color_mode: "footer.color_mode",
     temperature: "meta_chat.setting_temperature",
     top_p: "meta_chat.setting_top_p",
     reasoning_effort: "settings.reasoning_effort.title",
@@ -212,6 +213,9 @@ export default function MetaActionCard({
     }
     if (key === "sidebar_width") {
       return `${value ?? SIDEBAR_DEFAULT_WIDTH} px`;
+    }
+    if (key === "color_mode") {
+      return t(`footer.color_${value}`, { defaultValue: String(value) });
     }
     if (typeof value === "boolean") {
       return value ? t("meta_chat.setting_on") : t("meta_chat.setting_off");

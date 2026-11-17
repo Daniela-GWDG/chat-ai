@@ -376,7 +376,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
 
   return (
 
-    <div ref={dropdownRef} className="w-full relative">
+    <div ref={dropdownRef} className={`w-full relative ${listOnly ? "flex min-h-0 flex-1 flex-col" : ""}`}>
 
 
 
@@ -426,7 +426,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
 
       {/** Dropdown Panel — rendered inline when there is no trigger **/}
       <div className={listOnly
-        ? "relative bg-base-100 w-full rounded-box pb-2"
+        ? "relative bg-base-100 w-full rounded-box pb-2 flex min-h-0 flex-1 flex-col"
         : `${dropdownOpen ? "" : "hidden"} bg-base-100 absolute z-50 mt-1 w-full rounded-box border border-base-300 shadow-lg pb-4`}>
 
         <div className="px-4 pt-4 pb-2">
@@ -550,7 +550,7 @@ export default function ModelSelectorSimple({ selectedModel, modelsData, onChang
         </div>
 
         {/** Results List **/}
-        <div ref={listRef} id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1} className={`h-[32rem] max-h-[65dvh] overflow-auto px-2 ${OVERLAY_SCROLL_CLASS}`}>
+        <div ref={listRef} id="model-listbox" role="listbox" aria-label="Models" tabIndex={-1} className={`${listOnly ? "min-h-0 flex-1" : "h-[32rem] max-h-[65dvh]"} overflow-auto px-2 ${OVERLAY_SCROLL_CLASS}`}>
           <ActiveModelFilter value={modelFilter} onClear={() => setModelFilter(ALL_MODELS)} />
           {filteredModelsList.length === 0 && <p className="px-2 py-6 text-center text-sm text-base-content/70">{t("model_selector.no_results")}</p>}
           {resultViewMode === "list" && (

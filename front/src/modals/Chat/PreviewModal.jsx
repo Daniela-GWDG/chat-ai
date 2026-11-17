@@ -4,7 +4,8 @@ import Papa from "papaparse";
 import BaseModal from "../BaseModal"; // Using our new BaseModal (Headless UI)
 import AudioPlayer from "./AudioPlayer";
 import { useFile, useFileBase64, useFileContent } from "../../db";
-import { X } from "lucide-react";
+import { Download, WarningAltFilled } from "@carbon/icons-react";
+import { needsProcessing } from "../../hooks/useProcessAttachments";
 import { getFileType } from "../../utils/attachments";
 
 // --------------------
@@ -43,7 +44,7 @@ const CSVTable = ({ content }) => {
   const headers = Object.keys(parsedData[0]);
 
   return (
-    <div className="overflow-auto max-h-[85vh] w-full">
+    <div className="overflow-auto max-h-[70vh] w-full">
       <table className="min-w-full border-collapse">
         <thead className="bg-base-200 sticky top-0 z-10">
           <tr>
@@ -103,7 +104,7 @@ const DocxViewer = ({ data }) => {
   }, [data]);
 
   return (
-    <div className="max-h-[85vh] w-full overflow-auto">
+    <div className="max-h-[70vh] w-full overflow-auto">
       {status === "loading" && (
         <div className="p-4 text-base-content/70">
           {t("common.loading")}
@@ -181,7 +182,7 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
             <img
               src={base64}
               alt={file.name}
-              className="max-h-[85vh] max-w-full object-contain"
+              className="max-h-[70vh] max-w-full object-contain"
               onError={() => setLoadError(t("file_preview.image_failed"))}
             />
           </div>
@@ -194,7 +195,7 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
             <video
               src={base64}
               controls
-              className="max-h-[85vh] max-w-full"
+              className="max-h-[70vh] max-w-full"
               onError={() => setLoadError(t("file_preview.video_failed"))}
             >
               {t("file_preview.video_unsupported")}
@@ -237,33 +238,14 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
         // If we have a valid PDF URL for preview (original PDF) AND not processed
         if (base64 && !isMobile) {
           return (
-            <div className="w-full h-[85vh] flex flex-col">
-              {/* Show processing status if not processed */}
-              <div className="bg-info/10 border border-info/30 rounded-lg p-3 mb-4 mx-4">
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-info"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div>
-                    <p className="text-sm font-medium text-info">
-                      {t("file_preview.pdf_original_title")}
-                    </p>
-                    <p className="text-xs text-info">
-                      {t("file_preview.pdf_original_hint")}
-                    </p>
-                  </div>
+            <div className="w-full h-[70vh] flex flex-col">
+              {/* Only when this PDF really still has to be converted: the agent converts it on send */}
+              {needsProcessing(file) && (
+                <div role="note" className="alert alert-warning alert-soft mb-4 text-sm">
+                  <WarningAltFilled size={16} aria-hidden="true" />
+                  {t("file_preview.pdf_unprocessed_hint")}
                 </div>
-              </div>
+              )}
 
               <iframe
                 src={base64}
@@ -318,7 +300,7 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
         fileType === "txt"
       ) {
         return (
-          <pre className="bg-base-200 p-6 rounded-lg overflow-auto max-h-[85vh] w-full font-mono text-sm text-base-content">
+          <pre className="bg-base-200 p-6 rounded-lg overflow-auto max-h-[70vh] w-full font-mono text-sm text-base-content">
             {textContent || t("file_preview.no_content")}
           </pre>
         );
@@ -327,7 +309,7 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
       // Code Viewer
       if (fileType === "code") {
         return (
-          <pre className="bg-base-200 p-6 rounded-lg overflow-auto max-h-[85vh] w-full">
+          <pre className="bg-base-200 p-6 rounded-lg overflow-auto max-h-[70vh] w-full">
             <code className="font-mono text-sm whitespace-pre-wrap text-base-content">
               {textContent || t("file_preview.no_content")}
             </code>
@@ -338,7 +320,7 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
       // Default display for any other file type
       if (textContent && typeof textContent === "string") {
         return (
-          <div className="bg-base-100 p-6 overflow-auto max-h-[80vh] w-full whitespace-pre-wrap text-base-content">
+          <div className="bg-base-100 p-6 overflow-auto max-h-[70vh] w-full whitespace-pre-wrap text-base-content">
             {textContent}
           </div>
         );
@@ -364,38 +346,30 @@ export default function PreviewModal({ isOpen, onClose, fileId }) {
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      minimal={true}
-      titleKey={null} // We'll pass custom header
+      title={<span className="block truncate" title={file.name}>{file.name}</span>}
+      titleClassName="text-base font-semibold"
+      titleColorClassName="text-base-content"
       maxWidth="max-w-[1000px]"
+      contentClassName="p-0"
     >
-      {/* Custom Header with Filename + Actions */}
-      <div className="flex justify-between items-center mb-4 px-2">
-        <p className="text-lg font-medium text-accent truncate max-w-[70%]">
-          {file.name}
-        </p>
-        <div className="flex items-center gap-4">
-          {/* Download File Button */}
+      <div className="flex flex-col gap-4 rounded-b-box border-t border-base-300 p-5">
+        {/* Rendered File Content */}
+        <div className="relative min-h-0 overflow-auto">{renderContent()}</div>
+
+        <div className="flex justify-end gap-2">
+          <button type="button" className="btn btn-ghost" onClick={onClose}>
+            {t("common.close")}
+          </button>
           <button
+            type="button"
+            className="btn btn-accent"
             onClick={handleSave}
-            className="btn btn-sm btn-info"
             aria-label={t("file_preview.download_aria")}
           >
+            <Download size={16} aria-hidden="true" />
             {t("file_preview.save")}
           </button>
-          {/* Close Button */}
-          <button onClick={onClose} aria-label={t("file_preview.close_aria")}>
-            <X
-              className="h-[20px] w-[20px] cursor-pointer text-accent"
-              alt="cross"
-              onClick={onClose}
-            />{" "}
-          </button>
         </div>
-      </div>
-
-      {/* Rendered File Content */}
-      <div className="relative flex-1 min-h-0 overflow-auto">
-        {renderContent()}
       </div>
     </BaseModal>
   );
